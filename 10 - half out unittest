@@ -1,0 +1,9 @@
+class testin(unittest.TestCase):
+    def test_funkcji_half_out(self, dat):
+        algorithm = algorytm()
+        data_check_1, data_check_2 = algorithm.divide_half_out(closed(dat[0], dat[1]), closed(dat[2], dat[3]))
+        dat.sort()
+        if(dat[0]==dat[1]):
+            return self.assertEqual((data_check_1 | data_check_2), closed(dat[0], dat[2]) | closed(dat[2], dat[3]))
+        else:
+            return self.assertEqual((data_check_1 | data_check_2), closed(dat[0], dat[1])| closed(dat[1], dat[3]))
