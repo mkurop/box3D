@@ -2,6 +2,7 @@ import os
 import rtree
 import itertools as it
 from portion import closed, closedopen, openclosed, open, empty
+# Notatka, bo nie przyjmuje nie zmienionego kodu
 # usuwanie plików z poprzedniego działania programu
 try:
     os.remove('3d_index.idx')
