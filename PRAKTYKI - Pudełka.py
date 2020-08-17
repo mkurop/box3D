@@ -158,6 +158,8 @@ class algorytm:
 
 
 Q = boxStack()
+
+
 # pętla do wczytywania współrzędnych dla każdego pudełka i
 pudelka = int(input('Ile pudełek?: '))
 for i in range(pudelka):
