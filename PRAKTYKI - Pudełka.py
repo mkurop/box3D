@@ -154,13 +154,11 @@ class algorytm:
         #zwrócenie drzewa
         return tree.tree
 
-#pudelka = int(input('\nIle pudełek?\n'))
 
 
 Q = boxStack()
 
 
-# pętla do wczytywania współrzędnych dla każdego pudełka i
 pudelka = int(input('Ile pudełek?: '))
 for i in range(pudelka):
     # (int(num) for num in input('\nPodaj 6 liczb dla jednego z pudełek oddzielonput()), int(input()), int(input()), ine spacją oraz przecinkiem: '))
