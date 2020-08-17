@@ -1,3 +1,4 @@
+#!/usr/bin/env python3
 import os
 import rtree
 import itertools as it
@@ -155,14 +156,13 @@ class algorytm:
         return tree.tree
 
 
-
 Q = boxStack()
 
 
 pudelka = int(input('Ile pudełek?: '))
 for i in range(pudelka):
     # (int(num) for num in input('\nPodaj 6 liczb dla jednego z pudełek oddzielonput()), int(input()), int(input()), ine spacją oraz przecinkiem: '))
-    Q.append(box3D.factory(int(input("Podaj po jednej z sześciu współrzędnych pudełka oddzielonych enterem:\n")), int(input()), int(input()), int(input()), int(input()), int(input())))
+    Q.append(box3D.factory(int(input("Podaj po jednej z sześciu współrzędnych pudełka oddzielonych enterem: \n")), int(input()), int(input()), int(input()), int(input()), int(input())))
 algorytm.algorytm(Q, tree())
 
 
