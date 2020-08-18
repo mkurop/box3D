@@ -2,6 +2,7 @@
 import os
 import rtree
 import itertools as it
+import math
 from portion import closed, closedopen, openclosed, open, empty
 # Notatka, bo nie przyjmuje nie zmienionego kodu
 # usuwanie plików z poprzedniego działania programu
@@ -90,7 +91,10 @@ class algorytm:
             return closed(min(low), max(low)), openclosed(max(low)+1, max(up))
     def divide_out(self, int1, int2):
         inter = int1 & int2
-        return int1 - (inter), inter ,int2 - (inter)
+        return int1 - inter, inter, int2 - inter
+
+    def divide_equal(self, int1, int2):
+        return closedopen(int1.lower, math.floor(int1.upper/2)), openclosed(math.floor(int2.upper/2), int2.upper)
 
     def is_in(self, interval1, interval2):
         return True if interval1 & interval2 == min(interval2, interval1) else False
@@ -123,6 +127,129 @@ class algorytm:
         x, y, z = self.rozbijanie(q.interval_x, i.interval_x), self.rozbijanie(q.interval_y, i.interval_y), self.rozbijanie(q.interval_z, i.interval_z)
         print(list(it.combinations_with_replacement([x, y, z], 3)))
 
+    def canonical(self, inter_x, inter_y, inter_z):
+        sort, in2sorted, sorted2in = self.my_sort([inter_x, inter_y, inter_z])
+        if self.is_in(sort[0], sort[1]):
+            if self.is_in(sort[0], sort[2]):
+                if self.is_in(sort[1], sort[2]):
+                elif self.is_equal(sort[1], sort[2]):
+                elif self.is_half_out(sort[1], sort[2]):
+                elif self.is_out(sort[1], sort[2]):
+                elif self.is_separate(sort[1], sort[2]):
+            elif self.is_equal(sort[0], sort[2]):
+                if self.is_in(sort[1], sort[2]):
+                elif self.is_equal(sort[1], sort[2]):
+                elif self.is_half_out(sort[1], sort[2]):
+                elif self.is_out(sort[1], sort[2]):
+                elif self.is_separate(sort[1], sort[2]):
+            elif self.is_half_out(sort[0], sort[2]):
+                if self.is_in(sort[1], sort[2]):
+                elif self.is_equal(sort[1], sort[2]):
+                elif self.is_half_out(sort[1], sort[2]):
+                elif self.is_out(sort[1], sort[2]):
+                elif self.is_separate(sort[1], sort[2]):
+            elif self.is_out(sort[0],sort[2]):
+                if self.is_in(sort[1], sort[2]):
+                elif self.is_equal(sort[1], sort[2]):
+                elif self.is_half_out(sort[1], sort[2]):
+                elif self.is_out(sort[1], sort[2]):
+                elif self.is_separate(sort[1], sort[2]):
+        elif self.is_equal(sort[0], sort[1]):
+                if self.is_in(sort[1], sort[2]):
+                elif self.is_equal(sort[1], sort[2]):
+                elif self.is_half_out(sort[1], sort[2]):
+                elif self.is_out(sort[1], sort[2]):
+                elif self.is_separate(sort[1], sort[2]):
+            elif self.is_equal(sort[0], sort[2]):
+                if self.is_in(sort[1], sort[2]):
+                elif self.is_equal(sort[1], sort[2]):
+                elif self.is_half_out(sort[1], sort[2]):
+                elif self.is_out(sort[1], sort[2]):
+                elif self.is_separate(sort[1], sort[2]):
+            elif self.is_half_out(sort[0], sort[2]):
+                if self.is_in(sort[1], sort[2]):
+                elif self.is_equal(sort[1], sort[2]):
+                elif self.is_half_out(sort[1], sort[2]):
+                elif self.is_out(sort[1], sort[2]):
+                elif self.is_separate(sort[1], sort[2]):
+            elif self.is_out(sort[0],sort[2]):
+                if self.is_in(sort[1], sort[2]):
+                elif self.is_equal(sort[1], sort[2]):
+                elif self.is_half_out(sort[1], sort[2]):
+                elif self.is_out(sort[1], sort[2]):
+                elif self.is_separate(sort[1], sort[2]):
+            elif self.is_half_out(sort[0], sort[1]):
+                if self.is_in(sort[1], sort[2]):
+                elif self.is_equal(sort[1], sort[2]):
+                elif self.is_half_out(sort[1], sort[2]):
+                elif self.is_out(sort[1], sort[2]):
+                elif self.is_separate(sort[1], sort[2]):
+            elif self.is_equal(sort[0], sort[2]):
+                if self.is_in(sort[1], sort[2]):
+                elif self.is_equal(sort[1], sort[2]):
+                elif self.is_half_out(sort[1], sort[2]):
+                elif self.is_out(sort[1], sort[2]):
+                elif self.is_separate(sort[1], sort[2]):
+            elif self.is_half_out(sort[0], sort[2]):
+                if self.is_in(sort[1], sort[2]):
+                elif self.is_equal(sort[1], sort[2]):
+                elif self.is_half_out(sort[1], sort[2]):
+                elif self.is_out(sort[1], sort[2]):
+                elif self.is_separate(sort[1], sort[2]):
+            elif self.is_out(sort[0],sort[2]):
+                if self.is_in(sort[1], sort[2]):
+                elif self.is_equal(sort[1], sort[2]):
+                elif self.is_half_out(sort[1], sort[2]):
+                elif self.is_out(sort[1], sort[2]):
+                elif self.is_separate(sort[1], sort[2]):
+        elif self.is_separate(sort[0], sort[1]):
+                if self.is_in(sort[1], sort[2]):
+                elif self.is_equal(sort[1], sort[2]):
+                elif self.is_half_out(sort[1], sort[2]):
+                elif self.is_out(sort[1], sort[2]):
+                elif self.is_separate(sort[1], sort[2]):
+            elif self.is_equal(sort[0], sort[2]):
+                if self.is_in(sort[1], sort[2]):
+                elif self.is_equal(sort[1], sort[2]):
+                elif self.is_half_out(sort[1], sort[2]):
+                elif self.is_out(sort[1], sort[2]):
+                elif self.is_separate(sort[1], sort[2]):
+            elif self.is_half_out(sort[0], sort[2]):
+                if self.is_in(sort[1], sort[2]):
+                elif self.is_equal(sort[1], sort[2]):
+                elif self.is_half_out(sort[1], sort[2]):
+                elif self.is_out(sort[1], sort[2]):
+                elif self.is_separate(sort[1], sort[2]):
+            elif self.is_out(sort[0],sort[2]):
+                if self.is_in(sort[1], sort[2]):
+                elif self.is_equal(sort[1], sort[2]):
+                elif self.is_half_out(sort[1], sort[2]):
+                elif self.is_out(sort[1], sort[2]):
+                elif self.is_separate(sort[1], sort[2]):
+        elif self.is_half_out(sort[0], sort[1]):
+                if self.is_in(sort[1], sort[2]):
+                elif self.is_equal(sort[1], sort[2]):
+                elif self.is_half_out(sort[1], sort[2]):
+                elif self.is_out(sort[1], sort[2]):
+                elif self.is_separate(sort[1], sort[2]):
+            elif self.is_equal(sort[0], sort[2]):
+                if self.is_in(sort[1], sort[2]):
+                elif self.is_equal(sort[1], sort[2]):
+                elif self.is_half_out(sort[1], sort[2]):
+                elif self.is_out(sort[1], sort[2]):
+                elif self.is_separate(sort[1], sort[2]):
+            elif self.is_half_out(sort[0], sort[2]):
+                if self.is_in(sort[1], sort[2]):
+                elif self.is_equal(sort[1], sort[2]):
+                elif self.is_half_out(sort[1], sort[2]):
+                elif self.is_out(sort[1], sort[2]):
+                elif self.is_separate(sort[1], sort[2]):
+            elif self.is_out(sort[0],sort[2]):
+                if self.is_in(sort[1], sort[2]):
+                elif self.is_equal(sort[1], sort[2]):
+                elif self.is_half_out(sort[1], sort[2]):
+                elif self.is_out(sort[1], sort[2]):
+                elif self.is_separate(sort[1], sort[2]):
     @staticmethod
     # początek funkcji głównej
     def algorytm(Q, tree):
