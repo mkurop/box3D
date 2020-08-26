@@ -88,7 +88,7 @@ class algorytm:
         if int2.lower == int1.lower:
             return closed(min(low), min(up)), openclosed(min(up), max(up))
         else:
-            return closed(min(low), max(low)), openclosed(max(low)+1, max(up))
+            return closed(min(low), max(low)), openclosed(max(low), max(up))
     def divide_out(self, int1, int2):
         inter = int1 & int2
         return int1 - inter, inter, int2 - inter
@@ -124,132 +124,88 @@ class algorytm:
             return q
 
     def rozbij(self, q, i):
-        x, y, z = self.rozbijanie(q.interval_x, i.interval_x), self.rozbijanie(q.interval_y, i.interval_y), self.rozbijanie(q.interval_z, i.interval_z)
-        print(list(it.combinations_with_replacement([x, y, z], 3)))
+        split_x, split_y, split_z = self.rozbijanie(q.interval_x, i.interval_x), self.rozbijanie(q.interval_y, i.interval_y), \
+                                    self.rozbijanie(q.interval_z, i.interval_z)
+        return split_x,split_y,split_z
 
-    def canonical(self, inter_x, inter_y, inter_z):
+
+    def canonical_execute(self, inter_q, inter_i):
+        if self.is_in(inter_q, inter_i):
+            return 0
+        elif self.is_half_out(inter_q, inter_i):
+            return 1
+        elif self.is_equal(inter_q, inter_i):
+            return 2
+        elif self.is_out(inter_q, inter_i):
+            return 3
+
+    def canonical(self, inter_x, inter_y, inter_z, inter_x_i, inter_y_i, inter_z_i, split_x, split_y, split_z):
         sort, in2sorted, sorted2in = self.my_sort([inter_x, inter_y, inter_z])
-        if self.is_in(sort[0], sort[1]):
-            if self.is_in(sort[0], sort[2]):
-                if self.is_in(sort[1], sort[2]):
-                elif self.is_equal(sort[1], sort[2]):
-                elif self.is_half_out(sort[1], sort[2]):
-                elif self.is_out(sort[1], sort[2]):
-                elif self.is_separate(sort[1], sort[2]):
-            elif self.is_equal(sort[0], sort[2]):
-                if self.is_in(sort[1], sort[2]):
-                elif self.is_equal(sort[1], sort[2]):
-                elif self.is_half_out(sort[1], sort[2]):
-                elif self.is_out(sort[1], sort[2]):
-                elif self.is_separate(sort[1], sort[2]):
-            elif self.is_half_out(sort[0], sort[2]):
-                if self.is_in(sort[1], sort[2]):
-                elif self.is_equal(sort[1], sort[2]):
-                elif self.is_half_out(sort[1], sort[2]):
-                elif self.is_out(sort[1], sort[2]):
-                elif self.is_separate(sort[1], sort[2]):
-            elif self.is_out(sort[0],sort[2]):
-                if self.is_in(sort[1], sort[2]):
-                elif self.is_equal(sort[1], sort[2]):
-                elif self.is_half_out(sort[1], sort[2]):
-                elif self.is_out(sort[1], sort[2]):
-                elif self.is_separate(sort[1], sort[2]):
-        elif self.is_equal(sort[0], sort[1]):
-                if self.is_in(sort[1], sort[2]):
-                elif self.is_equal(sort[1], sort[2]):
-                elif self.is_half_out(sort[1], sort[2]):
-                elif self.is_out(sort[1], sort[2]):
-                elif self.is_separate(sort[1], sort[2]):
-            elif self.is_equal(sort[0], sort[2]):
-                if self.is_in(sort[1], sort[2]):
-                elif self.is_equal(sort[1], sort[2]):
-                elif self.is_half_out(sort[1], sort[2]):
-                elif self.is_out(sort[1], sort[2]):
-                elif self.is_separate(sort[1], sort[2]):
-            elif self.is_half_out(sort[0], sort[2]):
-                if self.is_in(sort[1], sort[2]):
-                elif self.is_equal(sort[1], sort[2]):
-                elif self.is_half_out(sort[1], sort[2]):
-                elif self.is_out(sort[1], sort[2]):
-                elif self.is_separate(sort[1], sort[2]):
-            elif self.is_out(sort[0],sort[2]):
-                if self.is_in(sort[1], sort[2]):
-                elif self.is_equal(sort[1], sort[2]):
-                elif self.is_half_out(sort[1], sort[2]):
-                elif self.is_out(sort[1], sort[2]):
-                elif self.is_separate(sort[1], sort[2]):
-            elif self.is_half_out(sort[0], sort[1]):
-                if self.is_in(sort[1], sort[2]):
-                elif self.is_equal(sort[1], sort[2]):
-                elif self.is_half_out(sort[1], sort[2]):
-                elif self.is_out(sort[1], sort[2]):
-                elif self.is_separate(sort[1], sort[2]):
-            elif self.is_equal(sort[0], sort[2]):
-                if self.is_in(sort[1], sort[2]):
-                elif self.is_equal(sort[1], sort[2]):
-                elif self.is_half_out(sort[1], sort[2]):
-                elif self.is_out(sort[1], sort[2]):
-                elif self.is_separate(sort[1], sort[2]):
-            elif self.is_half_out(sort[0], sort[2]):
-                if self.is_in(sort[1], sort[2]):
-                elif self.is_equal(sort[1], sort[2]):
-                elif self.is_half_out(sort[1], sort[2]):
-                elif self.is_out(sort[1], sort[2]):
-                elif self.is_separate(sort[1], sort[2]):
-            elif self.is_out(sort[0],sort[2]):
-                if self.is_in(sort[1], sort[2]):
-                elif self.is_equal(sort[1], sort[2]):
-                elif self.is_half_out(sort[1], sort[2]):
-                elif self.is_out(sort[1], sort[2]):
-                elif self.is_separate(sort[1], sort[2]):
-        elif self.is_separate(sort[0], sort[1]):
-                if self.is_in(sort[1], sort[2]):
-                elif self.is_equal(sort[1], sort[2]):
-                elif self.is_half_out(sort[1], sort[2]):
-                elif self.is_out(sort[1], sort[2]):
-                elif self.is_separate(sort[1], sort[2]):
-            elif self.is_equal(sort[0], sort[2]):
-                if self.is_in(sort[1], sort[2]):
-                elif self.is_equal(sort[1], sort[2]):
-                elif self.is_half_out(sort[1], sort[2]):
-                elif self.is_out(sort[1], sort[2]):
-                elif self.is_separate(sort[1], sort[2]):
-            elif self.is_half_out(sort[0], sort[2]):
-                if self.is_in(sort[1], sort[2]):
-                elif self.is_equal(sort[1], sort[2]):
-                elif self.is_half_out(sort[1], sort[2]):
-                elif self.is_out(sort[1], sort[2]):
-                elif self.is_separate(sort[1], sort[2]):
-            elif self.is_out(sort[0],sort[2]):
-                if self.is_in(sort[1], sort[2]):
-                elif self.is_equal(sort[1], sort[2]):
-                elif self.is_half_out(sort[1], sort[2]):
-                elif self.is_out(sort[1], sort[2]):
-                elif self.is_separate(sort[1], sort[2]):
-        elif self.is_half_out(sort[0], sort[1]):
-                if self.is_in(sort[1], sort[2]):
-                elif self.is_equal(sort[1], sort[2]):
-                elif self.is_half_out(sort[1], sort[2]):
-                elif self.is_out(sort[1], sort[2]):
-                elif self.is_separate(sort[1], sort[2]):
-            elif self.is_equal(sort[0], sort[2]):
-                if self.is_in(sort[1], sort[2]):
-                elif self.is_equal(sort[1], sort[2]):
-                elif self.is_half_out(sort[1], sort[2]):
-                elif self.is_out(sort[1], sort[2]):
-                elif self.is_separate(sort[1], sort[2]):
-            elif self.is_half_out(sort[0], sort[2]):
-                if self.is_in(sort[1], sort[2]):
-                elif self.is_equal(sort[1], sort[2]):
-                elif self.is_half_out(sort[1], sort[2]):
-                elif self.is_out(sort[1], sort[2]):
-                elif self.is_separate(sort[1], sort[2]):
-            elif self.is_out(sort[0],sort[2]):
-                if self.is_in(sort[1], sort[2]):
-                elif self.is_equal(sort[1], sort[2]):
-                elif self.is_half_out(sort[1], sort[2]):
-                elif self.is_out(sort[1], sort[2]):
-                elif self.is_separate(sort[1], sort[2]):
+        list_i = list(inter_x_i, inter_y_i, inter_z_i)
+        list_inter = list(self.canonical_execute(sort[0], list_i[sorted2in[0]]),self.canonical_execute(sort[1], list_i[sorted2in[1]]),
+                           self.canonical_execute(sort[2], list_i[sorted2in[2]]))
+        if list_inter[0] == 3 or list_inter[1] == 3 or list_inter[1]==3:
+            pudelko_1 = box3D(sort[sorted2in[0]],sort[sorted2in[1]],sort[sorted2in[0]])
+            if list_inter[0] == 3:
+                if sort[0].upper > list_i[in2sorted[0].upper] or sort[0].lower < list_i[in2sorted[0].lower]:
+                    sort[0] = sort[0] - list_i[in2sorted[0]]
+                    pudelko_2 = box3D(sort[sorted2in[0]],sort[sorted2in[1]],sort[sorted2in[0]])
+                else:
+                    list_i[in2sorted[0]] = list_i[in2sorted[0]] - sort[0]
+                    pudelko_2 = box3D(list_i[0],list_i[1],list_i[2])
+                return pudelko_1, pudelko_2
+            elif list_inter[1] == 3:
+                if sort[1].upper > list_i[in2sorted[1].upper] or sort[1].lower < list_i[in2sorted[1].lower]:
+                    sort[1] = sort[1] - list_i[in2sorted[1]]
+                    pudelko_2 = box3D(sort[sorted2in[0]],sort[sorted2in[1]],sort[sorted2in[0]])
+                else:
+                    list_i[in2sorted[1]] = list_i[in2sorted[1]] - sort[1]
+                    pudelko_2 = box3D(list_i[0],list_i[1],list_i[2])
+                return pudelko_1, pudelko_2
+            elif list_inter[2] == 3:
+                if sort[2].upper > list_i[in2sorted[2].upper] or sort[2].lower < list_i[in2sorted[2].lower]:
+                    sort[2] = sort[2] - list_i[in2sorted[2]]
+                    pudelko_2 = box3D(sort[sorted2in[0]],sort[sorted2in[1]],sort[sorted2in[0]])
+                else:
+                    list_i[in2sorted[2]] = list_i[in2sorted[2]] - sort[2]
+                    pudelko_2 = box3D(list_i[0],list_i[1],list_i[2])
+                return pudelko_1, pudelko_2
+            elif list_inter[0] == 3 and list_inter[1] == 3:
+                sort_temp = sort[0]
+                sort[0] = sort[0] - list_i[in2sorted[0]]
+                pudelko_2 = box3D(sort[sorted2in[0]],sort[sorted2in[1]],sort[sorted2in[2]])
+                sort[0], sort[1] = sort_temp, sort[1] - list_i[in2sorted[1]]
+                pudelko_3 = box3D(sort[sorted2in[0]],sort[sorted2in[1]],sort[sorted2in[2]])
+                return pudelko_1, pudelko_2, pudelko_3
+            elif list_inter[1] == 3 and list_inter[2] == 3:
+                sort_temp = sort[1]
+                sort[1] = sort[1] - list_i[in2sorted[1]]
+                pudelko_2 = box3D(sort[sorted2in[0]],sort[sorted2in[1]],sort[sorted2in[2]])
+                sort[1], sort[2] = sort_temp, sort[2] - list_i[in2sorted[2]]
+                pudelko_3 = box3D(sort[sorted2in[0]],sort[sorted2in[1]],sort[sorted2in[2]])
+                return pudelko_1, pudelko_2, pudelko_3
+            elif list_inter[0] == 3 and list_inter[2] == 3:
+                sort_temp = sort[0]
+                sort[0] = sort[0] - list_i[in2sorted[0]]
+                pudelko_2 = box3D(sort[sorted2in[0]],sort[sorted2in[1]],sort[sorted2in[2]])
+                sort[0], sort[2] = sort_temp, sort[2] - list_i[in2sorted[2]]
+                pudelko_3 = box3D(sort[sorted2in[0]],sort[sorted2in[1]],sort[sorted2in[2]])
+                return pudelko_1, pudelko_2, pudelko_3
+            elif list_inter[0] == 3 and list_inter[1] == 3 and list_inter[2] == 3:
+                sort_temp = sort[0]
+                sort[0] = sort[0] - list_i[in2sorted[0]]
+                pudelko_2 = box3D(sort[sorted2in[0]],sort[sorted2in[1]],sort[sorted2in[2]])
+                sort[0], sort_temp, sort[1] = sort_temp, sort[1], sort[1] - list_i[in2sorted[1]]
+                pudelko_3 = box3D(sort[sorted2in[0]],sort[sorted2in[1]],sort[sorted2in[2]])
+                sort[2], sort[1] = sort[2] - list_i[in2sorted[2]],sort_temp
+                pudelko_4 = box3D(sort[sorted2in[0]],sort[sorted2in[1]],sort[sorted2in[2]])
+                return pudelko_1, pudelko_2, pudelko_3, pudelko_4
+
+        else:
+            return None
+
+###!!!!DOKOŃCZYĆ!!!!###
+
     @staticmethod
     # początek funkcji głównej
     def algorytm(Q, tree):
