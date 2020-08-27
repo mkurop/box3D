@@ -1,9 +1,8 @@
 #!/usr/bin/env python3
 import os
 import rtree
-import itertools as it
 import math
-from portion import closed, closedopen, openclosed, open, empty
+from portion import closed, closedopen, openclosed
 # Notatka, bo nie przyjmuje nie zmienionego kodu
 # usuwanie plików z poprzedniego działania programu
 try:
@@ -46,6 +45,9 @@ class boxStack:
     def append(self, added):
         self.stack.append(added)
 
+    def extend(self, added):
+        self.stack.extend(added)
+
     def pop(self):
         return self.stack.pop()
 
@@ -66,11 +68,11 @@ class tree:
 
 
 class algorytm:
-    def permute(sortin, permutation):
+    def permute(self, sortin, permutation):
         assert len(sortin) == len(permutation)
         return [sortin[i] for i in permutation]
 
-    def my_sort(inputlist):
+    def my_sort(self, inputlist):
         inputlist = zip(inputlist, range(len(inputlist)))
         aux = sorted(inputlist, key = lambda x:x[0])
         sorted2in = [aux[i][1] for i in range(len(aux))]
@@ -126,8 +128,7 @@ class algorytm:
     def rozbij(self, q, i):
         split_x, split_y, split_z = self.rozbijanie(q.interval_x, i.interval_x), self.rozbijanie(q.interval_y, i.interval_y), \
                                     self.rozbijanie(q.interval_z, i.interval_z)
-        return split_x,split_y,split_z
-
+        return self.canonical(q.interval_x, q.interval_y, q.interval_z, i.interval_x, i.interval_y, i.interval_z)
 
     def canonical_execute(self, inter_q, inter_i):
         if self.is_in(inter_q, inter_i):
@@ -138,92 +139,78 @@ class algorytm:
             return 2
         elif self.is_out(inter_q, inter_i):
             return 3
+        elif self.is_separate(inter_q, inter_i):
+            return 4
 
-    def canonical(self, inter_x, inter_y, inter_z, inter_x_i, inter_y_i, inter_z_i, split_x, split_y, split_z):
-        sort, in2sorted, sorted2in = self.my_sort([inter_x, inter_y, inter_z])
-        list_i = list(inter_x_i, inter_y_i, inter_z_i)
-        list_inter = list(self.canonical_execute(sort[0], list_i[sorted2in[0]]),self.canonical_execute(sort[1], list_i[sorted2in[1]]),
-                           self.canonical_execute(sort[2], list_i[sorted2in[2]]))
-        if list_inter[0] == 3 or list_inter[1] == 3 or list_inter[1]==3:
-            pudelko_1 = box3D(sort[sorted2in[0]],sort[sorted2in[1]],sort[sorted2in[0]])
-            if list_inter[0] == 3:
-                if sort[0].upper > list_i[in2sorted[0].upper] or sort[0].lower < list_i[in2sorted[0].lower]:
-                    sort[0] = sort[0] - list_i[in2sorted[0]]
-                    pudelko_2 = box3D(sort[sorted2in[0]],sort[sorted2in[1]],sort[sorted2in[0]])
-                else:
-                    list_i[in2sorted[0]] = list_i[in2sorted[0]] - sort[0]
-                    pudelko_2 = box3D(list_i[0],list_i[1],list_i[2])
-                return pudelko_1, pudelko_2
+    def canonical_box(self, swap_small, swap_big, i, up):
+        if up:
+            check = swap_small[i+1]
+            swap_small[i+1] = abs(swap_big[i+1]) - abs(swap_small[i+1])
+            swap_small[i], swap_small[i+1] = swap_small[i+1] + swap_small[i], check
+        else:
+            check = swap_small[i]
+            swap_small[i] = abs(swap_big[i]) - abs(swap_small[i])
+            swap_small[i], swap_small[i+1] = check, swap_small[i+1] - swap_small[i]
+        return box3D(closed(swap_small[0], swap_small[1]), closed(swap_small[2], swap_small[3]), closed(swap_small[4], swap_small[5]))
+
+    def canonical(self, inter_x, inter_y, inter_z, inter_x_i, inter_y_i, inter_z_i):
+        list_q = [inter_x.lower, inter_x.upper, inter_y.lower, inter_y.upper, inter_z.lower, inter_z.upper]
+        list_i = [inter_x_i.lower, inter_x_i.upper, inter_y_i.lower, inter_y_i.upper, inter_z_i.lower, inter_z_i.upper]
+        list_inter = [self.canonical_execute(inter_x, inter_x_i), self.canonical_execute(inter_y, inter_y_i), self.canonical_execute(inter_z, inter_z_i)]
+        swap_small, swap_big = list_q.copy(), list_i.copy()
+        if list_inter[0] == 3 | list_inter[1] == 3 | list_inter[2] == 3:
+            if list_inter[0] == 3 and list_inter[1] == 3 and list_inter[2] == 3:
+                pudelko_2 = self.canonical_box(swap_small, swap_big, 0, swap_small[1]<swap_big[1])
+                pudelko_3 = self.canonical_box(swap_small, swap_big, 2, swap_small[3]<swap_big[3])
+                pudelko_4 = self.canonical_box(swap_small, swap_big, 4, swap_small[5]<swap_big[5])
+                return [pudelko_2, pudelko_3, pudelko_4]
             elif list_inter[1] == 3:
-                if sort[1].upper > list_i[in2sorted[1].upper] or sort[1].lower < list_i[in2sorted[1].lower]:
-                    sort[1] = sort[1] - list_i[in2sorted[1]]
-                    pudelko_2 = box3D(sort[sorted2in[0]],sort[sorted2in[1]],sort[sorted2in[0]])
+                if list_inter[0] == 3:
+                    pudelko_2 = self.canonical_box(swap_small, swap_big, 0, swap_small[1]<swap_big[1])
+                    pudelko_3 = self.canonical_box(swap_small, swap_big, 2, swap_small[3]<swap_big[3])
+                    return [pudelko_2, pudelko_3]
+                elif list_inter[2] == 3:
+                    pudelko_2 = self.canonical_box(swap_small, swap_big, 0, swap_small[1]<swap_big[1])
+                    pudelko_3 = self.canonical_box(swap_small, swap_big, 4, swap_small[5]<swap_big[5])
+                    return [pudelko_2, pudelko_3]
                 else:
-                    list_i[in2sorted[1]] = list_i[in2sorted[1]] - sort[1]
-                    pudelko_2 = box3D(list_i[0],list_i[1],list_i[2])
-                return pudelko_1, pudelko_2
+                    pudelko_2 = self.canonical_box(swap_small, swap_big, 0, swap_small[1]>swap_big[1])
+                    return [pudelko_2]
             elif list_inter[2] == 3:
-                if sort[2].upper > list_i[in2sorted[2].upper] or sort[2].lower < list_i[in2sorted[2].lower]:
-                    sort[2] = sort[2] - list_i[in2sorted[2]]
-                    pudelko_2 = box3D(sort[sorted2in[0]],sort[sorted2in[1]],sort[sorted2in[0]])
+                if list_inter[0] == 3:
+                    pudelko_2 = self.canonical_box(swap_small, swap_big, 0, swap_small[1]<swap_big[1])
+                    pudelko_3 = self.canonical_box(swap_small, swap_big, 2, swap_small[5]<swap_big[5])
+                    return [pudelko_2, pudelko_3]
                 else:
-                    list_i[in2sorted[2]] = list_i[in2sorted[2]] - sort[2]
-                    pudelko_2 = box3D(list_i[0],list_i[1],list_i[2])
-                return pudelko_1, pudelko_2
-            elif list_inter[0] == 3 and list_inter[1] == 3:
-                sort_temp = sort[0]
-                sort[0] = sort[0] - list_i[in2sorted[0]]
-                pudelko_2 = box3D(sort[sorted2in[0]],sort[sorted2in[1]],sort[sorted2in[2]])
-                sort[0], sort[1] = sort_temp, sort[1] - list_i[in2sorted[1]]
-                pudelko_3 = box3D(sort[sorted2in[0]],sort[sorted2in[1]],sort[sorted2in[2]])
-                return pudelko_1, pudelko_2, pudelko_3
-            elif list_inter[1] == 3 and list_inter[2] == 3:
-                sort_temp = sort[1]
-                sort[1] = sort[1] - list_i[in2sorted[1]]
-                pudelko_2 = box3D(sort[sorted2in[0]],sort[sorted2in[1]],sort[sorted2in[2]])
-                sort[1], sort[2] = sort_temp, sort[2] - list_i[in2sorted[2]]
-                pudelko_3 = box3D(sort[sorted2in[0]],sort[sorted2in[1]],sort[sorted2in[2]])
-                return pudelko_1, pudelko_2, pudelko_3
-            elif list_inter[0] == 3 and list_inter[2] == 3:
-                sort_temp = sort[0]
-                sort[0] = sort[0] - list_i[in2sorted[0]]
-                pudelko_2 = box3D(sort[sorted2in[0]],sort[sorted2in[1]],sort[sorted2in[2]])
-                sort[0], sort[2] = sort_temp, sort[2] - list_i[in2sorted[2]]
-                pudelko_3 = box3D(sort[sorted2in[0]],sort[sorted2in[1]],sort[sorted2in[2]])
-                return pudelko_1, pudelko_2, pudelko_3
-            elif list_inter[0] == 3 and list_inter[1] == 3 and list_inter[2] == 3:
-                sort_temp = sort[0]
-                sort[0] = sort[0] - list_i[in2sorted[0]]
-                pudelko_2 = box3D(sort[sorted2in[0]],sort[sorted2in[1]],sort[sorted2in[2]])
-                sort[0], sort_temp, sort[1] = sort_temp, sort[1], sort[1] - list_i[in2sorted[1]]
-                pudelko_3 = box3D(sort[sorted2in[0]],sort[sorted2in[1]],sort[sorted2in[2]])
-                sort[2], sort[1] = sort[2] - list_i[in2sorted[2]],sort_temp
-                pudelko_4 = box3D(sort[sorted2in[0]],sort[sorted2in[1]],sort[sorted2in[2]])
-                return pudelko_1, pudelko_2, pudelko_3, pudelko_4
+                    pudelko_2 = self.canonical_box(swap_small, swap_big, 4, swap_small[5]<swap_big[5])
+                    return [pudelko_2]
+            elif list_inter[0] == 3:
+                pudelko_2 = self.canonical_box(swap_small, swap_big, 0, swap_small[1]>swap_big[1])
+                return [pudelko_2]
 
         else:
-            return None
-
-###!!!!DOKOŃCZYĆ!!!!###
+            return []
 
     @staticmethod
     # początek funkcji głównej
     def algorytm(Q, tree):
         iD = 0
+        alg = algorytm()
         # główna pętla trwająca do skrócenia długości wejściowego zbioru do wartości 0
         while not len(Q.get_stack()) == 0:
             # komenda pop
             q = Q.pop()
             # sprawdzanie czy w drzewie pudełko q się przecina
-            if list(tree.tree.intersection([q.interval_x.lower, q.interval_y.lower, q.interval_z.lower, q.interval_x.upper, q.interval_y.upper, q.interval_z.upper])):
+            if list(tree.tree.intersection(([q.interval_x.lower, q.interval_y.lower, q.interval_z.lower, q.interval_x.upper, q.interval_y.upper, q.interval_z.upper]), True)):
+                print(list(tree.tree.intersection(([q.interval_x.lower, q.interval_y.lower, q.interval_z.lower, q.interval_x.upper, q.interval_y.upper, q.interval_z.upper]), True)))
                 # zwrócenie z drzewa pierwszego obiektu, z którym pudełko się przecina
                 i = list(tree.tree.intersection((q.interval_x.lower, q.interval_y.lower,q.interval_z.lower, q.interval_x.upper, q.interval_y.upper, q.interval_z.upper), True))
                 inter = [item for item in i[0].bounds]
                 i = box3D.factory(inter[0], inter[1], inter[2], inter[3], inter[4], inter[5])
                 # dodanie na koniec zbioru Q "rozbitego" pudełka q
-                divided = [i for i in algorytm().rozbij(q, i)]
+                divided = alg.rozbij(q, i)
                 print(divided)
-                Q.append(box3D(divided))
+                Q.extend(divided)
             else:
                 #print(q.interval_x, q.interval_y, q.interval_z)
                 # w przeciwnym wypadku dodanie do drzewa nowego pudełka
@@ -231,7 +218,7 @@ class algorytm:
                 # zwiększenie zmiennej iD
                 iD += 1
         # wypisanie drzewa
-        lista = list(tree.tree.intersection(tree.tree.get_bounds(),True))
+        lista = tree.tree.intersection(tree.tree.get_bounds(), True)
         lista = [(item.bbox)for item in lista]
         for i in lista:
             print([i[0], i[3]], 'x', [i[1], i[4]], 'x', [i[2],i[5]], '\n')
