@@ -116,13 +116,13 @@ class algorytm:
 
     def rozbijanie(self, q, i):
         if self.is_in(q, i):
-            return self.divide_in(q,i)
+            return self.divide_in(q, i)
         elif self.is_out(q, i):
-            return self.divide_out(q,i)
+            return self.divide_out(q, i)
         elif self.is_half_out(q, i):
-            return self.divide_half_out(q,i)
+            return self.divide_half_out(q, i)
         elif self.is_equal(q, i):
-            return self.divide_equal(q,i)
+            return self.divide_equal(q, i)
         elif self.is_separate(q, i):
             return q
 
@@ -140,58 +140,77 @@ class algorytm:
             return 3
         elif self.is_separate(inter_q, inter_i):
             return 4
-
-    def canonical_box(self, swap_small, swap_big, j, up):
-        if up:
-            swap_small[j] = swap_big[j+1]
+            #1  2  3  3  5  7
+            #2  3  2  4  7  7
+    def canonical_box(self, swap_small, swap_big, j):
+        interval_small, interval_big = closed(swap_small[j], swap_small[j+1]), closed(swap_big[j], swap_big[j+1])
+        swap_small_j = interval_small * interval_big
+        if swap_small_j.lower == swap_small_j.upper:
+            swap_small[j] = swap_small_j.lower
+            swap_small[j + 1] = swap_small_j.lower
+        elif swap_small[j] <= swap_big[j]:
+            swap_small[j] = swap_big[j + 1] + 1
+            swap_small[j + 1] = swap_small[j + 1] if swap_small[j + 1] < swap_big[j + 1] else swap_big[j + 1]
         else:
-            swap_small[j+1] = swap_big[j]
-        return box3D(closed(swap_small[0], swap_small[1]), closed(swap_small[2], swap_small[3]), closed(swap_small[4], swap_small[5]))
+            swap_small[j + 1] = swap_big[j] + 1
+            swap_small[j] = swap_small[j] if swap_small[j] < swap_big[j] else swap_big[j]
+        box = box3D(closed(swap_small[0], swap_small[1]), closed(swap_small[2], swap_small[3]), closed(swap_small[4], swap_small[5]))
+        swap_small[j], swap_small[j + 1] = interval_small.lower, interval_small.upper
+        return box
 #### TUTAJ DO POPRAWY - UWAGI: ŹLE PODSTAWIA CANONICAL_BOX
+
     def canonical(self, inter_x, inter_y, inter_z, inter_x_i, inter_y_i, inter_z_i):
+        boxes = []
         list_q = [inter_x.lower, inter_x.upper, inter_y.lower, inter_y.upper, inter_z.lower, inter_z.upper]
         list_i = [inter_x_i.lower, inter_x_i.upper, inter_y_i.lower, inter_y_i.upper, inter_z_i.lower, inter_z_i.upper]
-        swap_small, swap_big = list_q.copy(), list_i.copy()
-        if True in [self.is_out(inter_x, inter_x_i), self.is_out(inter_y, inter_y_i), self.is_out(inter_z, inter_z_i)]:
-            if self.is_out(inter_x, inter_x_i) and self.is_out(inter_y, inter_y_i) and self.is_out(inter_z, inter_z_i):
-                pudelko_1 = box3D(inter_x_i, inter_y_i, inter_z_i)
-                pudelko_2 = self.canonical_box(swap_small.copy(), swap_big.copy(), 0, swap_small[0] < swap_big[0])
-                pudelko_3 = self.canonical_box(swap_small.copy(), swap_big.copy(), 2, swap_small[2] < swap_big[2])
-                pudelko_4 = self.canonical_box(swap_small.copy(), swap_big.copy(), 4, swap_small[4] < swap_big[4])
-                return [pudelko_1, pudelko_2, pudelko_3, pudelko_4]
-            elif self.is_out(inter_y, inter_y_i):
-                if self.is_out(inter_x, inter_x_i):
-                    pudelko_1 = box3D(inter_x_i, inter_y_i, inter_z_i)
-                    pudelko_2 = self.canonical_box(swap_small.copy(), swap_big.copy(), 0, swap_small[0] < swap_big[0])
-                    pudelko_3 = self.canonical_box(swap_small.copy(), swap_big.copy(), 2, swap_small[2] < swap_big[2])
-                    return [pudelko_1, pudelko_2, pudelko_3]
-                elif self.is_out(inter_z, inter_z_i):
-                    pudelko_1 = box3D(inter_x_i, inter_y_i, inter_z_i)
-                    pudelko_2 = self.canonical_box(swap_small.copy(), swap_big.copy(), 0, swap_small[0] < swap_big[0])
-                    pudelko_3 = self.canonical_box(swap_small.copy(), swap_big.copy(), 4, swap_small[4] < swap_big[4])
-                    return [pudelko_1, pudelko_2, pudelko_3]
-                else:
-                    pudelko_1 = box3D(inter_x_i, inter_y_i, inter_z_i)
-                    pudelko_2 = self.canonical_box(swap_small, swap_big, 0, swap_small[0] < swap_big[0])
-                    return [pudelko_1, pudelko_2]
-            elif self.is_out(inter_z, inter_z_i):
-                if self.is_out(inter_x, inter_x_i):
-                    pudelko_1 = box3D(inter_x_i, inter_y_i, inter_z_i)
-                    pudelko_2 = self.canonical_box(swap_small.copy(), swap_big.copy(), 0, swap_small[0] < swap_big[0])
-                    pudelko_3 = self.canonical_box(swap_small.copy(), swap_big.copy(), 2, swap_small[2] < swap_big[2])
-                    return [pudelko_1, pudelko_2, pudelko_3]
-                else:
-                    pudelko_1 = box3D(inter_x_i, inter_y_i, inter_z_i)
-                    pudelko_2 = self.canonical_box(swap_small, swap_big, 4, swap_small[4] < swap_big[4])
-                    return [pudelko_1, pudelko_2]
-            elif self.is_out(inter_x, inter_x_i):
-                pudelko_1 = box3D(inter_x_i, inter_y_i, inter_z_i)
-                pudelko_2 = self.canonical_box(swap_small, swap_big, 0, swap_small[0] < swap_big[0])
-                return [pudelko_1, pudelko_2]
-            else:
-                return []
+        swap_small, swap_big = list_q, list_i
+        if any([self.is_out(inter_x, inter_x_i), self.is_out(inter_y, inter_y_i), self.is_out(inter_z, inter_z_i)]):
+            if self.is_out(inter_x, inter_x_i):
+                box = self.canonical_box(swap_small, swap_small, 0)
+                boxes.append(box)
+            if self.is_out(inter_y, inter_y_i):
+                box = self.canonical_box(swap_small, swap_big, 2)
+                boxes.append(box)
+            if self.is_out(inter_z, inter_z_i):
+                box = self.canonical_box(swap_small, swap_big, 4)
+                boxes.append(box)
+            return boxes
         else:
             return []
+
+        '''
+            if self.is_out(inter_x, inter_x_i) and self.is_out(inter_y, inter_y_i) and self.is_out(inter_z, inter_z_i):
+                pudelko_2 = self.canonical_box(swap_small.copy(), swap_big.copy(), 0, swap_small[0] < swap_big[0] and swap_small[1] > swap_big[1])
+                pudelko_3 = self.canonical_box(swap_small.copy(), swap_big.copy(), 2, swap_small[2] < swap_big[2] and swap_small[3] > swap_big[3])
+                pudelko_4 = self.canonical_box(swap_small.copy(), swap_big.copy(), 4, swap_small[4] < swap_big[4] and swap_small[5] > swap_big[5])
+                return [pudelko_2, pudelko_3, pudelko_4]
+            elif self.is_out(inter_y, inter_y_i):
+                if self.is_out(inter_x, inter_x_i):
+                    pudelko_2 = self.canonical_box(swap_small.copy(), swap_big.copy(), 0, swap_small[0] < swap_big[0] and swap_small[1] > swap_big[1])
+                    pudelko_3 = self.canonical_box(swap_small.copy(), swap_big.copy(), 2, swap_small[2] < swap_big[2] and swap_small[3] > swap_big[3])
+                    return [pudelko_2, pudelko_3]
+                elif self.is_out(inter_z, inter_z_i):
+                    pudelko_2 = self.canonical_box(swap_small.copy(), swap_big.copy(), 0, swap_small[0] < swap_big[0] and swap_small[1] > swap_big[1])
+                    pudelko_3 = self.canonical_box(swap_small.copy(), swap_big.copy(), 4, swap_small[4] < swap_big[4] and swap_small[5] > swap_big[5])
+                    return [pudelko_2, pudelko_3]
+                else:
+                    pudelko_2 = self.canonical_box(swap_small, swap_big, 0, swap_small[0] < swap_big[0] and swap_small[1] > swap_big[1])
+                    return [pudelko_2]
+            elif self.is_out(inter_z, inter_z_i):
+                if self.is_out(inter_x, inter_x_i):
+                    pudelko_2 = self.canonical_box(swap_small.copy(), swap_big.copy(), 0, swap_small[0] < swap_big[0] and swap_small[1] > swap_big[1])
+                    pudelko_3 = self.canonical_box(swap_small.copy(), swap_big.copy(), 2, swap_small[2] < swap_big[2] and swap_small[3] > swap_big[3])
+                    return [pudelko_2, pudelko_3]
+                else:
+                    pudelko_2 = self.canonical_box(swap_small, swap_big, 4, swap_small[4] < swap_big[4] and swap_small[5] > swap_big[5])
+                    return [pudelko_2]
+            elif self.is_out(inter_x, inter_x_i):
+                pudelko_2 = self.canonical_box(swap_small, swap_big, 0, swap_small[0] < swap_big[0] and swap_small[1] > swap_big[1])
+                return [pudelko_2]
+            else:
+                return []
+'''
+
 
     @staticmethod
     # początek funkcji głównej
@@ -207,8 +226,8 @@ class algorytm:
                 # zwrócenie z drzewa pierwszego obiektu, z którym pudełko się przecina
                 i = list(tree.tree.intersection((q.interval_x.lower, q.interval_y.lower, q.interval_z.lower, q.interval_x.upper, q.interval_y.upper, q.interval_z.upper), True))[0]
                 inter = [item for item in i.bbox]
-                print(inter)
                 i = box3D.factory(inter[0], inter[1], inter[2], inter[3], inter[4], inter[5])
+                print(i.interval_x, i.interval_y, i.interval_z)
                 divided = alg.rozbij(q, i)
                 print(divided)
                 Q.extend(divided)
