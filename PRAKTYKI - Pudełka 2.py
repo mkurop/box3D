@@ -91,6 +91,7 @@ class algorytm:
             return closed(min(low), min(up)), openclosed(min(up), max(up))
         else:
             return closed(min(low), max(low)), openclosed(max(low), max(up))
+
     def divide_out(self, int1, int2):
         inter = int1 & int2
         return int1 - inter, inter, int2 - inter
@@ -105,7 +106,7 @@ class algorytm:
         return True if interval1 == interval2 else False
 
     def is_out(self, interval1, interval2):
-        return True if (interval1 & interval2) != (interval1|interval2) and any(interval1&interval2)  else False
+        return True if (interval1 & interval2) != (interval1 | interval2) and (interval1 & interval2) else False
 
     def is_separate(self, int1, int2):
         return False if any(int1 & int2) else True
@@ -126,8 +127,6 @@ class algorytm:
             return q
 
     def rozbij(self, q, i):
-        split_x, split_y, split_z = self.rozbijanie(q.interval_x, i.interval_x), self.rozbijanie(q.interval_y, i.interval_y), \
-                                    self.rozbijanie(q.interval_z, i.interval_z)
         return self.canonical(q.interval_x, q.interval_y, q.interval_z, i.interval_x, i.interval_y, i.interval_z)
 
     def canonical_execute(self, inter_q, inter_i):
@@ -142,52 +141,55 @@ class algorytm:
         elif self.is_separate(inter_q, inter_i):
             return 4
 
-    def canonical_box(self, swap_small, swap_big, i, up):
+    def canonical_box(self, swap_small, swap_big, j, up):
         if up:
-            check = swap_small[i+1]
-            swap_small[i+1] = abs(swap_big[i+1]) - abs(swap_small[i+1])
-            swap_small[i], swap_small[i+1] = swap_small[i+1] + swap_small[i], check
+            swap_small[j] = swap_big[j+1]
         else:
-            check = swap_small[i]
-            swap_small[i] = abs(swap_big[i]) - abs(swap_small[i])
-            swap_small[i], swap_small[i+1] = check, swap_small[i+1] - swap_small[i]
+            swap_small[j+1] = swap_big[j]
         return box3D(closed(swap_small[0], swap_small[1]), closed(swap_small[2], swap_small[3]), closed(swap_small[4], swap_small[5]))
-
+#### TUTAJ DO POPRAWY - UWAGI: ŹLE PODSTAWIA CANONICAL_BOX
     def canonical(self, inter_x, inter_y, inter_z, inter_x_i, inter_y_i, inter_z_i):
         list_q = [inter_x.lower, inter_x.upper, inter_y.lower, inter_y.upper, inter_z.lower, inter_z.upper]
         list_i = [inter_x_i.lower, inter_x_i.upper, inter_y_i.lower, inter_y_i.upper, inter_z_i.lower, inter_z_i.upper]
-        list_inter = [self.canonical_execute(inter_x, inter_x_i), self.canonical_execute(inter_y, inter_y_i), self.canonical_execute(inter_z, inter_z_i)]
         swap_small, swap_big = list_q.copy(), list_i.copy()
-        if list_inter[0] == 3 | list_inter[1] == 3 | list_inter[2] == 3:
-            if list_inter[0] == 3 and list_inter[1] == 3 and list_inter[2] == 3:
-                pudelko_2 = self.canonical_box(swap_small, swap_big, 0, swap_small[1]<swap_big[1])
-                pudelko_3 = self.canonical_box(swap_small, swap_big, 2, swap_small[3]<swap_big[3])
-                pudelko_4 = self.canonical_box(swap_small, swap_big, 4, swap_small[5]<swap_big[5])
-                return [pudelko_2, pudelko_3, pudelko_4]
-            elif list_inter[1] == 3:
-                if list_inter[0] == 3:
-                    pudelko_2 = self.canonical_box(swap_small, swap_big, 0, swap_small[1]<swap_big[1])
-                    pudelko_3 = self.canonical_box(swap_small, swap_big, 2, swap_small[3]<swap_big[3])
-                    return [pudelko_2, pudelko_3]
-                elif list_inter[2] == 3:
-                    pudelko_2 = self.canonical_box(swap_small, swap_big, 0, swap_small[1]<swap_big[1])
-                    pudelko_3 = self.canonical_box(swap_small, swap_big, 4, swap_small[5]<swap_big[5])
-                    return [pudelko_2, pudelko_3]
+        if True in [self.is_out(inter_x, inter_x_i), self.is_out(inter_y, inter_y_i), self.is_out(inter_z, inter_z_i)]:
+            if self.is_out(inter_x, inter_x_i) and self.is_out(inter_y, inter_y_i) and self.is_out(inter_z, inter_z_i):
+                pudelko_1 = box3D(inter_x_i, inter_y_i, inter_z_i)
+                pudelko_2 = self.canonical_box(swap_small.copy(), swap_big.copy(), 0, swap_small[0] < swap_big[0])
+                pudelko_3 = self.canonical_box(swap_small.copy(), swap_big.copy(), 2, swap_small[2] < swap_big[2])
+                pudelko_4 = self.canonical_box(swap_small.copy(), swap_big.copy(), 4, swap_small[4] < swap_big[4])
+                return [pudelko_1, pudelko_2, pudelko_3, pudelko_4]
+            elif self.is_out(inter_y, inter_y_i):
+                if self.is_out(inter_x, inter_x_i):
+                    pudelko_1 = box3D(inter_x_i, inter_y_i, inter_z_i)
+                    pudelko_2 = self.canonical_box(swap_small.copy(), swap_big.copy(), 0, swap_small[0] < swap_big[0])
+                    pudelko_3 = self.canonical_box(swap_small.copy(), swap_big.copy(), 2, swap_small[2] < swap_big[2])
+                    return [pudelko_1, pudelko_2, pudelko_3]
+                elif self.is_out(inter_z, inter_z_i):
+                    pudelko_1 = box3D(inter_x_i, inter_y_i, inter_z_i)
+                    pudelko_2 = self.canonical_box(swap_small.copy(), swap_big.copy(), 0, swap_small[0] < swap_big[0])
+                    pudelko_3 = self.canonical_box(swap_small.copy(), swap_big.copy(), 4, swap_small[4] < swap_big[4])
+                    return [pudelko_1, pudelko_2, pudelko_3]
                 else:
-                    pudelko_2 = self.canonical_box(swap_small, swap_big, 0, swap_small[1]>swap_big[1])
-                    return [pudelko_2]
-            elif list_inter[2] == 3:
-                if list_inter[0] == 3:
-                    pudelko_2 = self.canonical_box(swap_small, swap_big, 0, swap_small[1]<swap_big[1])
-                    pudelko_3 = self.canonical_box(swap_small, swap_big, 2, swap_small[5]<swap_big[5])
-                    return [pudelko_2, pudelko_3]
+                    pudelko_1 = box3D(inter_x_i, inter_y_i, inter_z_i)
+                    pudelko_2 = self.canonical_box(swap_small, swap_big, 0, swap_small[0] < swap_big[0])
+                    return [pudelko_1, pudelko_2]
+            elif self.is_out(inter_z, inter_z_i):
+                if self.is_out(inter_x, inter_x_i):
+                    pudelko_1 = box3D(inter_x_i, inter_y_i, inter_z_i)
+                    pudelko_2 = self.canonical_box(swap_small.copy(), swap_big.copy(), 0, swap_small[0] < swap_big[0])
+                    pudelko_3 = self.canonical_box(swap_small.copy(), swap_big.copy(), 2, swap_small[2] < swap_big[2])
+                    return [pudelko_1, pudelko_2, pudelko_3]
                 else:
-                    pudelko_2 = self.canonical_box(swap_small, swap_big, 4, swap_small[5]<swap_big[5])
-                    return [pudelko_2]
-            elif list_inter[0] == 3:
-                pudelko_2 = self.canonical_box(swap_small, swap_big, 0, swap_small[1]>swap_big[1])
-                return [pudelko_2]
-
+                    pudelko_1 = box3D(inter_x_i, inter_y_i, inter_z_i)
+                    pudelko_2 = self.canonical_box(swap_small, swap_big, 4, swap_small[4] < swap_big[4])
+                    return [pudelko_1, pudelko_2]
+            elif self.is_out(inter_x, inter_x_i):
+                pudelko_1 = box3D(inter_x_i, inter_y_i, inter_z_i)
+                pudelko_2 = self.canonical_box(swap_small, swap_big, 0, swap_small[0] < swap_big[0])
+                return [pudelko_1, pudelko_2]
+            else:
+                return []
         else:
             return []
 
@@ -202,19 +204,18 @@ class algorytm:
             q = Q.pop()
             # sprawdzanie czy w drzewie pudełko q się przecina
             if list(tree.tree.intersection(([q.interval_x.lower, q.interval_y.lower, q.interval_z.lower, q.interval_x.upper, q.interval_y.upper, q.interval_z.upper]), True)):
-                print(list(tree.tree.intersection(([q.interval_x.lower, q.interval_y.lower, q.interval_z.lower, q.interval_x.upper, q.interval_y.upper, q.interval_z.upper]), True)))
                 # zwrócenie z drzewa pierwszego obiektu, z którym pudełko się przecina
-                i = list(tree.tree.intersection((q.interval_x.lower, q.interval_y.lower,q.interval_z.lower, q.interval_x.upper, q.interval_y.upper, q.interval_z.upper), True))
-                inter = [item for item in i[0].bounds]
+                i = list(tree.tree.intersection((q.interval_x.lower, q.interval_y.lower, q.interval_z.lower, q.interval_x.upper, q.interval_y.upper, q.interval_z.upper), True))[0]
+                inter = [item for item in i.bbox]
+                print(inter)
                 i = box3D.factory(inter[0], inter[1], inter[2], inter[3], inter[4], inter[5])
-                # dodanie na koniec zbioru Q "rozbitego" pudełka q
                 divided = alg.rozbij(q, i)
                 print(divided)
                 Q.extend(divided)
             else:
                 #print(q.interval_x, q.interval_y, q.interval_z)
                 # w przeciwnym wypadku dodanie do drzewa nowego pudełka
-                tree.tree.insert(iD, [q.interval_x.lower, q.interval_y.lower,q.interval_z.lower, q.interval_x.upper, q.interval_y.upper, q.interval_z.upper])
+                tree.tree.insert(iD, [q.interval_x.lower, q.interval_y.lower, q.interval_z.lower, q.interval_x.upper, q.interval_y.upper, q.interval_z.upper])
                 # zwiększenie zmiennej iD
                 iD += 1
         # wypisanie drzewa
