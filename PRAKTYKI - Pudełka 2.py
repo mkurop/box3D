@@ -144,35 +144,54 @@ class algorytm:
             #2  3  2  4  7  7
     def canonical_box(self, swap_small, swap_big, j):
         interval_small, interval_big = closed(swap_small[j], swap_small[j+1]), closed(swap_big[j], swap_big[j+1])
+        if self.is_out(interval_small, interval_big):
+            if interval_small.upper > interval_big.upper:
+                interval_small = closed(interval_big.upper + 1, interval_small.upper) if abs(interval_small.upper) - abs(interval_big.upper) > 1 else closed(interval_big.upper, interval_small.upper)
+            else:
+                interval_small = closed(interval_small.lower, interval_big.lower - 1) if abs(interval_big.lower) - abs(interval_small.lower) > 1 else closed(interval_small.lower, interval_big.lower)
+        else:
+            if interval_big.lower > interval_small.lower:
+                interval_small = closed(interval_small.lower, interval_big.lower - 1) if abs(interval_big.lower) - abs(interval_small.lower) > 1 else closed(interval_small.lower, interval_big.lower)
+            else:
+                interval_small = closed(interval_big.upper + 1, interval_small.upper) if abs(interval_small.upper) - abs(interval_big.upper) > 1 else closed(interval_big.upper, interval_small.upper)
+        '''
         max_t = False
-        if max(interval_small, interval_big) == swap_small and min(interval_small, interval_big) == swap_big:
+        swap_temp_s, swap_temp_b = swap_small.copy(), swap_big.copy()
+        if (interval_small.lower < interval_big.lower) and (interval_small.upper > interval_big.upper):
             max_t = True
+            interval_backup_s = interval_small
+            interval_backup_b = interval_big
+            interval_small, interval_big = interval_backup_b, interval_small
+            interval_big = closed(interval_big.lower, interval_small.lower)
+        elif (interval_small.lower > interval_big.lower) and (interval_small.upper < interval_big.upper):
+            interval_big = closed(interval_small.lower, interval_big.upper)
+        interval_small = interval_big - interval_small
+        if swap_small[j] == swap_big[j]:
+            swap_small[j], swap_small[j + 1] = interval_small.lower - 1, interval_small.upper
+        elif swap_small[j + 1] == swap_big[j + 1]:
+            swap_small[j], swap_small[j + 1] = interval_small.lower, interval_small.upper + 1
+        
         if self.is_half_out(interval_small, interval_big):
             if swap_small[j + 1] < swap_big[j] and swap_small[j] < swap_big[j]:
-                swap_small[j + 1] = swap_big[j]
+                swap_small[j + 1] = swap_big[j] - 1
             elif swap_small[j + 1] > swap_big[j + 1] and swap_small [j] >= swap_big[j + 1]:
-                swap_small[j] = swap_big[j + 1]
+                swap_small[j] = swap_big[j + 1] + 1
         elif self.is_out(interval_small, interval_big):
             if swap_small[j + 1] < swap_big[j]:
-                swap_small[j + 1] = swap_big[j]
+                swap_small[j + 1] = swap_big[j] - 1
             else:
-                swap_small[j] = swap_big[j + 1]
-        for k in range(0, 6):
-            if k % 2 == 0 and swap_small[k] == swap_big[1 + k]:
-                swap_small[k] = swap_small[k] - 1
-            elif k % 2 == 1 and swap_small[k] == swap_big[k - 1]:
-                swap_small[k] = swap_small[k] + 1
-        interval_small = interval_small - interval_big
+                swap_small[j] = swap_big[j + 1] + 1
+
+        if interval_small != interval_big:
+            interval_small = interval_small - interval_big
 
         if max_t:
-            temp1, temp2 = swap_small[j], swap_small[j + 1]
-            swap_small, swap_big = swap_temp_s, swap_temp_b
-            swap_small[j], swap_small[j + 1] = temp1, temp2
-
+            temp1, temp2 = swap_small.copy()[j], swap_small.copy()[j + 1]
+            swap_small, swap_big = temp2, temp1
+            #            swap_small[j], swap_small[j + 1] = temp1, temp2
+        '''
         swap_small[j], swap_small[j + 1] = interval_small.lower, interval_small.upper
         box = box3D(closed(swap_small[0], swap_small[1]), closed(swap_small[2], swap_small[3]), closed(swap_small[4], swap_small[5]))
-
-
         return box
 
         #### TUTAJ DO POPRAWY - UWAGI: ŹLE PODSTAWIA CANONICAL_BOX
@@ -183,14 +202,14 @@ class algorytm:
         list_i = [inter_x_i.lower, inter_x_i.upper, inter_y_i.lower, inter_y_i.upper, inter_z_i.lower, inter_z_i.upper]
         swap_small, swap_big = list_q.copy(), list_i.copy()
         if any([self.is_out(inter_x, inter_x_i), self.is_out(inter_y, inter_y_i), self.is_out(inter_z, inter_z_i)]):
-            if (self.is_out(inter_x, inter_x_i) or self.is_half_out(inter_x, inter_x_i)) and ~self.is_in(inter_x, inter_x_i):
-                box = self.canonical_box(swap_small.copy(), swap_small.copy(), 0)
+            if self.is_out(inter_x, inter_x_i) | self.is_half_out(inter_x, inter_x_i):
+                box = self.canonical_box(swap_small, swap_small, 0)
                 boxes.append(box)
-            if (self.is_out(inter_y, inter_y_i) or self.is_half_out(inter_y, inter_y_i)) and ~self.is_in(inter_y, inter_y_i):
-                box = self.canonical_box(swap_small.copy(), swap_big.copy(), 2)
+            if self.is_out(inter_y, inter_y_i) | self.is_half_out(inter_y, inter_y_i):
+                box = self.canonical_box(swap_small, swap_big, 2)
                 boxes.append(box)
-            if (self.is_out(inter_z, inter_z_i) or self.is_half_out(inter_z, inter_z_i)) and ~self.is_in(inter_z, inter_z_i):
-                box = self.canonical_box(swap_small.copy(), swap_big.copy(), 4)
+            if self.is_out(inter_z, inter_z_i) | self.is_half_out(inter_z, inter_z_i):
+                box = self.canonical_box(swap_small, swap_big, 4)
                 boxes.append(box)
             return boxes
 
@@ -210,7 +229,7 @@ class algorytm:
                 i = list(tree.tree.intersection((q.interval_x.lower, q.interval_y.lower, q.interval_z.lower, q.interval_x.upper, q.interval_y.upper, q.interval_z.upper), True))[0]
                 inter = [item for item in i.bbox]
                 i = box3D.factory(inter[0], inter[1], inter[2], inter[3], inter[4], inter[5])
-                print(q.interval_x, q.interval_y, q.interval_z)
+                #print(q.interval_x, q.interval_y, q.interval_z)
                 divided = alg.rozbij(q, i)
                 Q.extend(divided)
             else:
@@ -222,8 +241,13 @@ class algorytm:
         # wypisanie drzewa
         lista = tree.tree.intersection(tree.tree.get_bounds(), True)
         lista = [(item.bbox)for item in lista]
+        print('\n')
         for i in lista:
-            print([i[0], i[3]], 'x', [i[1], i[4]], 'x', [i[2],i[5]], '\n')
+            print([i[0], i[3]], end = '') if i[0] != i[3] else print([i[0]], end = '')
+            print(' x ', end = '')
+            print([i[1], i[4]], end = '') if i[1] != i[4] else print([i[1]], end = '')
+            print(' x ', end = '')
+            print([i[2],i[5]], end = '\n') if i[2] != i[5] else print([i[2]], end = '\n')
         #zwrócenie drzewa
         return tree.tree
 
