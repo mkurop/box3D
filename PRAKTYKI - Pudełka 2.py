@@ -142,18 +142,33 @@ class algorytm:
             return 4
             #1  2  3  3  5  7
             #2  3  2  4  7  7
-    def canonical_box(self, swap_small, swap_big, j):
-        interval_small, interval_big = closed(swap_small[j], swap_small[j+1]), closed(swap_big[j], swap_big[j+1])
+    def canonical_box(self, swap_small, swap_big, out, half_out, equal):
+        if out:
+            return [self.divide_out(swap_small, swap_big)]
+        elif half_out:
+            return [self.divide_half_out(swap_small, swap_big)]
+        elif equal:
+            return [self.divide_equal(swap_small, swap_big)]
+        else:
+            return [self.divide_in(swap_big, swap_small)]
+
+        '''
         if self.is_out(interval_small, interval_big):
             if interval_small.upper > interval_big.upper:
-                interval_small = closed(interval_big.upper + 1, interval_small.upper) if abs(interval_small.upper) - abs(interval_big.upper) > 1 else closed(interval_big.upper, interval_small.upper)
+                interval_small = closed(interval_big.upper + 1, interval_small.upper) if (abs(interval_small.upper - interval_big.upper) > 0) or (abs(interval_small.upper + interval_big.upper) < 0) else closed(interval_big.upper, interval_small.upper)
             else:
-                interval_small = closed(interval_small.lower, interval_big.lower - 1) if abs(interval_big.lower) - abs(interval_small.lower) > 1 else closed(interval_small.lower, interval_big.lower)
+                interval_small = closed(interval_small.lower, interval_big.lower - 1) if (abs(interval_big.lower - interval_small.lower) > 0) or (abs(interval_big.lower + interval_small.lower) < 0) else closed(interval_small.lower, interval_big.lower)
         else:
             if interval_big.lower > interval_small.lower:
-                interval_small = closed(interval_small.lower, interval_big.lower - 1) if abs(interval_big.lower) - abs(interval_small.lower) > 1 else closed(interval_small.lower, interval_big.lower)
+                interval_small = closed(interval_small.lower, interval_big.lower - 1) if (abs(interval_big.lower - interval_small.lower) > 0) or (abs(interval_big.lower + interval_small.lower) < 0) else closed(interval_small.lower, interval_big.lower)
+            elif interval_big.lower < interval_small.lower and interval_big.upper < interval_small.upper :
+                interval_small = closed(interval_small.upper + 1, interval_big.upper) if (abs(interval_big.upper - interval_small.upper) > 0) or (abs(interval_big.upper + interval_small.upper) < 0) else closed(interval_small.upper, interval_big.upper)
+
+            elif interval_big.upper > interval_small.upper:
+                interval_small = closed(interval_big.upper + 1, interval_small.upper) if (abs(interval_small.upper - interval_big.upper) > 0) or (abs(interval_small.upper + interval_big.upper) < 0) else closed(interval_big.upper, interval_small.upper)
             else:
-                interval_small = closed(interval_big.upper + 1, interval_small.upper) if abs(interval_small.upper) - abs(interval_big.upper) > 1 else closed(interval_big.upper, interval_small.upper)
+                interval_small = closed(interval_big.lower, interval_small.lower - 1) if (abs(interval_small.lower - interval_big.lower) > 0) or (abs(interval_small.lower + interval_big.lower) < 0) else closed(interval_big.lower, interval_small.lower)
+        '''
         '''
         max_t = False
         swap_temp_s, swap_temp_b = swap_small.copy(), swap_big.copy()
@@ -190,27 +205,101 @@ class algorytm:
             swap_small, swap_big = temp2, temp1
             #            swap_small[j], swap_small[j + 1] = temp1, temp2
         '''
-        swap_small[j], swap_small[j + 1] = interval_small.lower, interval_small.upper
-        box = box3D(closed(swap_small[0], swap_small[1]), closed(swap_small[2], swap_small[3]), closed(swap_small[4], swap_small[5]))
-        return box
 
-        #### TUTAJ DO POPRAWY - UWAGI: ŹLE PODSTAWIA CANONICAL_BOX
 
     def canonical(self, inter_x, inter_y, inter_z, inter_x_i, inter_y_i, inter_z_i):
         boxes = []
-        list_q = [inter_x.lower, inter_x.upper, inter_y.lower, inter_y.upper, inter_z.lower, inter_z.upper]
-        list_i = [inter_x_i.lower, inter_x_i.upper, inter_y_i.lower, inter_y_i.upper, inter_z_i.lower, inter_z_i.upper]
+        x, y, z, x_o, y_o, z_o, x_e, y_e, z_e = False, False, False, False, False, False, False, False, False
+        list_q = [inter_x, inter_y, inter_z]
+        list_i = [inter_x_i, inter_y_i, inter_z_i]
+        list_q_new = []
         swap_small, swap_big = list_q.copy(), list_i.copy()
         if any([self.is_out(inter_x, inter_x_i), self.is_out(inter_y, inter_y_i), self.is_out(inter_z, inter_z_i)]):
-            if self.is_out(inter_x, inter_x_i) | self.is_half_out(inter_x, inter_x_i):
-                box = self.canonical_box(swap_small, swap_small, 0)
-                boxes.append(box)
-            if self.is_out(inter_y, inter_y_i) | self.is_half_out(inter_y, inter_y_i):
-                box = self.canonical_box(swap_small, swap_big, 2)
-                boxes.append(box)
-            if self.is_out(inter_z, inter_z_i) | self.is_half_out(inter_z, inter_z_i):
-                box = self.canonical_box(swap_small, swap_big, 4)
-                boxes.append(box)
+            if self.is_out(inter_x, inter_x_i):
+                x = True
+            if self.is_half_out(inter_x, inter_x_i):
+                x_o = True
+            if self.is_out(inter_y, inter_y_i):
+                y = True
+            if self.is_half_out(inter_y, inter_y_i):
+                y_o = True
+            if self.is_out(inter_z, inter_z_i):
+                z = True
+            if self.is_half_out(inter_z, inter_z_i):
+                z_o = True
+            if self.is_equal(inter_x, inter_x_i):
+                x_e = True
+            if self.is_equal(inter_y, inter_y_i):
+                y_e = True
+            if self.is_equal(inter_z, inter_z_i):
+                z_e = True
+            if True in [x, y, z] or True in [x_o, y_o, z_o] or True in [x_e, y_e, z_e]:
+                sorted_vars, from_before, from_after = self.my_sort([x, y, z])
+                sorted_o, from_before_o, from_after_o = self.my_sort([x_o, y_o, z_o])
+                sorted_e, from_before_e, from_after_e = self.my_sort([x_e, y_e, z_e])
+                results1, results2, results3 = [], [], []
+                vars = [x, y, z]
+                if sorted_vars[0]:
+                    results1.extend(i for i in self.canonical_box(swap_small[from_before[0]], swap_big[from_before[0]], True, False, False)[0])
+                elif sorted_o[0]:
+                    results1.extend(i for i in self.canonical_box(swap_small[from_before[0]], swap_big[from_before[0]], False, True, False)[0])
+                elif sorted_e[0]:
+                    results1.extend(i for i in self.canonical_box(swap_small[from_before[0]], swap_big[from_before[0]], False, False, True)[0])
+                else:
+                    results1.extend(i for i in self.canonical_box(swap_small[from_before[0]], swap_big[from_before[0]], False, False, False,)[0])
+                if sorted_vars[1]:
+                    results2.extend(i for i in self.canonical_box(swap_small[from_before[1]], swap_big[from_before[1]], True, False, False)[0])
+                elif sorted_o[1]:
+                    results2.extend(i for i in self.canonical_box(swap_small[from_before[1]], swap_big[from_before[1]], False, True, False)[0])
+                elif sorted_e[1]:
+                    results2.extend(i for i in self.canonical_box(swap_small[from_before[1]], swap_big[from_before[1]], False, False, True)[0])
+                else:
+                    results2.extend(i for i in self.canonical_box(swap_small[from_before[1]], swap_big[from_before[1]], False, False, False)[0])
+                if sorted_vars[2]:
+                    results3.extend(i for i in self.canonical_box(swap_small[from_before[2]], swap_big[from_before[2]], True, False, False)[0])
+                elif sorted_o[2]:
+                    results3.extend(i for i in self.canonical_box(swap_small[from_before[2]], swap_big[from_before[2]], False, True, False)[0])
+                elif sorted_e[2]:
+                    results2.extend(i for i in self.canonical_box(swap_small[from_before[1]], swap_big[from_before[1]], False, False, True)[0])
+                else:
+                    results3.extend(i for i in self.canonical_box(swap_small[from_before[2]], swap_big[from_before[2]], False, False, False)[0])
+            else:
+                return []
+            for i in range(max((len(results3)), len(results2), len(results1))):
+                if results1[i] == closed(math.inf, -math.inf) and i < len(results1) - 1:
+                    x = results1[i + 1] if results1[i + 1] != closed(math.inf, -math.inf) else results1[i + 2]
+                elif results1[-1] == closed(math.inf, -math.inf) and i > len(results1) - 1:
+                    x = results1[-3] if results1[-2] == closed(math.inf, -math.inf) else results1[-2]
+                else:
+                    x = results1[i] if len(results1) - 1 >= i else results1[-1]
+                if results2[i] == closed(math.inf, -math.inf) and i < len(results2) - 1:
+                    y = results2[i + 1] if results2[i + 1] != closed(math.inf, -math.inf) else results2[i + 2]
+                elif results2[-1] == closed(math.inf, -math.inf) and i > len(results2) - 1:
+                    y = results2[-3] if results2[-2] == closed(math.inf, -math.inf) else results2[-2]
+                else:
+                    y = results2[i] if len(results2) - 1 >= i else results2[-1]
+                if results3[i] == closed(math.inf, -math.inf) and i < len(results3) - 1:
+                    z = results3[i + 1] if results3[i + 1] != closed(math.inf, -math.inf) else results3[i + 2]
+                elif results3[-1] == closed(math.inf, -math.inf) and i > len(results1) - 1:
+                    z = results3[-3] if results3[-2] == closed(math.inf, -math.inf) else results3[-2]
+                else:
+                    z = results1[i] if len(results1) - 1 >= i else results1[-1]
+                for j in range(max((len(results3)), len(results2), len(results1))):
+                    if j < len(x) and x[j + 1] != closed(max.inf, -math.inf) and x[j] != closed(max.inf, -math.inf) and x[j] & x[j + 1]:
+                        x[j] -= x[j + 1] & x[j]
+                        x[j].closed(int(x[j].lower), x[j].upper - 1)
+                    if j < len(y) and y[j + 1] != closed(max.inf, -math.inf) and y[j] != closed(max.inf, -math.inf) and y[j] & y[j]:
+                        y[j] -= y[j + 1] & y[j]
+                        y[j].closed(int(y[j].lower), y[j].upper - 1)
+
+                    if j < len(z) and z[j + 1] != closed(max.inf, -math.inf) and z[j] != closed(max.inf, -math.inf) and z[j] & z[j]:
+                        z[j] -= z[j + 1] & z[j]
+                        z[j].closed(int(z[j].lower), z[j].upper - 1)
+                x[j].closed(int(x[j].lower), x[j].upper)
+                y[j].closed(int(y[j].lower), y[j].upper)
+                z[j].closed(int(z[j].lower), z[j].upper)
+                print(x, y, z)
+                boxes.append(box3D(x[j], y[j], z[j]))
             return boxes
 
 
