@@ -148,15 +148,21 @@ class algorytm:
         results = []
         if self.is_in(interval, interval_i):
             results.extend(self.divide_in(interval, interval_i))
+            results[0] = closed(results[0].lower, results[0].upper)
         elif self.is_equal(interval, interval_i):
             results.extend(self.divide_equal(interval, interval_i))
+            results[0] = closed(results[0].lower, results[0].upper)
+            results[1] = closed(results[1].lower, results[1].upper)
         elif self.is_half_out(interval, interval_i):
             results.extend(self.divide_half_out(interval, interval_i))
-            results[1] = closed(results[1].lower + 1, results[1].upper)
+            results[0] = closed(results[0].lower, results[0].upper - 1)
+            results[1] = closed(results[1].lower, results[1].upper)
         elif self.is_out(interval, interval_i):
             results.extend(self.divide_out(interval, interval_i)) if interval.lower < interval_i.lower else results.extend(self.divide_out(interval_i, interval))
-            results[0] = closed(results[0].lower, results[0].upper - 1)
-            results[2] = closed(results[2].lower + 1, results[2].upper)
+            if not results[0].empty:
+                results[0] = closed(results[0].lower, results[0].upper - 1)
+            if not results[2].empty:
+                results[2] = closed(results[2].lower + 1, results[2].upper)
         else:
             results.extend(interval)
         return results
@@ -232,6 +238,8 @@ class algorytm:
                 table.append(table[- 1])
             elif i == len(table) + 1:
                 table.append(table[i - 2])
+            elif table[0] == closed(math.inf, -math.inf):
+                table[0] = table[1] if table[1] != closed(math.inf, -math.inf) else table[2]
             elif not table[i]:
                 table.append(table[i - 1]) if i > 0 else table.append(table[i + 1]) if table[i + 1] else table.append(table[i + 2])
         return table
