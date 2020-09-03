@@ -83,36 +83,37 @@ class algorytm:
         return sort, in2sorted, sorted2in
 
     def divide_in(self, int1, int2):
-        return int1 | int2
+        return [int1 | int2]
 
     def divide_half_out(self, int1, int2):
         up, low = (int1.upper, int2.upper), (int1.lower, int2.lower)
         if int2.lower == int1.lower:
-            return closed(min(low), min(up)), openclosed(min(up), max(up))
+            return [closed(min(low), min(up)), openclosed(min(up), max(up))]
         else:
-            return closed(min(low), max(low)), openclosed(max(low), max(up))
+            return [closed(min(low), max(low)), openclosed(max(low), max(up))]
 
     def divide_out(self, int1, int2):
         inter = int1 & int2
-        return int1 - inter, inter, int2 - inter
+        return [int1 - inter, inter, int2 - inter]
 
     def divide_equal(self, int1, int2):
-        return closedopen(int1.lower, math.floor(int1.upper/2)), openclosed(math.floor(int2.upper/2), int2.upper)
+        return [closedopen(int1.lower, math.floor(int1.upper/2)), openclosed(math.floor(int2.upper/2), int2.upper)]
 
     def is_in(self, interval1, interval2):
-        return True if interval1 & interval2 == min(interval2, interval1) else False
+        union = interval1 & interval2
+        return True if ((union == interval1) ^ (union == interval2)) and (interval2.lower != interval1.lower and interval1.upper != interval2.upper)  else False
 
     def is_equal(self, interval1, interval2):
         return True if interval1 == interval2 else False
 
     def is_out(self, interval1, interval2):
-        return True if (interval1 & interval2) != (interval1 | interval2) and (interval1 & interval2) else False
+        return True if (interval1.lower != interval2.lower) and (interval2.upper != interval1.upper) and (interval1 & interval2) else False
 
     def is_separate(self, int1, int2):
-        return False if any(int1 & int2) else True
+        return False if int1 & int2 else True
 
     def is_half_out(self, int1, int2):
-        return True if (int1.lower == int2.lower or int2.upper == int1.upper) and int1 | int2 != int1 & int2 else False
+        return True if ((int1.lower == int2.lower) ^ (int2.upper == int1.upper)) and ((int2 == int2 & int1) ^ (int1 == int1 & int2)) else False
 
     def rozbijanie(self, q, i):
         if self.is_in(q, i):
@@ -142,7 +143,26 @@ class algorytm:
             return 4
             #1  2  3  3  5  7
             #2  3  2  4  7  7
-    def canonical_box(self, swap_small, swap_big, out, half_out, equal):
+
+    def canonical_int(self, interval, interval_i):
+        results = []
+        if self.is_in(interval, interval_i):
+            results.extend(self.divide_in(interval, interval_i))
+        elif self.is_equal(interval, interval_i):
+            results.extend(self.divide_equal(interval, interval_i))
+        elif self.is_half_out(interval, interval_i):
+            results.extend(self.divide_half_out(interval, interval_i))
+            results[1] = closed(results[1].lower + 1, results[1].upper)
+        elif self.is_out(interval, interval_i):
+            results.extend(self.divide_out(interval, interval_i)) if interval.lower < interval_i.lower else results.extend(self.divide_out(interval_i, interval))
+            results[0] = closed(results[0].lower, results[0].upper - 1)
+            results[2] = closed(results[2].lower + 1, results[2].upper)
+        else:
+            results.extend(interval)
+        return results
+
+
+        '''
         if out:
             return [self.divide_out(swap_small, swap_big)]
         elif half_out:
@@ -151,7 +171,7 @@ class algorytm:
             return [self.divide_equal(swap_small, swap_big)]
         else:
             return [self.divide_in(swap_big, swap_small)]
-
+        '''
         '''
         if self.is_out(interval_small, interval_big):
             if interval_small.upper > interval_big.upper:
@@ -206,9 +226,36 @@ class algorytm:
             #            swap_small[j], swap_small[j + 1] = temp1, temp2
         '''
 
+    def canonical_box(self, table):
+        for i in range(3):
+            if i == len(table):
+                table.append(table[- 1])
+            elif i == len(table) + 1:
+                table.append(table[i - 2])
+            elif not table[i]:
+                table.append(table[i - 1]) if i > 0 else table.append(table[i + 1]) if table[i + 1] else table.append(table[i + 2])
+        return table
+
+    def equal_boxes(self, table1, table2):
+        return True if table1[0] == table2[0] and table1[1] == table2[1] and table1[2] == table2[2] else False
 
     def canonical(self, inter_x, inter_y, inter_z, inter_x_i, inter_y_i, inter_z_i):
-        boxes = []
+        results1, results2, results3, boxes = [], [], [], []
+        results1.extend(self.canonical_int(inter_x, inter_x_i))
+        results2.extend(self.canonical_int(inter_y, inter_y_i))
+        results3.extend(self.canonical_int(inter_z, inter_z_i))
+        results1 = self.canonical_box(results1)
+        results2 = self.canonical_box(results2)
+        results3 = self.canonical_box(results3)
+        boxes.append(box3D(results1[0], results2[0], results3[0]))
+        if not self.equal_boxes(results1, results2):
+            boxes.append(box3D(results1[1], results2[1], results3[1]))
+        if not (self.equal_boxes(results1, results3) and self.equal_boxes(results2, results3)):
+            boxes.append(box3D(results1[2], results2[2], results3[2]))
+        print(results1, '\n', results2, '\n', results3, '\n')
+        return boxes
+
+        '''
         x, y, z, x_o, y_o, z_o, x_e, y_e, z_e = False, False, False, False, False, False, False, False, False
         list_q = [inter_x, inter_y, inter_z]
         list_i = [inter_x_i, inter_y_i, inter_z_i]
@@ -295,12 +342,12 @@ class algorytm:
                     if j < len(z) and z[j + 1] != closed(max.inf, -math.inf) and z[j] != closed(max.inf, -math.inf) and z[j] & z[j]:
                         z[j] -= z[j + 1] & z[j]
                         z[j].closed(int(z[j].lower), z[j].upper - 1)
-                x[j].closed(int(x[j].lower), x[j].upper)
-                y[j].closed(int(y[j].lower), y[j].upper)
-                z[j].closed(int(z[j].lower), z[j].upper)
+                x[j].closed(x[j].lower, x[j].upper)
+                y[j].closed(y[j].lower, y[j].upper)
+                z[j].closed(z[j].lower, z[j].upper)
                 print(x, y, z)
                 boxes.append(box3D(x[j], y[j], z[j]))
-            return boxes
+            '''
 
 
     @staticmethod
@@ -336,7 +383,7 @@ class algorytm:
             print(' x ', end = '')
             print([i[1], i[4]], end = '') if i[1] != i[4] else print([i[1]], end = '')
             print(' x ', end = '')
-            print([i[2],i[5]], end = '\n') if i[2] != i[5] else print([i[2]], end = '\n')
+            print([i[2], i[5]], end = '\n') if i[2] != i[5] else print([i[2]], end = '\n')
         #zwrócenie drzewa
         return tree.tree
 
