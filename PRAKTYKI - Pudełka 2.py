@@ -74,10 +74,10 @@ class algorytm:
 
     def my_sort(self, inputlist):
         inputlist = zip(inputlist, range(len(inputlist)))
-        aux = sorted(inputlist, key = lambda x:x[0])
+        aux = sorted(inputlist, key = lambda x : x[0])
         sorted2in = [aux[i][1] for i in range(len(aux))]
         list2 = zip(sorted2in, range(len(sorted2in)))
-        aux1 = sorted(list2, key = lambda x:x[0])
+        aux1 = sorted(list2, key = lambda x : x[0])
         in2sorted = [aux1[i][1] for i in range(len(aux1))]
         sort = [aux[i][0] for i in range(len(aux))]
         return sort, in2sorted, sorted2in
@@ -128,43 +128,27 @@ class algorytm:
             return q
 
     def rozbij(self, q, i):
+        print(q.interval_x, q.interval_y, q.interval_z,'\n')
+        print(i.interval_x, i.interval_y, i.interval_z)
         return self.canonical(q.interval_x, q.interval_y, q.interval_z, i.interval_x, i.interval_y, i.interval_z)
 
     def canonical_execute(self, inter_q, inter_i):
         if self.is_in(inter_q, inter_i):
             return 0
         elif self.is_half_out(inter_q, inter_i):
-            return 1
-        elif self.is_equal(inter_q, inter_i):
-            return 2
-        elif self.is_out(inter_q, inter_i):
             return 3
+        elif self.is_equal(inter_q, inter_i):
+            return 0
+        elif self.is_out(inter_q, inter_i):
+            return 5
         elif self.is_separate(inter_q, inter_i):
-            return 4
+            return 7
             #1  2  3  3  5  7
             #2  3  2  4  7  7
 
-    def canonical_int(self, interval, interval_i):
+    def canonical_int(self, int_x, int_x_i, int_y, int_y_i, int_z, int_z_i):
         results = []
-        if self.is_in(interval, interval_i):
-            results.extend(self.divide_in(interval, interval_i))
-            results[0] = closed(results[0].lower, results[0].upper)
-        elif self.is_equal(interval, interval_i):
-            results.extend(self.divide_equal(interval, interval_i))
-            results[0] = closed(results[0].lower, results[0].upper)
-            results[1] = closed(results[1].lower, results[1].upper)
-        elif self.is_half_out(interval, interval_i):
-            results.extend(self.divide_half_out(interval, interval_i))
-            results[0] = closed(results[0].lower, results[0].upper - 1)
-            results[1] = closed(results[1].lower, results[1].upper)
-        elif self.is_out(interval, interval_i):
-            results.extend(self.divide_out(interval, interval_i)) if interval.lower < interval_i.lower else results.extend(self.divide_out(interval_i, interval))
-            if not results[0].empty:
-                results[0] = closed(results[0].lower, results[0].upper - 1)
-            if not results[2].empty:
-                results[2] = closed(results[2].lower + 1, results[2].upper)
-        else:
-            results.extend(interval)
+
         return results
 
 
@@ -232,22 +216,99 @@ class algorytm:
             #            swap_small[j], swap_small[j + 1] = temp1, temp2
         '''
 
-    def canonical_box(self, table):
-        for i in range(3):
-            if i == len(table):
-                table.append(table[- 1])
-            elif i == len(table) + 1:
-                table.append(table[i - 2])
-            elif table[0] == closed(math.inf, -math.inf):
-                table[0] = table[1] if table[1] != closed(math.inf, -math.inf) else table[2]
-            elif not table[i]:
-                table.append(table[i - 1]) if i > 0 else table.append(table[i + 1]) if table[i + 1] else table.append(table[i + 2])
-        return table
-
-    def equal_boxes(self, table1, table2):
-        return True if table1[0] == table2[0] and table1[1] == table2[1] and table1[2] == table2[2] else False
+    def canonical_box(self, inter, checksum, num, out = False):
+        i=0
+        if (inter[0][0] == (inter[0][0] | inter[0][1])) or (inter[1][0] == (inter[1][0] | inter[1][1])) or (inter[2][0] == (inter[2][0] | inter[2][1])):
+            x1, x2 = 0, 1
+        else:
+            x1, x2 = 1, 0
+        if out:
+            for i in range(len(inter[i])):
+                if checksum % 10 == num:
+                    inter[i][x1], between, inter[i][x2] = self.divide_out(inter[inter[i][x1], inter[i][x2]])
+                    if ~between.is_empty():
+                        inter[i].append(between)
+                    else:
+                        inter = [j for j[0:1] in inter[:]]
+                        break
+                else:
+                    if len(inter[i]) < 3:
+                        inter[i].append(inter[i][x2])
+                    checksum /= 10
+            return inter
+        '''
+        while True:
+            if checksum % 10 == num:
+                if
+                inter[i][x1] = inter[i][x1] - inter[i][x2]
+                break
+            else:
+                i += 1
+                checksum /= 10
+            return inter
+        '''
 
     def canonical(self, inter_x, inter_y, inter_z, inter_x_i, inter_y_i, inter_z_i):
+        results1, results2, results3, checksum, boxes, boxes2 = [], [], [], 0, [], []
+        checksum += self.canonical_execute(inter_x, inter_x_i)
+        checksum *= 10
+        checksum += self.canonical_execute(inter_y, inter_y_i)
+        checksum *= 10
+        checksum += self.canonical_execute(inter_z, inter_z_i)
+        if checksum == 0:
+            return [box3D(self.divide_in(inter_x, inter_x_i), self.divide_in(inter_y, inter_y_i), self.divide_in(inter_z, inter_z_i))]
+        elif checksum in [3, 30, 300]:
+            inter = self.canonical_box([[inter_x, inter_x_i], [inter_y, inter_y_i], [inter_z, inter_z_i]], checksum, 3)
+            return [box3D(inter[0][0], inter[1][0], inter[2][0]), box3D(inter[0][1], inter[1][1], inter[2][1])]
+        elif checksum in [5, 50, 500]:
+            inter = self.canonical_box([[inter_x, inter_x_i], [inter_y, inter_y_i], [inter_z, inter_z_i]], checksum, 5)
+            return [box3D(inter[0][0], inter[1][0], inter[2][0]), box3D(inter[0][1], inter[1][1], inter[2][1])]
+        elif checksum in [35, 53, 305, 350, 503, 530]:
+            inter = self.canonical_box([[inter_x, inter_x_i], [inter_y, inter_y_i], [inter_z, inter_z_i]], checksum, 5, True)
+            return [box3D(inter[0][0], inter[1][0], inter[2][0]), box3D(inter[0][1], inter[1][1], inter[2][1]), box3D(inter[0][2], inter[1][2], inter[2][2])]
+        elif checksum in [55, 505, 550]:
+            inter = self.canonical_box([[inter_x, inter_x_i], [inter_y, inter_y_i], [inter_z, inter_z_i]], checksum, 5, True)
+            return [box3D(inter[0][0], inter[1][0], inter[2][0]), box3D(inter[0][1], inter[1][1], inter[2][1]), box3D(inter[0][2], inter[1][2], inter[2][2])]
+            '''
+            inter = (self.canonical_box([[inter_x, inter_x_i], [inter_y, inter_y_i], [inter_z, inter_z_i]], checksum, 5))
+            checksum = checksum - 5 if checksum % 10 == 5 else checksum - 50
+            boxes.extend(self.canonical_box([[inter_x, inter_x_i], [inter_y, inter_y_i], [inter_z, inter_z_i]], checksum, 5))
+            boxes_p = [i[0] for i in boxes[:]] if ~self.is_equal(inter_x, boxes[0][0]) else [i[1] for i in boxes[:]]
+            return [box3D(inter[0][0], inter[1][0], inter[2][0]), box3D(inter[0][1], inter[1][1], inter[2][1]), box3D(boxes_p[0], boxes_p[1], boxes_p[2])]
+            '''
+        elif checksum in [355, 535, 553]:
+            inter = self.canonical_box([[inter_x, inter_x_i], [inter_y, inter_y_i], [inter_z, inter_z_i]], checksum, 5, True)
+            return [box3D(inter[0][0], inter[1][0], inter[2][0]), box3D(inter[0][1], inter[1][1], inter[2][1]), box3D(inter[0][2], inter[1][2], inter[2][2])]
+            '''
+            inter = self.canonical_box([[inter_x, inter_x_i], [inter_y, inter_y_i], [inter_z, inter_z_i]], checksum, 5)
+            checksum = checksum - 5 if checksum % 10 == 5 else checksum - 50
+            boxes.extend(self.canonical_box([[inter_x, inter_x_i], [inter_y, inter_y_i], [inter_z, inter_z_i]], checksum, 5))
+            boxes_p = [i[0] for i in boxes[:]] if ~self.is_equal(inter_x, boxes[0][0]) else [i[1] for i in boxes[:]]
+            return [box3D(inter[0][0], inter[1][0], inter[2][0]), box3D(inter[0][1], inter[1][1], inter[2][1]), box3D(boxes_p[0], boxes_p[1], boxes_p[2])]
+            '''
+        elif checksum in [335, 353, 533]:
+            inter = self.canonical_box([[inter_x, inter_x_i], [inter_y, inter_y_i], [inter_z, inter_z_i]], checksum, 5, True)
+            return [box3D(inter[0][0], inter[1][0], inter[2][0]), box3D(inter[0][1], inter[1][1], inter[2][1]), box3D(inter[0][2], inter[1][2], inter[2][2])]
+        elif checksum in [555]:
+            inter = self.canonical_box([[inter_x, inter_x_i], [inter_y, inter_y_i], [inter_z, inter_z_i]], checksum, 5, True)
+            inter = self.canonical_box(inter, checksum, 5, True)
+            inter = self.canonical_box(inter, checksum, 5, True)
+            return [box3D(inter[0][0], inter[1][0], inter[2][0]), box3D(inter[0][1], inter[1][1], inter[2][1]), box3D(inter[0][2], inter[1][2], inter[2][2]), box3D(inter[0][3], inter[1][3], inter[2][3]), box3D(inter[0][4], inter[1][4], inter[2][4])]
+            '''
+            inter = self.canonical_box([[inter_x, inter_x_i], [inter_y, inter_y_i], [inter_z, inter_z_i]], checksum, 5)
+            checksum -= 5
+            boxes.extend(self.canonical_box([[inter_x, inter_x_i], [inter_y, inter_y_i], [inter_z, inter_z_i]], checksum, 5))
+            boxes_p = [i[0] for i in boxes[:]] if ~self.is_equal(inter_x, boxes[0][0]) else [i[1] for i in boxes[:]]
+            checksum -= 50
+            boxes2.extend(self.canonical_box([[inter_x, inter_x_i], [inter_y, inter_y_i], [inter_z, inter_z_i]], checksum, 5))
+            boxes_p_2 = [i[0] for i in boxes2[:]] if ~self.is_equal(inter_x, boxes2[0][0]) else [i[1] for i in boxes2[:]]
+            return [box3D(inter[0][0], inter[1][0], inter[2][0]), box3D(inter[0][1], inter[1][1], inter[2][1]), box3D(boxes_p[0], boxes_p[1], boxes_p[2]), box3D(boxes_p_2[0], boxes_p_2[1], boxes_p_2[2])]
+            '''
+        else:
+
+            return [box3D(self.divide_in(inter_x, inter_x_i), self.divide_in(inter_y, inter_y_i), self.divide_in(inter_z, inter_z_i))]
+
+        '''
         results1, results2, results3, boxes = [], [], [], []
         results1.extend(self.canonical_int(inter_x, inter_x_i))
         results2.extend(self.canonical_int(inter_y, inter_y_i))
@@ -262,7 +323,7 @@ class algorytm:
             boxes.append(box3D(results1[2], results2[2], results3[2]))
         print(results1, '\n', results2, '\n', results3, '\n')
         return boxes
-
+        '''
         '''
         x, y, z, x_o, y_o, z_o, x_e, y_e, z_e = False, False, False, False, False, False, False, False, False
         list_q = [inter_x, inter_y, inter_z]
@@ -372,6 +433,7 @@ class algorytm:
                 # zwrócenie z drzewa pierwszego obiektu, z którym pudełko się przecina
                 i = list(tree.tree.intersection((q.interval_x.lower, q.interval_y.lower, q.interval_z.lower, q.interval_x.upper, q.interval_y.upper, q.interval_z.upper), True))[0]
                 inter = [item for item in i.bbox]
+                tree.tree.delete(i.id, i.bounds)
                 i = box3D.factory(inter[0], inter[1], inter[2], inter[3], inter[4], inter[5])
                 #print(q.interval_x, q.interval_y, q.interval_z)
                 divided = alg.rozbij(q, i)
