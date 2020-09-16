@@ -1,0 +1,81 @@
+class TEST:
+    def my_sort(self, inputlist):
+        inputlist = zip(inputlist, range(len(inputlist)))
+        aux = sorted(inputlist, key = lambda x : x[0])
+        sorted2in = [aux[i][1] for i in range(len(aux))]
+        list2 = zip(sorted2in, range(len(sorted2in)))
+        aux1 = sorted(list2, key = lambda x : x[0])
+        in2sorted = [aux1[i][1] for i in range(len(aux1))]
+        sort = [aux[i][0] for i in range(len(aux))]
+        return sort, in2sorted, sorted2in
+
+    def is_in(self, interval1, interval2):
+        union = interval1 & interval2
+        return True if ((union == interval1) ^ (union == interval2)) and (interval2.lower != interval1.lower and interval1.upper != interval2.upper)  else False
+
+    def is_out(self, interval1, interval2):
+        return True if (interval1.lower != interval2.lower) and (interval2.upper != interval1.upper) and (interval1 & interval2) else False
+
+    def canonical_box(self, inter, inter_i):
+        if self.is_in(inter, inter_i):
+            if inter.upper < inter_i.upper:
+                return 'in I II'
+            else:
+                return 'in II I'
+        elif self.is_out(inter, inter_i):
+            if inter.upper < inter_i.upper:
+                return 'o I II'
+            else:
+                return 'o II I'
+        elif self.is_separate(inter, inter_i):
+            return 's'
+
+    def canonical(self, inter_x, inter_y, inter_z, inter_x_i, inter_y_i, inter_z_i):
+        return self.canonical_box(inter_x, inter_x_i),  self.canonical_box(inter_y, inter_y_i),  self.canonical_box(inter_z, inter_z_i)
+
+    def rozbij(self, q, i):
+        print(q.interval_x, q.interval_y, q.interval_z)
+        print(i.interval_x, i.interval_y, i.interval_z,'\n')
+
+        sort, in2sorted, sorted2in = self.my_sort(self.canonical(q.interval_x, q.interval_y, q.interval_z, i.interval_x, i.interval_y, i.interval_z))
+        if sort == ['in I II', 'in I II', 'in I II']:
+            return [box3D(i.interval_x, i.interval_y, i.interval_z)]
+        elif sort == ['in II I', 'in II I', 'in II I']:
+            return [box3D(q.interval_x, q.interval_y, q.interval_z)]
+        elif sort == ['in I II', 'in I II', 'in II I']:
+             return box3D(q.interval_x, q.interval_y, q.interval_z),\
+                   box3D(i.interval_x, i.interval_y, closed(i.interval_z.lower, q.interval_z.lower)),\
+                   box3D(i.interval_x, i.interval_y, closed(q.interval_z.upper, i.interval_z.upper))
+        elif sort == ['in I II', 'in II I', 'in II I']:
+            return box3D(q.interval_x, q.interval_y, q.interval_z),\
+                   box3D(closed(i.interval_x.lower, q.interval_x.lower), q.interval_y, i.interval_z),\
+                   box3D(closed(q.interval_x.upper, i.interval_x.upper), q.interval_y, i.interval_z)
+        elif sort == ['in I II', 'in I II', 'o I II']:
+            return box3D(i.interval_x, i.interval_y, i.interval_z), \
+                   box3D(q.interval_x, q.interval_y, closed(q.interval_z.lower, i.interval_z.lower))
+
+
+class box3D:
+    def __init__(self, interval_x, interval_y, interval_z):
+        self.interval_x = interval_x
+        self.interval_y = interval_y
+        self.interval_z = interval_z
+
+    def get_interval_x(self):
+        return self.interval_x
+
+    def get_interval_y(self):
+        return self.interval_y
+
+    def get_interval_z(self):
+        return self.interval_z
+
+    @staticmethod
+    def factory(x1, y1, z1, x2, y2, z2):
+        return box3D(closed(x1, x2), closed(y1, y2), closed(z1, z2))
+from portion import closed
+tst = TEST()
+int1 = tst.rozbij(box3D(closed(input(), input()), closed(input(), input()), closed(input(), input())), box3D(closed(input(), input()), closed(input(), input()), closed(input(), input())))
+
+for i in range(len(int1)):
+    print(int1[i].interval_x, int1[i].interval_y, int1[i].interval_z)
