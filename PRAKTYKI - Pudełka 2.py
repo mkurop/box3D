@@ -115,34 +115,15 @@ class algorytm:
     def is_half_out(self, int1, int2):
         return True if ((int1.lower == int2.lower) ^ (int2.upper == int1.upper)) and ((int2 == int2 & int1) ^ (int1 == int1 & int2)) else False
 
-    def rozbijanie(self, q, i):
-        if self.is_in(q, i):
-            return self.divide_in(q, i)
-        elif self.is_out(q, i):
-            return self.divide_out(q, i)
-        elif self.is_half_out(q, i):
-            return self.divide_half_out(q, i)
-        elif self.is_equal(q, i):
-            return self.divide_equal(q, i)
-        elif self.is_separate(q, i):
-            return q
-
     def rozbij(self, q, i):
         print(q.interval_x, q.interval_y, q.interval_z)
         print(i.interval_x, i.interval_y, i.interval_z,'\n')
-        return self.canonical(q.interval_x, q.interval_y, q.interval_z, i.interval_x, i.interval_y, i.interval_z)
+        sort, in2sorted, sorted2in = self.my_sort(self.canonical(q.interval_x, q.interval_y, q.interval_z, i.interval_x, i.interval_y, i.interval_z))
+        if sort == ['in I II', 'in I II', 'in I II']:
+            return [box3D(i.interval_x, i.interval_y, i.interval_z)]
+        elif sort == ['in II I', 'in II I', 'in II I']:
+            return [box3D(q.interval_x, q.interval_y, q.interval_z)]
 
-    def canonical_execute(self, inter_q, inter_i):
-        if self.is_in(inter_q, inter_i):
-            return 0
-        elif self.is_half_out(inter_q, inter_i):
-            return 3
-        elif self.is_equal(inter_q, inter_i):
-            return 0
-        elif self.is_out(inter_q, inter_i):
-            return 5
-        elif self.is_separate(inter_q, inter_i):
-            return 7
             #1  2  3  3  5  7
             #2  3  2  4  7  7
 
@@ -151,276 +132,29 @@ class algorytm:
 
         return results
 
-
-        '''
-        if out:
-            return [self.divide_out(swap_small, swap_big)]
-        elif half_out:
-            return [self.divide_half_out(swap_small, swap_big)]
-        elif equal:
-            return [self.divide_equal(swap_small, swap_big)]
-        else:
-            return [self.divide_in(swap_big, swap_small)]
-        '''
-        '''
-        if self.is_out(interval_small, interval_big):
-            if interval_small.upper > interval_big.upper:
-                interval_small = closed(interval_big.upper + 1, interval_small.upper) if (abs(interval_small.upper - interval_big.upper) > 0) or (abs(interval_small.upper + interval_big.upper) < 0) else closed(interval_big.upper, interval_small.upper)
+    def canonical_box(self, inter, inter_i):
+        if self.is_in(inter, inter_i):
+            if inter.upper < inter_i.upper:
+                return 'in I II'
             else:
-                interval_small = closed(interval_small.lower, interval_big.lower - 1) if (abs(interval_big.lower - interval_small.lower) > 0) or (abs(interval_big.lower + interval_small.lower) < 0) else closed(interval_small.lower, interval_big.lower)
-        else:
-            if interval_big.lower > interval_small.lower:
-                interval_small = closed(interval_small.lower, interval_big.lower - 1) if (abs(interval_big.lower - interval_small.lower) > 0) or (abs(interval_big.lower + interval_small.lower) < 0) else closed(interval_small.lower, interval_big.lower)
-            elif interval_big.lower < interval_small.lower and interval_big.upper < interval_small.upper :
-                interval_small = closed(interval_small.upper + 1, interval_big.upper) if (abs(interval_big.upper - interval_small.upper) > 0) or (abs(interval_big.upper + interval_small.upper) < 0) else closed(interval_small.upper, interval_big.upper)
-
-            elif interval_big.upper > interval_small.upper:
-                interval_small = closed(interval_big.upper + 1, interval_small.upper) if (abs(interval_small.upper - interval_big.upper) > 0) or (abs(interval_small.upper + interval_big.upper) < 0) else closed(interval_big.upper, interval_small.upper)
+                return 'in II I'
+        elif self.is_half_out(inter, inter_i):
+            if inter.upper < inter_i.upper:
+                return 'h-o I II'
             else:
-                interval_small = closed(interval_big.lower, interval_small.lower - 1) if (abs(interval_small.lower - interval_big.lower) > 0) or (abs(interval_small.lower + interval_big.lower) < 0) else closed(interval_big.lower, interval_small.lower)
-        '''
-        '''
-        max_t = False
-        swap_temp_s, swap_temp_b = swap_small.copy(), swap_big.copy()
-        if (interval_small.lower < interval_big.lower) and (interval_small.upper > interval_big.upper):
-            max_t = True
-            interval_backup_s = interval_small
-            interval_backup_b = interval_big
-            interval_small, interval_big = interval_backup_b, interval_small
-            interval_big = closed(interval_big.lower, interval_small.lower)
-        elif (interval_small.lower > interval_big.lower) and (interval_small.upper < interval_big.upper):
-            interval_big = closed(interval_small.lower, interval_big.upper)
-        interval_small = interval_big - interval_small
-        if swap_small[j] == swap_big[j]:
-            swap_small[j], swap_small[j + 1] = interval_small.lower - 1, interval_small.upper
-        elif swap_small[j + 1] == swap_big[j + 1]:
-            swap_small[j], swap_small[j + 1] = interval_small.lower, interval_small.upper + 1
-        
-        if self.is_half_out(interval_small, interval_big):
-            if swap_small[j + 1] < swap_big[j] and swap_small[j] < swap_big[j]:
-                swap_small[j + 1] = swap_big[j] - 1
-            elif swap_small[j + 1] > swap_big[j + 1] and swap_small [j] >= swap_big[j + 1]:
-                swap_small[j] = swap_big[j + 1] + 1
-        elif self.is_out(interval_small, interval_big):
-            if swap_small[j + 1] < swap_big[j]:
-                swap_small[j + 1] = swap_big[j] - 1
+                return 'h-o II I'
+        elif self.is_equal(inter, inter_i):
+            return 'e'
+        elif self.is_out(inter, inter_i):
+            if inter.upper < inter_i.upper:
+                return 'o I II'
             else:
-                swap_small[j] = swap_big[j + 1] + 1
-
-        if interval_small != interval_big:
-            interval_small = interval_small - interval_big
-
-        if max_t:
-            temp1, temp2 = swap_small.copy()[j], swap_small.copy()[j + 1]
-            swap_small, swap_big = temp2, temp1
-            #            swap_small[j], swap_small[j + 1] = temp1, temp2
-        '''
-
-    def canonical_box(self, inter, checksum, num, out = False, first_of_last = False):
-        i=0
-        if (inter[0][0] == (inter[0][0] | inter[0][1])) or (inter[1][0] == (inter[1][0] | inter[1][1])) or (inter[2][0] == (inter[2][0] | inter[2][1])):
-            x1, x2 = 0, 1
-        else:
-            x1, x2 = 1, 0
-        if out:
-            for i in range(len(inter)):
-                if checksum % 10 == num:
-                    inter[i][x1], between, inter[i][x2] = self.divide_out(inter[inter[i][x1], inter[i][x2]])
-                    inter[i].append(between)
-                    inter[i].append(inter[i][x2])
-                    #inter[i].append(closed(inter[i][x2].upper, inter[i][x1].upper)) if inter[i][x2].lower > inter[i][x1].lower else inter[i].append(closed(inter[i][x1].lower, inter[i][x2].lower))
-                else:
-                    if len(inter[i]) < 4:
-                        inter[i].append(inter[i][x2])
-                        inter[i].append(inter[i][x2])
-                    checksum /= 10
-            if first_of_last:
-                for k in range(len(inter)):
-                    inter[k].pop(1)
-
-            return inter, checksum
-        '''
-        while True:
-            if checksum % 10 == num:
-                if
-                inter[i][x1] = inter[i][x1] - inter[i][x2]
-                break
-            else:
-                i += 1
-                checksum /= 10
-            return inter
-        '''
+                return 'o II I'
+        elif self.is_separate(inter, inter_i):
+            return 's'
 
     def canonical(self, inter_x, inter_y, inter_z, inter_x_i, inter_y_i, inter_z_i):
-        results1, results2, results3, checksum, boxes, boxes2, inter = [], [], [], 0, [], [], []
-        checksum += self.canonical_execute(inter_x, inter_x_i)
-        checksum *= 10
-        checksum += self.canonical_execute(inter_y, inter_y_i)
-        checksum *= 10
-        checksum += self.canonical_execute(inter_z, inter_z_i)
-        print(checksum, '\n')
-        if checksum == 0:
-            return box3D(self.divide_in(inter_x, inter_x_i), self.divide_in(inter_y, inter_y_i), self.divide_in(inter_z, inter_z_i))
-        elif checksum in [3, 30, 300]:
-            inter, checksum = (self.canonical_box([[inter_x, inter_x_i], [inter_y, inter_y_i], [inter_z, inter_z_i]], checksum, 3, True, True))
-            return box3D(inter[0][0], inter[1][0], inter[2][0]), box3D(inter[0][1], inter[1][1], inter[2][1])
-        elif checksum in [5, 50, 500]:
-            inter, checksum = (self.canonical_box([[inter_x, inter_x_i], [inter_y, inter_y_i], [inter_z, inter_z_i]], checksum, 5, True, True))
-            return box3D(inter[0][0], inter[1][0], inter[2][0]), box3D(inter[0][1], inter[1][1], inter[2][1])
-        elif checksum in [35, 53, 305, 350, 503, 530]:
-            inter, checksum = (self.canonical_box([[inter_x, inter_x_i], [inter_y, inter_y_i], [inter_z, inter_z_i]], checksum, 5, True, True))
-            return box3D(inter[0][0], inter[1][0], inter[2][0]), box3D(inter[0][1], inter[1][1], inter[2][1]), box3D(inter[0][2], inter[1][2], inter[2][2]) if len(inter[0]) > 2 else box3D(inter[0][0], inter[1][0], inter[2][0]), box3D(inter[0][1], inter[1][1], inter[2][1])
-        elif checksum in [55, 505, 550]:
-            inter, checksum = (self.canonical_box([[inter_x, inter_x_i], [inter_y, inter_y_i], [inter_z, inter_z_i]], checksum, 5, True, True))
-            return box3D(inter[0][0], inter[1][0], inter[2][0]), box3D(inter[0][1], inter[1][1], inter[2][1]), box3D(inter[0][2], inter[1][2], inter[2][2]) if len(inter[0]) > 2 else box3D(inter[0][0], inter[1][0], inter[2][0]), box3D(inter[0][1], inter[1][1], inter[2][1])
-            '''
-            inter = (self.canonical_box([[inter_x, inter_x_i], [inter_y, inter_y_i], [inter_z, inter_z_i]], checksum, 5))
-            checksum = checksum - 5 if checksum % 10 == 5 else checksum - 50
-            boxes.extend(self.canonical_box([[inter_x, inter_x_i], [inter_y, inter_y_i], [inter_z, inter_z_i]], checksum, 5))
-            boxes_p = [i[0] for i in boxes[:]] if ~self.is_equal(inter_x, boxes[0][0]) else [i[1] for i in boxes[:]]
-            return [box3D(inter[0][0], inter[1][0], inter[2][0]), box3D(inter[0][1], inter[1][1], inter[2][1]), box3D(boxes_p[0], boxes_p[1], boxes_p[2])]
-            '''
-        elif checksum in [355, 535, 553]:
-            inter, checksum = (self.canonical_box([[inter_x, inter_x_i], [inter_y, inter_y_i], [inter_z, inter_z_i]], checksum, 5, True, True))
-            return box3D(inter[0][0], inter[1][0], inter[2][0]), box3D(inter[0][1], inter[1][1], inter[2][1]), box3D(inter[0][2], inter[1][2], inter[2][2]) if len(inter[0]) > 2 else box3D(inter[0][0], inter[1][0], inter[2][0]), box3D(inter[0][1], inter[1][1], inter[2][1])
-            '''
-            inter = self.canonical_box([[inter_x, inter_x_i], [inter_y, inter_y_i], [inter_z, inter_z_i]], checksum, 5)
-            checksum = checksum - 5 if checksum % 10 == 5 else checksum - 50
-            boxes.extend(self.canonical_box([[inter_x, inter_x_i], [inter_y, inter_y_i], [inter_z, inter_z_i]], checksum, 5))
-            boxes_p = [i[0] for i in boxes[:]] if ~self.is_equal(inter_x, boxes[0][0]) else [i[1] for i in boxes[:]]
-            return [box3D(inter[0][0], inter[1][0], inter[2][0]), box3D(inter[0][1], inter[1][1], inter[2][1]), box3D(boxes_p[0], boxes_p[1], boxes_p[2])]
-            '''
-        elif checksum in [335, 353, 533]:
-            inter, checksum = (self.canonical_box([[inter_x, inter_x_i], [inter_y, inter_y_i], [inter_z, inter_z_i]], checksum, 5, True, True))
-            return box3D(inter[0][0], inter[1][0], inter[2][0]), box3D(inter[0][1], inter[1][1], inter[2][1]), box3D(inter[0][2], inter[1][2], inter[2][2]) if len(inter[0]) > 2 else box3D(inter[0][0], inter[1][0], inter[2][0]), box3D(inter[0][1], inter[1][1], inter[2][1])
-        elif checksum in [555]:
-            inter, checksum = self.canonical_box([[inter_x, inter_x_i], [inter_y, inter_y_i], [inter_z, inter_z_i]], checksum, 5, True)
-            inter, checksum = self.canonical_box(inter, checksum, 5, True)
-            inter, checksum = self.canonical_box(inter, checksum, 5, True, True)
-            return box3D(inter[0][0], inter[1][0], inter[2][0]), box3D(inter[0][1], inter[1][1], inter[2][1]), box3D(inter[0][2], inter[1][2], inter[2][2]), box3D(inter[0][3], inter[1][3], inter[2][3]), box3D(inter[0][4], inter[1][4], inter[2][4]) if len(inter[0]) > 2 else box3D(inter[0][0], inter[1][0], inter[2][0]), box3D(inter[0][1], inter[1][1], inter[2][1])
-            '''
-            inter = self.canonical_box([[inter_x, inter_x_i], [inter_y, inter_y_i], [inter_z, inter_z_i]], checksum, 5)
-            checksum -= 5
-            boxes.extend(self.canonical_box([[inter_x, inter_x_i], [inter_y, inter_y_i], [inter_z, inter_z_i]], checksum, 5))
-            boxes_p = [i[0] for i in boxes[:]] if ~self.is_equal(inter_x, boxes[0][0]) else [i[1] for i in boxes[:]]
-            checksum -= 50
-            boxes2.extend(self.canonical_box([[inter_x, inter_x_i], [inter_y, inter_y_i], [inter_z, inter_z_i]], checksum, 5))
-            boxes_p_2 = [i[0] for i in boxes2[:]] if ~self.is_equal(inter_x, boxes2[0][0]) else [i[1] for i in boxes2[:]]
-            return [box3D(inter[0][0], inter[1][0], inter[2][0]), box3D(inter[0][1], inter[1][1], inter[2][1]), box3D(boxes_p[0], boxes_p[1], boxes_p[2]), box3D(boxes_p_2[0], boxes_p_2[1], boxes_p_2[2])]
-            '''
-        else:
-
-            return box3D(self.divide_in(inter_x, inter_x_i), self.divide_in(inter_y, inter_y_i), self.divide_in(inter_z, inter_z_i))
-
-        '''
-        results1, results2, results3, boxes = [], [], [], []
-        results1.extend(self.canonical_int(inter_x, inter_x_i))
-        results2.extend(self.canonical_int(inter_y, inter_y_i))
-        results3.extend(self.canonical_int(inter_z, inter_z_i))
-        results1 = self.canonical_box(results1)
-        results2 = self.canonical_box(results2)
-        results3 = self.canonical_box(results3)
-        boxes.append(box3D(results1[0], results2[0], results3[0]))
-        if not self.equal_boxes(results1, results2):
-            boxes.append(box3D(results1[1], results2[1], results3[1]))
-        if not (self.equal_boxes(results1, results3) and self.equal_boxes(results2, results3)):
-            boxes.append(box3D(results1[2], results2[2], results3[2]))
-        print(results1, '\n', results2, '\n', results3, '\n')
-        return boxes
-        '''
-        '''
-        x, y, z, x_o, y_o, z_o, x_e, y_e, z_e = False, False, False, False, False, False, False, False, False
-        list_q = [inter_x, inter_y, inter_z]
-        list_i = [inter_x_i, inter_y_i, inter_z_i]
-        list_q_new = []
-        swap_small, swap_big = list_q.copy(), list_i.copy()
-        if any([self.is_out(inter_x, inter_x_i), self.is_out(inter_y, inter_y_i), self.is_out(inter_z, inter_z_i)]):
-            if self.is_out(inter_x, inter_x_i):
-                x = True
-            if self.is_half_out(inter_x, inter_x_i):
-                x_o = True
-            if self.is_out(inter_y, inter_y_i):
-                y = True
-            if self.is_half_out(inter_y, inter_y_i):
-                y_o = True
-            if self.is_out(inter_z, inter_z_i):
-                z = True
-            if self.is_half_out(inter_z, inter_z_i):
-                z_o = True
-            if self.is_equal(inter_x, inter_x_i):
-                x_e = True
-            if self.is_equal(inter_y, inter_y_i):
-                y_e = True
-            if self.is_equal(inter_z, inter_z_i):
-                z_e = True
-            if True in [x, y, z] or True in [x_o, y_o, z_o] or True in [x_e, y_e, z_e]:
-                sorted_vars, from_before, from_after = self.my_sort([x, y, z])
-                sorted_o, from_before_o, from_after_o = self.my_sort([x_o, y_o, z_o])
-                sorted_e, from_before_e, from_after_e = self.my_sort([x_e, y_e, z_e])
-                results1, results2, results3 = [], [], []
-                vars = [x, y, z]
-                if sorted_vars[0]:
-                    results1.extend(i for i in self.canonical_box(swap_small[from_before[0]], swap_big[from_before[0]], True, False, False)[0])
-                elif sorted_o[0]:
-                    results1.extend(i for i in self.canonical_box(swap_small[from_before[0]], swap_big[from_before[0]], False, True, False)[0])
-                elif sorted_e[0]:
-                    results1.extend(i for i in self.canonical_box(swap_small[from_before[0]], swap_big[from_before[0]], False, False, True)[0])
-                else:
-                    results1.extend(i for i in self.canonical_box(swap_small[from_before[0]], swap_big[from_before[0]], False, False, False,)[0])
-                if sorted_vars[1]:
-                    results2.extend(i for i in self.canonical_box(swap_small[from_before[1]], swap_big[from_before[1]], True, False, False)[0])
-                elif sorted_o[1]:
-                    results2.extend(i for i in self.canonical_box(swap_small[from_before[1]], swap_big[from_before[1]], False, True, False)[0])
-                elif sorted_e[1]:
-                    results2.extend(i for i in self.canonical_box(swap_small[from_before[1]], swap_big[from_before[1]], False, False, True)[0])
-                else:
-                    results2.extend(i for i in self.canonical_box(swap_small[from_before[1]], swap_big[from_before[1]], False, False, False)[0])
-                if sorted_vars[2]:
-                    results3.extend(i for i in self.canonical_box(swap_small[from_before[2]], swap_big[from_before[2]], True, False, False)[0])
-                elif sorted_o[2]:
-                    results3.extend(i for i in self.canonical_box(swap_small[from_before[2]], swap_big[from_before[2]], False, True, False)[0])
-                elif sorted_e[2]:
-                    results2.extend(i for i in self.canonical_box(swap_small[from_before[1]], swap_big[from_before[1]], False, False, True)[0])
-                else:
-                    results3.extend(i for i in self.canonical_box(swap_small[from_before[2]], swap_big[from_before[2]], False, False, False)[0])
-            else:
-                return []
-            for i in range(max((len(results3)), len(results2), len(results1))):
-                if results1[i] == closed(math.inf, -math.inf) and i < len(results1) - 1:
-                    x = results1[i + 1] if results1[i + 1] != closed(math.inf, -math.inf) else results1[i + 2]
-                elif results1[-1] == closed(math.inf, -math.inf) and i > len(results1) - 1:
-                    x = results1[-3] if results1[-2] == closed(math.inf, -math.inf) else results1[-2]
-                else:
-                    x = results1[i] if len(results1) - 1 >= i else results1[-1]
-                if results2[i] == closed(math.inf, -math.inf) and i < len(results2) - 1:
-                    y = results2[i + 1] if results2[i + 1] != closed(math.inf, -math.inf) else results2[i + 2]
-                elif results2[-1] == closed(math.inf, -math.inf) and i > len(results2) - 1:
-                    y = results2[-3] if results2[-2] == closed(math.inf, -math.inf) else results2[-2]
-                else:
-                    y = results2[i] if len(results2) - 1 >= i else results2[-1]
-                if results3[i] == closed(math.inf, -math.inf) and i < len(results3) - 1:
-                    z = results3[i + 1] if results3[i + 1] != closed(math.inf, -math.inf) else results3[i + 2]
-                elif results3[-1] == closed(math.inf, -math.inf) and i > len(results1) - 1:
-                    z = results3[-3] if results3[-2] == closed(math.inf, -math.inf) else results3[-2]
-                else:
-                    z = results1[i] if len(results1) - 1 >= i else results1[-1]
-                for j in range(max((len(results3)), len(results2), len(results1))):
-                    if j < len(x) and x[j + 1] != closed(max.inf, -math.inf) and x[j] != closed(max.inf, -math.inf) and x[j] & x[j + 1]:
-                        x[j] -= x[j + 1] & x[j]
-                        x[j].closed(int(x[j].lower), x[j].upper - 1)
-                    if j < len(y) and y[j + 1] != closed(max.inf, -math.inf) and y[j] != closed(max.inf, -math.inf) and y[j] & y[j]:
-                        y[j] -= y[j + 1] & y[j]
-                        y[j].closed(int(y[j].lower), y[j].upper - 1)
-
-                    if j < len(z) and z[j + 1] != closed(max.inf, -math.inf) and z[j] != closed(max.inf, -math.inf) and z[j] & z[j]:
-                        z[j] -= z[j + 1] & z[j]
-                        z[j].closed(int(z[j].lower), z[j].upper - 1)
-                x[j].closed(x[j].lower, x[j].upper)
-                y[j].closed(y[j].lower, y[j].upper)
-                z[j].closed(z[j].lower, z[j].upper)
-                print(x, y, z)
-                boxes.append(box3D(x[j], y[j], z[j]))
-            '''
+        return self.canonical_box(inter_x, inter_x_i),  self.canonical_box(inter_y, inter_y_i),  self.canonical_box(inter_z, inter_z_i)
 
 
     @staticmethod
@@ -440,7 +174,7 @@ class algorytm:
                 tree.tree.delete(i.id, i.bounds)
                 i = box3D.factory(inter[0], inter[1], inter[2], inter[3], inter[4], inter[5])
                 #print(q.interval_x, q.interval_y, q.interval_z)
-                canonical = [alg.canonical(q.interval_x, q.interval_y, q.interval_z, i.interval_x, i.interval_y, i.interval_z)][0][0]
+                canonical = alg.rozbij(q, i)
                 Q.append(canonical) if type(canonical) is not tuple else Q.extend(canonical)
                 print(canonical.interval_x, canonical.interval_y, canonical.interval_z)
             else:
