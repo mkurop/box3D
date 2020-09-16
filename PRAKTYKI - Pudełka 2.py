@@ -123,6 +123,9 @@ class algorytm:
             return [box3D(i.interval_x, i.interval_y, i.interval_z)]
         elif sort == ['in II I', 'in II I', 'in II I']:
             return [box3D(q.interval_x, q.interval_y, q.interval_z)]
+        elif sort == ['in I II', 'in I II', 'in II I']:
+            return [box3D(q.interval_x, q.interval_y, q.interval_z), box3D(i.interval_x, i.interval_y, closed(i.interval_z.lower, q.interval_z.lower)),
+                    box3D(i.interval_x, i.interval_y, closed(q.interval_z.upper, i.interval_z.upper))]
 
             #1  2  3  3  5  7
             #2  3  2  4  7  7
@@ -171,12 +174,11 @@ class algorytm:
                 # zwrócenie z drzewa pierwszego obiektu, z którym pudełko się przecina
                 i = list(tree.tree.intersection((q.interval_x.lower, q.interval_y.lower, q.interval_z.lower, q.interval_x.upper, q.interval_y.upper, q.interval_z.upper), True))[0]
                 inter = [item for item in i.bbox]
-                tree.tree.delete(i.id, i.bounds)
+                tree.tree.delete(i.id, [i.bounds[0], i.bounds[2], i.bounds[4], i.bounds[1], i.bounds[3], i.bounds[5]])
                 i = box3D.factory(inter[0], inter[1], inter[2], inter[3], inter[4], inter[5])
                 #print(q.interval_x, q.interval_y, q.interval_z)
                 canonical = alg.rozbij(q, i)
-                Q.append(canonical) if type(canonical) is not tuple else Q.extend(canonical)
-                print(canonical.interval_x, canonical.interval_y, canonical.interval_z)
+                Q.append(canonical[0]) if type(canonical) is not tuple else Q.extend(k for k in canonical)
             else:
                 #print(q.interval_x, q.interval_y, q.interval_z)
                 # w przeciwnym wypadku dodanie do drzewa nowego pudełka
