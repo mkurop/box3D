@@ -57,9 +57,13 @@ class TEST:
             return [box3D(inter[0][0], inter[0][1], inter[0][2]),
                    box3D(inter[2][0], inter[3][1], inter[4][1]),
                    box3D(inter[2][2], inter[3][1], inter[4][1])]
+        #--------------------------------------------------------#
         elif sort == ['in I II', 'in I II', 'o I II']:
             return [box3D(inter[1][0], inter[1][1], inter[1][2]),
                    box3D(inter[0][0], inter[0][1], inter[4][0])]
+        elif sort == ['in I II', 'in I II', 'o II I']:
+            return [box3D(inter[1][0], inter[1][1], inter[1][2]),
+                    box3D(inter[0][0], inter[0][1], inter[4][2])]
 
 
 class box3D:
