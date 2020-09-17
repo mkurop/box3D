@@ -36,23 +36,30 @@ class TEST:
     def rozbij(self, q, i):
         print(q.interval_x, q.interval_y, q.interval_z)
         print(i.interval_x, i.interval_y, i.interval_z,'\n')
-
+        min_x_u, min_x_l, max_x_u, max_x_l, min_y_u, min_y_l, max_y_u, max_y_l, min_z_u, min_z_l, max_z_u, max_z_l = \
+            min(q.interval_x.upper, i.interval_x.upper), min(q.interval_x.lower, i.interval_x.lower), max(q.interval_x.upper, i.interval_x.upper), max(q.interval_x.lower, i.interval_x.lower), \
+            min(q.interval_y.upper, i.interval_y.upper), min(q.interval_y.lower, i.interval_y.lower), max(q.interval_y.upper, i.interval_y.upper), max(q.interval_y.lower, i.interval_y.lower),\
+            min(q.interval_z.upper, i.interval_z.upper), min(q.interval_z.lower, i.interval_z.lower), max(q.interval_z.upper, i.interval_z.upper), max(q.interval_z.lower, i.interval_z.lower)
+        inter = [[q.interval_x, q.interval_y, q.interval_z],[i.interval_x, i.interval_y, i.interval_z],
+                    [closed(min_y_l, max_y_l), closed(max_y_l, min_y_u), closed(min_y_u, max_y_u)],
+                    [closed(min_y_l, max_y_l), closed(max_y_l, min_y_u), closed(min_y_u, max_y_u)],
+                    [closed(min_z_l, max_z_l), closed(max_z_l, min_z_u), closed(min_z_u, max_z_u)]]
         sort, in2sorted, sorted2in = self.my_sort(self.canonical(q.interval_x, q.interval_y, q.interval_z, i.interval_x, i.interval_y, i.interval_z))
         if sort == ['in I II', 'in I II', 'in I II']:
-            return [box3D(i.interval_x, i.interval_y, i.interval_z)]
+            return [box3D(inter[1][0], inter[1][1], inter[1][2])]
         elif sort == ['in II I', 'in II I', 'in II I']:
-            return [box3D(q.interval_x, q.interval_y, q.interval_z)]
+            return [box3D(inter[0][0], inter[0][1], inter[0][2])]
         elif sort == ['in I II', 'in I II', 'in II I']:
-             return box3D(q.interval_x, q.interval_y, q.interval_z),\
-                   box3D(i.interval_x, i.interval_y, closed(i.interval_z.lower, q.interval_z.lower)),\
-                   box3D(i.interval_x, i.interval_y, closed(q.interval_z.upper, i.interval_z.upper))
+            return [box3D(inter[0][0], inter[0][1], inter[0][2]),
+                   box3D(inter[1][0], inter[1][1], inter[4][0]),
+                   box3D(inter[1][0], inter[1][1], inter[4][2])]
         elif sort == ['in I II', 'in II I', 'in II I']:
-            return box3D(q.interval_x, q.interval_y, q.interval_z),\
-                   box3D(closed(i.interval_x.lower, q.interval_x.lower), q.interval_y, i.interval_z),\
-                   box3D(closed(q.interval_x.upper, i.interval_x.upper), q.interval_y, i.interval_z)
+            return [box3D(inter[0][0], inter[0][1], inter[0][2]),
+                   box3D(inter[2][0], inter[3][1], inter[4][1]),
+                   box3D(inter[2][2], inter[3][1], inter[4][1])]
         elif sort == ['in I II', 'in I II', 'o I II']:
-            return box3D(i.interval_x, i.interval_y, i.interval_z), \
-                   box3D(q.interval_x, q.interval_y, closed(q.interval_z.lower, i.interval_z.lower))
+            return [box3D(inter[1][0], inter[1][1], inter[1][2]),
+                   box3D(inter[0][0], inter[0][1], inter[4][0])]
 
 
 class box3D:
