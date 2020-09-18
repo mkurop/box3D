@@ -68,9 +68,6 @@ class tree:
 
 
 class algorytm:
-    def permute(self, sortin, permutation):
-        assert len(sortin) == len(permutation)
-        return [sortin[i] for i in permutation]
 
     def my_sort(self, inputlist):
         inputlist = zip(inputlist, range(len(inputlist)))
@@ -115,26 +112,6 @@ class algorytm:
     def is_half_out(self, int1, int2):
         return True if ((int1.lower == int2.lower) ^ (int2.upper == int1.upper)) and ((int2 == int2 & int1) ^ (int1 == int1 & int2)) else False
 
-    def rozbij(self, q, i):
-        print(q.interval_x, q.interval_y, q.interval_z)
-        print(i.interval_x, i.interval_y, i.interval_z,'\n')
-        sort, in2sorted, sorted2in = self.my_sort(self.canonical(q.interval_x, q.interval_y, q.interval_z, i.interval_x, i.interval_y, i.interval_z))
-        if sort == ['in I II', 'in I II', 'in I II']:
-            return [box3D(i.interval_x, i.interval_y, i.interval_z)]
-        elif sort == ['in II I', 'in II I', 'in II I']:
-            return [box3D(q.interval_x, q.interval_y, q.interval_z)]
-        elif sort == ['in I II', 'in I II', 'in II I']:
-            return [box3D(q.interval_x, q.interval_y, q.interval_z), box3D(i.interval_x, i.interval_y, closed(i.interval_z.lower, q.interval_z.lower)),
-                    box3D(i.interval_x, i.interval_y, closed(q.interval_z.upper, i.interval_z.upper))]
-
-            #1  2  3  3  5  7
-            #2  3  2  4  7  7
-
-    def canonical_int(self, int_x, int_x_i, int_y, int_y_i, int_z, int_z_i):
-        results = []
-
-        return results
-
     def canonical_box(self, inter, inter_i):
         if self.is_in(inter, inter_i):
             if inter.upper < inter_i.upper:
@@ -155,6 +132,18 @@ class algorytm:
                 return 'o II I'
         elif self.is_separate(inter, inter_i):
             return 's'
+
+
+
+            #1  2  3  3  5  7
+            #2  3  2  4  7  7
+
+    def canonical_int(self, int_x, int_x_i, int_y, int_y_i, int_z, int_z_i):
+        results = []
+
+        return results
+
+
 
     def canonical(self, inter_x, inter_y, inter_z, inter_x_i, inter_y_i, inter_z_i):
         return self.canonical_box(inter_x, inter_x_i),  self.canonical_box(inter_y, inter_y_i),  self.canonical_box(inter_z, inter_z_i)
@@ -187,7 +176,7 @@ class algorytm:
                 iD += 1
         # wypisanie drzewa
         lista = tree.tree.intersection(tree.tree.get_bounds(), True)
-        lista = [(item.bbox)for item in lista]
+        lista = [item.bbox for item in lista]
         print('\n')
         for i in lista:
             print([i[0], i[3]], end = '') if i[0] != i[3] else print([i[0]], end = '')
