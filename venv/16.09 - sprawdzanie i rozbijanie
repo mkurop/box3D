@@ -43,10 +43,11 @@ class TEST:
         print(i.interval_x, i.interval_y, i.interval_z,'\n')
         sort, in2sorted, sorted2in = self.my_sort(self.canonical(q.interval_x, q.interval_y, q.interval_z, i.interval_x, i.interval_y, i.interval_z))
 
-        self.permute([q.interval_x, q.interval_y, q.interval_z], in2sorted)
-        self.permute([i.interval_x, i.interval_y, i.interval_z], in2sorted)
+        perm_q = self.permute([q.interval_x, q.interval_y, q.interval_z], in2sorted)
+        perm_i = self.permute([i.interval_x, i.interval_y, i.interval_z], in2sorted)
 
 
+        '''
         min_x_u, min_x_l, max_x_u, max_x_l, min_y_u, min_y_l, max_y_u, max_y_l, min_z_u, min_z_l, max_z_u, max_z_l = \
             min(q.interval_x.upper, i.interval_x.upper), min(q.interval_x.lower, i.interval_x.lower), max(q.interval_x.upper, i.interval_x.upper), max(q.interval_x.lower, i.interval_x.lower), \
             min(q.interval_y.upper, i.interval_y.upper), min(q.interval_y.lower, i.interval_y.lower), max(q.interval_y.upper, i.interval_y.upper), max(q.interval_y.lower, i.interval_y.lower),\
@@ -55,26 +56,37 @@ class TEST:
                     [closed(min_y_l, max_y_l), closed(max_y_l, min_y_u), closed(min_y_u, max_y_u)],
                     [closed(min_y_l, max_y_l), closed(max_y_l, min_y_u), closed(min_y_u, max_y_u)],
                     [closed(min_z_l, max_z_l), closed(max_z_l, min_z_u), closed(min_z_u, max_z_u)]]
+        '''
 
         if sort == ['in I II', 'in I II', 'in I II']:
-            return [box3D(inter[1][0], inter[1][1], inter[1][2])]
+            return [box3D(i.interval_x, i.interval_y, i.interval_z)]
         elif sort == ['in II I', 'in II I', 'in II I']:
-            return [box3D(inter[0][0], inter[0][1], inter[0][2])]
+            return [box3D(q.interval_x, q.interval_y, q.interval_z)]
         elif sort == ['in I II', 'in I II', 'in II I']:
-            return [box3D(inter[0][0], inter[0][1], inter[0][2]),
-                   box3D(inter[1][0], inter[1][1], inter[4][0]),
-                   box3D(inter[1][0], inter[1][1], inter[4][2])]
+            box1 = self.permute([perm_q[0], perm_q[1], perm_q[2]], sorted2in)
+            box2 = self.permute([perm_i[0], perm_i[1], closed(min(perm_q[2].lower, perm_i[2].lower), max(perm_q[2].lower, perm_i[2].lower))], sorted2in)
+            box3 = self.permute([perm_i[0], perm_i[1], closed(min(perm_i[2].upper, perm_q[2].upper), max(perm_i[2].upper, perm_q[2].upper))], sorted2in)
+            return [box3D(box1[0], box1[1], box1[2]),
+                    box3D(box2[0], box2[1], box2[2]),
+                    box3D(box3[0], box3[1], box3[2])]
         elif sort == ['in I II', 'in II I', 'in II I']:
-            return [box3D(inter[0][0], inter[0][1], inter[0][2]),
-                   box3D(inter[2][0], inter[3][1], inter[4][1]),
-                   box3D(inter[2][2], inter[3][1], inter[4][1])]
+            box1 = self.permute([perm_q[0], perm_q[1], perm_q[2]], sorted2in)
+            box2 = self.permute([closed(min(perm_q[0].lower, perm_i[0].lower), max(min(perm_q[0].lower, perm_i[0].lower))),  perm_i[1], perm_i[2]], sorted2in)
+            box3 = self.permute([closed(perm_i[0].upper, perm_q[0].upper), perm_i[1]], perm_i[2])
+            return [box3D(box1[0], box1[1], box1[2]),
+                   box3D(box2[0], box2[1], box2[2]),
+                   box3D(box3[0], box3[1], box3[2])]
         #--------------------------------------------------------#
         elif sort == ['in I II', 'in I II', 'o I II']:
-            return [box3D(inter[1][0], inter[1][1], inter[1][2]),
-                   box3D(inter[0][0], inter[0][1], inter[4][0])]
+            box1 = self.permute([perm_i[0], perm_i[1], perm_i[2]], sorted2in)
+            box2 = self.permute([perm_q[0], perm_q[1], closed(min(perm_i[2].lower, perm_q[2].lower), max(perm_i[2].lower, perm_q[2].lower))], sorted2in)
+            return [box3D(box1[0], box1[1], box1[2]),
+                   box3D(box2[0], box2[1], box2[2])]
         elif sort == ['in I II', 'in I II', 'o II I']:
-            return [box3D(inter[1][0], inter[1][1], inter[1][2]),
-                    box3D(inter[0][0], inter[0][1], inter[4][2])]
+            box1 = self.permute([perm_i[0], perm_i[1], perm_i[2]], sorted2in)
+            box2 = self.permute([perm_q[0], perm_q[1], closed(min(perm_q[2].upper, perm_i[2].upper), max(perm_q[2].upper, perm_i[2].upper))], sorted2in)
+            return [box3D(box1[0], box1[1], box1[2]),
+                    box3D(box2[0], box2[1], box2[2])]
 
 
 
