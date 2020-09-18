@@ -2,13 +2,13 @@
 najpierw trzeba stworzyć 20 funkcji rozbijających kanoniczne trójki sygnatur
 lista kanoniczny trójek sygnatur jest następująca:
 
-[('outI<II', 'outI<II', 'outI<II'), ('outI<II', 'outI<II', 'outI>II'), ('outI<II', 'outI<II', 'inI<II'),
-('outI<II', 'outI<II', 'inI>II'), ('outI<II', 'outI>II', 'outI>II'), ('outI<II', 'outI>II', 'inI<II'),
-('outI<II', 'outI>II', 'inI>II'), ('outI<II', 'inI<II', 'inI<II'), ('outI<II', 'inI<II', 'inI>II'),
-('outI<II', 'inI>II', 'inI>II'), ('outI>II', 'outI>II', 'outI>II'), ('outI>II', 'outI>II', 'inI<II'),
-('outI>II', 'outI>II', 'inI>II'), ('outI>II', 'inI<II', 'inI<II'), ('outI>II', 'inI<II', 'inI>II'),
-('outI>II', 'inI>II', 'inI>II'), ('inI<II', 'inI<II', 'inI<II'), ('inI<II', 'inI<II', 'inI>II'),
-('inI<II', 'inI>II', 'inI>II'), ('inI>II', 'inI>II', 'inI>II')]
+[(''), (''), (''),
+(''), (''), ('outI<II', 'outI>II', 'inI<II'),
+(''), (''), (''),
+(''), (''), (''),
+(''), (''), (''),
+(''), (''), (''),
+(''), ('')]
 
 """
 
@@ -24,6 +24,7 @@ def oI_II_oII_I_oII_I(box1, box2):
 
 def oII_I_oII_I_oII_I(box1, box2):
     return
+
 # -------------------------------- #
 def iI_II_i_I_II_iI_II(box1, box2):
     return
@@ -43,10 +44,22 @@ def oI_II_oI_II_iI_II(box1, box2):
 def oI_II_oI_II_iII_I(box1, box2):
     return
 
+def oI_II_oI_II_iI_II(box1, box2):
+    return
+
+def oI_II_oII_I_iI_II(box1, box2):
+    return
+
 def oI_II_oII_I_iII_I(box1, box2):
     return
 
 def oII_I_oII_I_iII_I(box1, box2):
+    return
+
+def oII_I_oII_I_iI_II(box1, box2):
+    return
+
+def oI_II_oII_I_iI_II(box1, box2):
     return
 # -------------------------------- #
 def oI_II_iI_II_iI_II(box1, box2):
@@ -60,7 +73,7 @@ def oI_II_iII_I_iII_I(box1, box2):
 
 def oII_I_iII_I_iII_I(box1, box2):
     return
-
+# -------------------------------- #
 
 """
 ...
