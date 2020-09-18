@@ -1,3 +1,100 @@
+"""
+najpierw trzeba stworzyć 20 funkcji rozbijających kanoniczne trójki sygnatur
+lista kanoniczny trójek sygnatur jest następująca:
+
+[('outI<II', 'outI<II', 'outI<II'), ('outI<II', 'outI<II', 'outI>II'), ('outI<II', 'outI<II', 'inI<II'),
+('outI<II', 'outI<II', 'inI>II'), ('outI<II', 'outI>II', 'outI>II'), ('outI<II', 'outI>II', 'inI<II'),
+('outI<II', 'outI>II', 'inI>II'), ('outI<II', 'inI<II', 'inI<II'), ('outI<II', 'inI<II', 'inI>II'),
+('outI<II', 'inI>II', 'inI>II'), ('outI>II', 'outI>II', 'outI>II'), ('outI>II', 'outI>II', 'inI<II'),
+('outI>II', 'outI>II', 'inI>II'), ('outI>II', 'inI<II', 'inI<II'), ('outI>II', 'inI<II', 'inI>II'),
+('outI>II', 'inI>II', 'inI>II'), ('inI<II', 'inI<II', 'inI<II'), ('inI<II', 'inI<II', 'inI>II'),
+('inI<II', 'inI>II', 'inI>II'), ('inI>II', 'inI>II', 'inI>II')]
+
+"""
+
+def oI_II_oI_II_oI_II(box1,box2):
+    return
+
+def oI_II_oI_II_oII_I(box1,box2):
+    return
+
+def oI_II_oI_II_iI_II(box1,box2):
+    return
+
+"""
+...
+i tak dalej
+"""
+
+"""
+potrzebny jest słownik który przyporządkowuje indeksy do słownika sygnatur
+"""
+
+idx_sig = {'oI_II' : 0, 'oII_I' : 1, 'iI_II': 2, 'iII_I': 3}
+
+"""
+potrzebna jest funkcja która zwraca sygnaturę dla pary interwałów wejściowych
+sygnatury są ze zbioru oI_II,oII_I, iI_II, iII_I
+"""
+
+def get_signature(interval1,interval2):
+    return
+
+"""
+funkcja która dla pary pudełek zwraca trójkę sygnatur (możliwe że niekanoniczną)
+"""
+
+def get_signatures_triple(box1,box2):
+    return
+
+"""
+Powiedzmy że powyższa funkcja zwraca trójkę sygnatur ts
+"""
+
+"""
+Tworzymy liste indeksów dla sygnatur z ts
+"""
+
+tsi = [idx_sig[ts[0]],idx_sig[ts[1]],idx_sig[ts[2]]]
+
+"""
+następnie my_sort na tsi
+"""
+
+a,b,c = my_sort(tsi)
+
+"""
+sprowadzamy ts do postaci kanonicznej przy pomocy permute
+"""
+
+"""
+sprowadzamy interwały w box1 i box2 do postaci kanonicznej przy pomocy permute
+"""
+
+"""
+tworzymy słownik dla funkcji rozbijających
+
+rozbij_dict = {(kanoniczna trójka sygnatur) : (odpowiadająca jej funkcja rozbijająca)}
+"""
+
+"""
+stosujemy odpowiednią funkcję do rozbicia naszych pudełek box1 i box2, z interwałami w kolejności kanonicznej
+funkcję rozbijającą pobieramy ze słownika
+"""
+
+"""
+cofamy permutację interwałów w box1 i box2 do pierwotnej kolejności przy pomocy funkcji permute
+"""
+
+
+
+
+
+
+
+
+
+
 class TEST:
 
     def permute(self, sortin, permutation):
