@@ -12,14 +12,55 @@ lista kanoniczny trójek sygnatur jest następująca:
 
 """
 
-def oI_II_oI_II_oI_II(box1,box2):
+
+def oI_II_oI_II_oI_II(box1, box2):
     return
 
-def oI_II_oI_II_oII_I(box1,box2):
+def oI_II_oI_II_oII_I(box1, box2):
     return
 
-def oI_II_oI_II_iI_II(box1,box2):
+def oI_II_oII_I_oII_I(box1, box2):
     return
+
+def oII_I_oII_I_oII_I(box1, box2):
+    return
+# -------------------------------- #
+def iI_II_i_I_II_iI_II(box1, box2):
+    return
+
+def iI_II_i_I_II_iII_I(box1, box2):
+    return
+
+def iI_II_i_II_I_iII_I(box1, box2):
+    return
+
+def iII_I_i_II_I_iII_I(box1, box2):
+    return
+# -------------------------------- #
+def oI_II_oI_II_iI_II(box1, box2):
+    return
+
+def oI_II_oI_II_iII_I(box1, box2):
+    return
+
+def oI_II_oII_I_iII_I(box1, box2):
+    return
+
+def oII_I_oII_I_iII_I(box1, box2):
+    return
+# -------------------------------- #
+def oI_II_iI_II_iI_II(box1, box2):
+    return
+
+def oI_II_iI_II_iII_I(box1, box2):
+    return
+
+def oI_II_iII_I_iII_I(box1, box2):
+    return
+
+def oII_I_iII_I_iII_I(box1, box2):
+    return
+
 
 """
 ...
