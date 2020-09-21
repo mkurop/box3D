@@ -10,47 +10,54 @@ class TEST:
         x = self.divide_out(box1.interval_x, box2.interval_x)
         y = self.divide_out(box1.interval_y, box2.interval_y)
         z = self.divide_out(box1.interval_z, box2.interval_z)
-        return [[x[0], y[0], z[0]], [x[1], y[1], z[2] - z[1]], [x[2] - x[1], y[2], z[2]]]
+        table = [[x[0], y[0], z[0]], [x[1], y[1], z[2]], [x[2], y[2], z[2]]]
+        return table
 
     def oI_II_oI_II_oII_I(self, box1, box2):
         x = self.divide_out(box1.interval_x, box2.interval_x)
         y = self.divide_out(box1.interval_y, box2.interval_y)
         z = self.divide_out(box1.interval_z, box2.interval_z)
-        return [[x[0], y[0], z[0]], [x[1], y[1], z[2] - z[1]], [x[2] - x[1], y[2], z[2]]]
+        table = [[x[0], y[0], z[0]], [x[1], y[1], z[2] - z[1]], [x[2] - x[1], y[2], z[2]]]
+        return table
 
     def oI_II_oII_I_oII_I(self, box1, box2):
         x = self.divide_out(box1.interval_x, box2.interval_x)
         y = self.divide_out(box1.interval_y, box2.interval_y)
         z = self.divide_out(box1.interval_z, box2.interval_z)
-        return [[x[0], y[0], z[0]], [x[2] - x[1], y[2] - y[1], z[2]], [x[1], y[1], z[2] - z[1]]]
+        table = [[x[0], y[0], z[0]], [x[2] - x[1], y[2] - y[1], z[2]], [x[1], y[1], z[2] - z[1]]]
+        return table
 
     def oII_I_oII_I_oII_I(self, box1, box2):
-        return [[box1.interval_x, box1.interval_y, box1.interval_z],
+        table = [[box1.interval_x, box1.interval_y, box1.interval_z],
                 [closed(box2.interval_x.lower, box1.interval_x.lower), box1.interval_y & box2.interval_y, box2.interval_z],
                 [closed(box1.interval_x.upper, box2.interval_x.upper), box1.interval_y & box2.interval_y, box2.interval_z]]
-
+        return table
 
     def iI_II_i_I_II_iI_II(self, box1, box2):
         x = self.divide_in(box1.interval_x, box2.interval_x)
         y = self.divide_in(box1.interval_y, box2.interval_y)
         z = self.divide_in(box1.interval_z, box2.interval_z)
-        return [[x[0], y[0], z[0]]]
+        table = [[x[0], y[0], z[0]]]
+        return table
 
     def iI_II_i_I_II_iII_I(self, box1, box2):
-        return [[box1.interval_x, box1.interval_y, box1.interval_z],
+        table = [[box1.interval_x, box1.interval_y, box1.interval_z],
                 [box2.interval_x, box2.interval_y, closed(box2.interval_z.lower, box1.interval_z.lower)],
                 [box2.interval_x, box2.interval_y, closed(box1.interval_z.lower, box2.interval_z.lower)]]
+        return table
 
-    def iI_II_iII_I_iII_I(self, box1, box2):
-        return [[box1.interval_x, box1.interval_y, box1.interval_z],
+    def iI_II_i_II_I_iII_I(self, box1, box2):
+        table = [[box1.interval_x, box1.interval_y, box1.interval_z],
                 [closed(box2.interval_x.lower, box1.interval_x.lower), box2.interval_y, box2.interval_z],
                 [closed(box1.interval_x.upper, box2.interval_x.upper), box2.interval_y, box2.interval_z]]
+        return table
 
     def iII_I_i_II_I_iII_I(self, box1, box2):
         x = self.divide_in(box1.interval_x, box2.interval_x)
         y = self.divide_in(box1.interval_y, box2.interval_y)
         z = self.divide_in(box1.interval_z, box2.interval_z)
-        return [[x[0], y[0], z[0]]]
+        table = [[x[0], y[0], z[0]]]
+        return table
 
     def oII_I_iI_II_iI_II(self, box1, box2):
         return
@@ -80,8 +87,8 @@ class TEST:
         x = self.divide_out(box1.interval_x, box2.interval_x)
         y = self.divide_in(box1.interval_y, box2.interval_y)
         z = self.divide_in(box1.interval_z, box2.interval_z)
-        return [[x[2], y[0], z[0]],
-                [x[0] - x[1], box1.interval_y, box1.interval_z]]
+        table = [[x[2], y[0], z[0]], [x[0] - x[1], box1.interval_y, box1.interval_z]]
+        return table
 
     def oI_II_iI_II_iII_I(self, box1, box2):
         return
@@ -137,30 +144,30 @@ class TEST:
     """
 #    idx_sig = {'oI_II': 0, 'oII_I': 1, 'iI_II': 2, 'iII_I': 3, 'sep': 4}
 
-    rozbij_dict = {([0, 0, 0]): oI_II_oI_II_oI_II,
-                   ([0, 0, 1]): oI_II_oI_II_oII_I,
-                   ([0, 1, 1]): oI_II_oII_I_oII_I,
-                   ([1, 1, 1]): oII_I_oII_I_oII_I,
+    rozbij_dict = {tuple([0, 0, 0]): oI_II_oI_II_oI_II,
+                   tuple([0, 0, 1]): oI_II_oI_II_oII_I,
+                   tuple([0, 1, 1]): oI_II_oII_I_oII_I,
+                   tuple([1, 1, 1]): oII_I_oII_I_oII_I,
 
-                   ([2, 2, 2]): iI_II_i_I_II_iI_II,
-                   ([2, 2, 3]): iI_II_i_I_II_iII_I,
-                   ([2, 3, 3]): iI_II_i_II_I_iII_I,
-                   ([3, 3, 3]): iII_I_i_II_I_iII_I,
+                   tuple([2, 2, 2]): iI_II_i_I_II_iI_II,
+                   tuple([2, 2, 3]): iI_II_i_I_II_iII_I,
+                   tuple([2, 3, 3]): iI_II_i_II_I_iII_I,
+                   tuple([3, 3, 3]): iII_I_i_II_I_iII_I,
 
-                   ([0, 0, 2]): oI_II_oI_II_iI_II,
-                   ([0, 1, 2]): oI_II_oII_I_iI_II,
-                   ([1, 1, 2]): oII_I_oII_I_iI_II,
-                   ([1, 2, 2]): oII_I_iI_II_iI_II,
+                   tuple([0, 0, 2]): oI_II_oI_II_iI_II,
+                   tuple([0, 1, 2]): oI_II_oII_I_iI_II,
+                   tuple([1, 1, 2]): oII_I_oII_I_iI_II,
+                   tuple([1, 2, 2]): oII_I_iI_II_iI_II,
 
-                   ([0, 0, 3]): oI_II_oI_II_iII_I,
-                   ([0, 1, 3]): oI_II_oII_I_iII_I,
-                   ([1, 1, 3]): oII_I_oII_I_iII_I,
-                   ([1, 3, 3]): oII_I_iII_I_iII_I,
+                   tuple([0, 0, 3]): oI_II_oI_II_iII_I,
+                   tuple([0, 1, 3]): oI_II_oII_I_iII_I,
+                   tuple([1, 1, 3]): oII_I_oII_I_iII_I,
+                   tuple([1, 3, 3]): oII_I_iII_I_iII_I,
 
-                   ([1, 2, 3]): oII_I_iI_II_i_II_I,
-                   ([0, 2, 2]): oI_II_iI_II_iI_II,
-                   ([0, 2, 3]): oI_II_iI_II_iII_I,
-                   ([0, 3, 3]): oI_II_iII_I_iII_I}
+                   tuple([1, 2, 3]): oII_I_iI_II_i_II_I,
+                   tuple([0, 2, 2]): oI_II_iI_II_iI_II,
+                   tuple([0, 2, 3]): oI_II_iI_II_iII_I,
+                   tuple([0, 3, 3]): oI_II_iII_I_iII_I}
     """
     Tworzymy liste indeksów dla sygnatur z ts
     """
@@ -256,9 +263,30 @@ class box3D:
     @staticmethod
     def factory(x1, y1, z1, x2, y2, z2):
         return box3D(closed(x1, x2), closed(y1, y2), closed(z1, z2))
-from portion import closed
+
+from portion import closed, closedopen, openclosed
+
+'''
 tst = TEST()
 int1 = tst.rozbij(box3D(closed(input(), input()), closed(input(), input()), closed(input(), input())), box3D(closed(input(), input()), closed(input(), input()), closed(input(), input())))
 
 for i in range(len(int1)):
     print(int1[i].interval_x, int1[i].interval_y, int1[i].interval_z)
+'''
+
+#unit testy
+
+import unittest
+class testing(unittest.TestCase):
+    def setUp(self):
+        self.box0 = box3D(closed(2, 5), closed(2, 5), closed(2, 5))
+        self.box1 = box3D(closed(3, 6), closed(3, 6), closed(3, 6))
+    def test_funkcji_oI_II_oI_II_oI_II(self):
+        tst = TEST()
+        self.assertEqual(tst.oI_II_oI_II_oI_II(self.box0, self.box1),
+                         [[self.box0.interval_x - self.box1.interval_x, self.box0.interval_y - self.box1.interval_y, self.box0.interval_z - self.box1.interval_z],
+                          [self.box0.interval_x & self.box1.interval_x, self.box0.interval_y & self.box1.interval_y, self.box1.interval_z - (self.box0.interval_z & self.box1.interval_z)],
+                          [self.box1.interval_x - (self.box0.interval_x & self.box1.interval_x), self.box1.interval_y - self.box0.interval_y, self.box1.interval_z - self.box0.interval_z]])
+
+if __name__ == '__main__':
+    unittest.main()
