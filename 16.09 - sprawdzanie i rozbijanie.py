@@ -15,65 +15,86 @@ import math
 
 class TEST:
 
+    def oI_II_oI_II_oI_II(self, box1, box2):
+        x = self.divide_out(box1.interval_x, box2.interval_x)
+        y = self.divide_out(box1.interval_y, box2.interval_y)
+        z = self.divide_out(box1.interval_z, box2.interval_z)
+        return [[x[0], y[0], z[0]], [x[1], y[1], z[2] - z[1]], [x[2] - x[1], y[2], z[2]]]
 
-    def oI_II_oI_II_oI_II(box1, box2):
+    def oI_II_oI_II_oII_I(self, box1, box2):
+        x = self.divide_out(box1.interval_x, box2.interval_x)
+        y = self.divide_out(box1.interval_y, box2.interval_y)
+        z = self.divide_out(box1.interval_z, box2.interval_z)
+        return [[x[0], y[0], z[0]], [x[1], y[1], z[2] - z[1]], [x[2] - x[1], y[2], z[2]]]
+
+    def oI_II_oII_I_oII_I(self, box1, box2):
+        x = self.divide_out(box1.interval_x, box2.interval_x)
+        y = self.divide_out(box1.interval_y, box2.interval_y)
+        z = self.divide_out(box1.interval_z, box2.interval_z)
+        return [[x[0], y[0], z[0]], [x[2] - x[1], y[2] - y[1], z[2]], [x[1], y[1], z[2] - z[1]]]
+
+    def oII_I_oII_I_oII_I(self, box1, box2):
+        return [[box1.interval_x, box1.interval_y, box1.interval_z],
+                [closed(box2.interval_x.lower, box1.interval_x.lower), box1.interval_y & box2.interval_y, box2.interval_z],
+                [closed(box1.interval_x.upper, box2.interval_x.upper), box1.interval_y & box2.interval_y, box2.interval_z]]
+
+
+    def iI_II_i_I_II_iI_II(self, box1, box2):
+        x = self.divide_in(box1.interval_x, box2.interval_x)
+        y = self.divide_in(box1.interval_y, box2.interval_y)
+        z = self.divide_in(box1.interval_z, box2.interval_z)
+        return [[x[0], y[0], z[0]]]
+
+    def iI_II_i_I_II_iII_I(self, box1, box2):
+        return [[box1.interval_x, box1.interval_y, box1.interval_z],
+                [box2.interval_x, box2.interval_y, closed(box2.interval_z.lower, box1.interval_z.lower)],
+                [box2.interval_x, box2.interval_y, closed(box1.interval_z.lower, box2.interval_z.lower)]]
+
+    def iI_II_iII_I_iII_I(self, box1, box2):
+        return [[box1.interval_x, box1.interval_y, box1.interval_z],
+                [closed(box2.interval_x.lower, box1.interval_x.lower), box2.interval_y, box2.interval_z]
+                [closed(box1.interval_x.upper, box2.interval_x.upper), box2.interval_y, box2.interval_z]]
+
+    def iII_I_i_II_I_iII_I(self, box1, box2):
+        x = self.divide_in(box1.interval_x, box2.interval_x)
+        y = self.divide_in(box1.interval_y, box2.interval_y)
+        z = self.divide_in(box1.interval_z, box2.interval_z)
+        return [[x[0], y[0], z[0]]]
+
+    def oII_I_iI_II_iI_II(self, box1, box2):
         return
 
-    def oI_II_oI_II_oII_I(box1, box2):
+    def oI_II_oI_II_iII_I(self, box1, box2):
         return
 
-    def oI_II_oII_I_oII_I(box1, box2):
+    def oI_II_oI_II_iI_II(self, box1, box2):
         return
 
-    def oII_I_oII_I_oII_I(box1, box2):
+    def oI_II_oII_I_iI_II(self, box1, box2):
         return
 
-    def iI_II_i_I_II_iI_II(box1, box2):
+    def oI_II_oII_I_iII_I(self, box1, box2):
         return
 
-    def iI_II_i_I_II_iII_I(box1, box2):
+    def oII_I_oII_I_iII_I(self, box1, box2):
         return
 
-    def iI_II_i_II_I_iII_I(box1, box2):
+    def oII_I_oII_I_iI_II(self, box1, box2):
         return
 
-    def iII_I_i_II_I_iII_I(box1, box2):
+    def oII_I_iI_II_i_II_I(self, box1, box2):
         return
 
-    def oII_I_iI_II_iI_II(box1, box2):
+    def oI_II_iI_II_iI_II(self, box1, box2):
         return
 
-    def oI_II_oI_II_iII_I(box1, box2):
+    def oI_II_iI_II_iII_I(self, box1, box2):
         return
 
-    def oI_II_oI_II_iI_II(box1, box2):
+    def oI_II_iII_I_iII_I(self, box1, box2):
         return
 
-    def oI_II_oII_I_iI_II(box1, box2):
-        return
-
-    def oI_II_oII_I_iII_I(box1, box2):
-        return
-
-    def oII_I_oII_I_iII_I(box1, box2):
-        return
-
-    def oII_I_oII_I_iI_II(box1, box2):
-        return
-
-    def oII_I_iI_II_i_II_I(box1, box2):
-        return
-
-    def oI_II_iI_II_iI_II(box1, box2):
-        return
-
-    def oI_II_iI_II_iII_I(box1, box2):
-        return
-
-    def oI_II_iII_I_iII_I(box1, box2):
-        return
-
-    def oII_I_iII_I_iII_I(box1, box2):
+    def oII_I_iII_I_iII_I(self, box1, box2):
         return
 
     """
@@ -144,8 +165,7 @@ class TEST:
                    ([1, 2, 3]): oII_I_iI_II_i_II_I,
                    ([0, 2, 2]): oI_II_iI_II_iI_II,
                    ([0, 2, 3]): oI_II_iI_II_iII_I,
-                   ([0, 3, 3]): oI_II_iII_I_iII_I,
-                   }
+                   ([0, 3, 3]): oI_II_iII_I_iII_I}
     """
     Tworzymy liste indeksów dla sygnatur z ts
     """
@@ -157,7 +177,8 @@ class TEST:
         ts = self.permute(ts, b)
         box1 = self.permute([box1.interval_x, box1.interval_y, box1.interval_z], b)
         box2 = self.permute([box2.interval_x, box2.interval_y, box2.interval_z], b)
-        split = self.rozbij_dict[ts](box1, box2)
+        split, table = [], self.rozbij_dict[ts](box1, box2)
+        split.extend(box3D(i[0], i[1], i[2]) for i in table)
         box1, box2 = self.permute(box1, c), self.permute(box2, c)
         return split, box1, box2
     """
