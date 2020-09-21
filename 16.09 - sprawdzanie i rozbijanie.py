@@ -1,15 +1,6 @@
 """
 najpierw trzeba stworzyć 20 funkcji rozbijających kanoniczne trójki sygnatur
 lista kanoniczny trójek sygnatur jest następująca:
-
-[(''), (''), (''),
-(''), (''), ('')',
-(''), (''), (''),
-(''), (''), (''),
-(''), (''), (''),
-(''), (''), (''),
-(''), ('')]
-
 """
 import math
 
@@ -52,7 +43,7 @@ class TEST:
 
     def iI_II_iII_I_iII_I(self, box1, box2):
         return [[box1.interval_x, box1.interval_y, box1.interval_z],
-                [closed(box2.interval_x.lower, box1.interval_x.lower), box2.interval_y, box2.interval_z]
+                [closed(box2.interval_x.lower, box1.interval_x.lower), box2.interval_y, box2.interval_z],
                 [closed(box1.interval_x.upper, box2.interval_x.upper), box2.interval_y, box2.interval_z]]
 
     def iII_I_i_II_I_iII_I(self, box1, box2):
@@ -86,7 +77,11 @@ class TEST:
         return
 
     def oI_II_iI_II_iI_II(self, box1, box2):
-        return
+        x = self.divide_out(box1.interval_x, box2.interval_x)
+        y = self.divide_in(box1.interval_y, box2.interval_y)
+        z = self.divide_in(box1.interval_z, box2.interval_z)
+        return [[x[2], y[0], z[0]],
+                [x[0] - x[1], box1.interval_y, box1.interval_z]]
 
     def oI_II_iI_II_iII_I(self, box1, box2):
         return
@@ -120,12 +115,12 @@ class TEST:
         elif self.is_equal(interval1, interval2):
             return self.idx_sig['iI_II']
         elif self.is_half_out(interval1, interval2):
-            if self.divide_out[1] == (math.inf, -math.inf):
+            if self.divide_out[1] == (0, 0):
                 return self.idx_sig['oI_II'] if interval2.upper > interval1.upper else self.idx_sig['oII_I']
             else:
                 return self.idx_sig['iI_II'] if interval2.upper > interval1.upper else self.idx_sig['iII_I']
         else:
-            self.idx_sig['sep']
+            return self.idx_sig['sep']
 
 
 
@@ -240,6 +235,8 @@ class TEST:
         inter = int1 & int2
         return [int1 - inter, inter, int2 - inter]
 
+    def divide_in(self, int1, int2):
+        return [int1 | int2]
 
 class box3D:
     def __init__(self, interval_x, interval_y, interval_z):
