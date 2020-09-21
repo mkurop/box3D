@@ -28,8 +28,6 @@ class TEST:
     def oII_I_oII_I_oII_I(box1, box2):
         return
 
-
-
     def iI_II_i_I_II_iI_II(box1, box2):
         return
 
@@ -42,10 +40,7 @@ class TEST:
     def iII_I_i_II_I_iII_I(box1, box2):
         return
 
-
-
-
-    def oI_II_oI_II_iI_II(box1, box2):
+    def oII_I_iI_II_iI_II(box1, box2):
         return
 
     def oI_II_oI_II_iII_I(box1, box2):
@@ -57,9 +52,6 @@ class TEST:
     def oI_II_oII_I_iI_II(box1, box2):
         return
 
-
-
-
     def oI_II_oII_I_iII_I(box1, box2):
         return
 
@@ -69,11 +61,8 @@ class TEST:
     def oII_I_oII_I_iI_II(box1, box2):
         return
 
-    def oI_II_oII_I_iI_II(box1, box2):
+    def oII_I_iI_II_i_II_I(box1, box2):
         return
-
-
-
 
     def oI_II_iI_II_iI_II(box1, box2):
         return
@@ -151,25 +140,26 @@ class TEST:
                    ([0, 1, 3]): oI_II_oII_I_iII_I,
                    ([1, 1, 3]): oII_I_oII_I_iII_I,
                    ([1, 3, 3]): oII_I_iII_I_iII_I,
-                   ([1, 2, 3]): oII_I_iI_II_i_II_I,
-                   #dwa błędnie
 
+                   ([1, 2, 3]): oII_I_iI_II_i_II_I,
                    ([0, 2, 2]): oI_II_iI_II_iI_II,
                    ([0, 2, 3]): oI_II_iI_II_iII_I,
                    ([0, 3, 3]): oI_II_iII_I_iII_I,
-
                    }
     """
     Tworzymy liste indeksów dla sygnatur z ts
     """
     def sort_signatures(self, box1, box2):
-        ts = get_signatures_triple(box1, box2)
+        idx_sig = self.get_signatures_triple(box1, box2)
+        ts = self.get_signatures_triple(box1, box2)
         tsi = [idx_sig[ts[0]], idx_sig[ts[1]], idx_sig[ts[2]]]
         a, b, c = self.my_sort(tsi)
         ts = self.permute(ts, b)
         box1 = self.permute([box1.interval_x, box1.interval_y, box1.interval_z], b)
         box2 = self.permute([box2.interval_x, box2.interval_y, box2.interval_z], b)
-        return
+        split = self.rozbij_dict[ts](box1, box2)
+        box1, box2 = self.permute(box1, c), self.permute(box2, c)
+        return split, box1, box2
     """
     następnie my_sort na tsi
     """
