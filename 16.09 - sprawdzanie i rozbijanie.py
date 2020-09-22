@@ -72,7 +72,10 @@ class TEST:
         return
 
     def oI_II_iI_II_iI_II(self, box1, box2):
-        return
+        x1, y1, z1 = box1.interval_x, box1.interval_y, box1.interval_z
+        x2, y2, z2 = box2.interval_x, box2.interval_y, box2.interval_z
+        table = [[x2, y2, z2], [x1, y1, z1 - z2]]
+        return table
 
     def oI_II_iI_II_iII_I(self, box1, box2):
         return
@@ -297,6 +300,14 @@ class testing(unittest.TestCase):
                          [[self.interval_smaller, self.in_interval_bigger, self.in_interval_bigger],
                           [x_cut[0], self.interval_smaller, self.interval_smaller],
                           [x_cut[2], self.interval_smaller, self.interval_smaller]])
+
+    def test_funkcji_oI_II_iI_II_iI_II(self):
+        box0 = box3D(self.interval_smaller, self.interval_smaller, self.interval_smaller)
+        box1 = box3D(self.out_interval_bigger, self.in_interval_bigger, self.in_interval_bigger)
+        x1, y1, z1 = box0.interval_x, box0.interval_y, box0.interval_z
+        x2, y2, z2 = box1.interval_x, box1.interval_y, box1.interval_z
+        self.assertEqual(self.tst.oI_II_iI_II_iI_II(box0, box1), [[x2, y2, z2], [x1, y1, z1 - z2]])
+
 
 if __name__ == '__main__':
     unittest.main()
