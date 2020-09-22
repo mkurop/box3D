@@ -17,7 +17,7 @@ class TEST:
         x = self.divide_out(box1.interval_x, box2.interval_x)
         y = self.divide_out(box1.interval_y, box2.interval_y)
         z = self.divide_out(box1.interval_z, box2.interval_z)
-        table = [[x[0], y[0], z[0]], [x[1], y[1], z[2] - z[1]], [x[2] - x[1], y[2], z[2]]]
+        table = [[x[0], y[0], z[0]], [x[1], y[1], z[2]], [x[2], y[2], z[2]]]
         return table
 
     def oI_II_oII_I_oII_I(self, box1, box2):
@@ -281,12 +281,17 @@ class testing(unittest.TestCase):
     def setUp(self):
         self.box0 = box3D(closed(2, 5), closed(2, 5), closed(2, 5))
         self.box1 = box3D(closed(3, 6), closed(3, 6), closed(3, 6))
+        self.tst = TEST()
     def test_funkcji_oI_II_oI_II_oI_II(self):
-        tst = TEST()
-        self.assertEqual(tst.oI_II_oI_II_oI_II(self.box0, self.box1),
+        self.assertEqual(self.tst.oI_II_oI_II_oI_II(self.box0, self.box1),
                          [[self.box0.interval_x - self.box1.interval_x, self.box0.interval_y - self.box1.interval_y, self.box0.interval_z - self.box1.interval_z],
                           [self.box0.interval_x & self.box1.interval_x, self.box0.interval_y & self.box1.interval_y, self.box1.interval_z - (self.box0.interval_z & self.box1.interval_z)],
                           [self.box1.interval_x - (self.box0.interval_x & self.box1.interval_x), self.box1.interval_y - self.box0.interval_y, self.box1.interval_z - self.box0.interval_z]])
+    def test_funkcji_oI_II_oI_II_oII_I(self):
+        self.assertEqual(self.tst.oI_II_oI_II_oII_I(self.box0, self.box1),
+                         [[self.box0.interval_x - self.box1.interval_x, self.box0.interval_y - self.box1.interval_y, self.box0.interval_z - self.box1.interval_z],
+                          [self.box0.interval_x & self.box1.interval_x, self.box0.interval_y & self.box1.interval_y, self.box1.interval_z - self.box0.interval_z],
+                          [self.box1.interval_x - self.box0.interval_x, self.box1.interval_y - self.box0.interval_y, self.box1.interval_z - self.box0.interval_z]])
 
 if __name__ == '__main__':
     unittest.main()
