@@ -7,9 +7,6 @@ import math
 class TEST:
 
     def oI_II_oI_II_oI_II(self, box1, box2):
-        x_cut = self.divide_in(box1.interval_x, box2.interval_x)
-        y_cut = self.divide_in(box1.interval_y, box2.interval_y)
-        z_cut = self.divide_in(box1.interval_z, box2.interval_z)
         table = [[]]
         return table
 
@@ -32,7 +29,9 @@ class TEST:
         return table
 
     def iI_II_iI_II_iII_I(self, box1, box2):
-        table = []
+        x1, x2, y1, y2 = box1.interval_x, box2.interval_x, box1.interval_y, box2.interval_y
+        z_cut = self.divide_out(box1.interval_z, box2.interval_z)
+        table = [[x1, y1, box1.interval_z], [x2, y2, z_cut[0]], [x2, y2, z_cut[2]]]
         return table
 
     def iI_II_iII_I_iII_I(self, box1, box2):
@@ -266,18 +265,24 @@ class testing(unittest.TestCase):
         self.tst = TEST()
 
     def test_funkcji_iI_II_iI_II_iI_II(self):
-        self.box0 = box3D(self.interval_smaller, self.interval_smaller, self.interval_smaller)
-        self.box1 = box3D(self.in_interval_bigger, self.in_interval_bigger, self.in_interval_bigger)
-        self.assertEqual(self.tst.iI_II_iI_II_iI_II(self.box0, self.box1),
+        box0 = box3D(self.interval_smaller, self.interval_smaller, self.interval_smaller)
+        box1 = box3D(self.in_interval_bigger, self.in_interval_bigger, self.in_interval_bigger)
+        self.assertEqual(self.tst.iI_II_iI_II_iI_II(box0, box1),
                          [[self.in_interval_bigger], [self.in_interval_bigger], [self.in_interval_bigger]])
 
     def test_funkcji_iII_I_iII_I_iII_I(self):
-        self.box0 = box3D(self.in_interval_bigger, self.in_interval_bigger, self.in_interval_bigger)
-        self.box1 = box3D(self.interval_smaller, self.interval_smaller, self.interval_smaller)
-        self.assertEqual(self.tst.iII_I_iII_I_iII_I(self.box0, self.box1),
+        box0 = box3D(self.in_interval_bigger, self.in_interval_bigger, self.in_interval_bigger)
+        box1 = box3D(self.interval_smaller, self.interval_smaller, self.interval_smaller)
+        self.assertEqual(self.tst.iII_I_iII_I_iII_I(box0, box1),
                          [[self.in_interval_bigger], [self.in_interval_bigger], [self.in_interval_bigger]])
 
-
-
+    def test_funkcji_iI_II_iI_II_iII_I(self):
+        box0 = box3D(self.interval_smaller, self.interval_smaller, self.in_interval_bigger)
+        box1 = box3D(self.in_interval_bigger, self.in_interval_bigger, self.interval_smaller)
+        z_cut = self.tst.divide_out(box0.interval_z, box1.interval_z)
+        self.assertEqual(self.tst.iI_II_iI_II_iII_I(box0, box1),
+                         [[self.interval_smaller, self.interval_smaller, self.in_interval_bigger],
+                          [self.in_interval_bigger, self.in_interval_bigger, z_cut[0]],
+                          [self.in_interval_bigger, self.in_interval_bigger, z_cut[2]]])
 if __name__ == '__main__':
     unittest.main()
