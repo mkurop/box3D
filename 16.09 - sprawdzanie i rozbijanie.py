@@ -35,7 +35,10 @@ class TEST:
         return table
 
     def iI_II_iII_I_iII_I(self, box1, box2):
-        table = []
+        x1, y1, z1 = box1.interval_x, box1.interval_y, box1.interval_z
+        x2, y2, z2 = box2.interval_x, box2.interval_y, box2.interval_z
+        x_cut = self.divide_out(x1, x2)
+        table = [[x1, y1, z1], [x_cut[0], y2, z2], [x_cut[2], y2, z2]]
         return table
 
     def iII_I_iII_I_iII_I(self, box1, box2):
@@ -44,6 +47,7 @@ class TEST:
         return table
 
     def oII_I_iI_II_iI_II(self, box1, box2):
+
         return
 
     def oI_II_oI_II_iII_I(self, box1, box2):
@@ -284,5 +288,15 @@ class testing(unittest.TestCase):
                          [[self.interval_smaller, self.interval_smaller, self.in_interval_bigger],
                           [self.in_interval_bigger, self.in_interval_bigger, z_cut[0]],
                           [self.in_interval_bigger, self.in_interval_bigger, z_cut[2]]])
+
+    def test_funkcji_iI_II_iII_I_iII_I(self):
+        box0 = box3D(self.interval_smaller, self.in_interval_bigger, self.in_interval_bigger)
+        box1 = box3D(self.in_interval_bigger, self.interval_smaller, self.interval_smaller)
+        x_cut = self.tst.divide_out(self.interval_smaller, self.in_interval_bigger)
+        self.assertEqual(self.tst.iI_II_iII_I_iII_I(box0, box1),
+                         [[self.interval_smaller, self.in_interval_bigger, self.in_interval_bigger],
+                          [x_cut[0], self.interval_smaller, self.interval_smaller],
+                          [x_cut[2], self.interval_smaller, self.interval_smaller]])
+
 if __name__ == '__main__':
     unittest.main()
