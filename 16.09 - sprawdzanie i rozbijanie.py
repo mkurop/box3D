@@ -294,7 +294,7 @@ class function_check():
                 exit(('ERROR Z, Liczba:', z_rand, ' Iteracja', i + 1))
             else:
                 pass
-        print('SUKCES po 1000 prób!')
+        exit('SUKCES po 1000 prób!')
 
 fct_chk = function_check()
 out_interval_bigger = closed(3, 6)
