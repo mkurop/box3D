@@ -25,7 +25,7 @@ class TEST:
 
     def iI_II_iI_II_iI_II(self, box1, box2):
         x, y, z = box2.interval_x, box2.interval_y, box2.interval_z
-        table = [[x], [y], [z]]
+        table = [[x, y, z]]
         return table
 
     def iI_II_iI_II_iII_I(self, box1, box2):
@@ -43,11 +43,14 @@ class TEST:
 
     def iII_I_iII_I_iII_I(self, box1, box2):
         x, y, z = box1.interval_x, box1.interval_y, box1.interval_z
-        table = [[x], [y], [z]]
+        table = [[x, y, z]]
         return table
 
     def oII_I_iI_II_iI_II(self, box1, box2):
-        return
+        x1, y1, z1 = box1.interval_x, box1.interval_y, box1.interval_z
+        x2, y2, z2 = box2.interval_x, box2.interval_y, box2.interval_z
+        table = [[x2, y2, z2], [x1 - x2, y1, z1]]
+        return table
 
     def oI_II_oI_II_iII_I(self, box1, box2):
         return
@@ -250,7 +253,7 @@ class box3D:
     def factory(x1, y1, z1, x2, y2, z2):
         return box3D(closed(x1, x2), closed(y1, y2), closed(z1, z2))
 
-from portion import closed, closedopen, openclosed
+from portion import closed
 
 '''
 tst = TEST()
@@ -271,19 +274,19 @@ class function_check():
             x_rand = rnd.randint(min(x1.lower, x2.lower), max(x1.upper, x2.upper))
             y_rand = rnd.randint(min(y1.lower, y2.lower), max(y1.upper, y2.upper))
             z_rand = rnd.randint(min(z1.lower, z2.lower), max(z1.upper, z2.upper))
-            for j in range(len(split[0][0])):
-                if not (x_rand in split[0][0][j]):
+            for j in range(len(split)):
+                if not (x_rand in closed(split[j][0].lower, split[j][0].upper)):
                     wrong_x += 1
                 else:
-                    print('Num: ', x_rand, 'Pod:', i, ': pass!')
-                if not (y_rand in split[1][0][j]):
+                    print('Num x: ', x_rand, 'Pod:', i, ': pass!')
+                if not (y_rand in closed(split[j][1].lower, split[j][1].upper)):
                     wrong_y += 1
                 else:
-                    print('Num: ', y_rand, 'Pod:', i, ': pass!')
-                if not (z_rand in split[2][0][j]):
+                    print('Num y: ', y_rand, 'Pod:', i, ': pass!')
+                if not (z_rand in closed(split[j][2].lower, split[j][2].upper)):
                     wrong_z += 1
                 else:
-                    print('Num: ', z_rand, 'Pod:', i, ': pass!')
+                    print('Num z: ', z_rand, 'Pod:', i, ': pass!')
             if wrong_x == 3:
                 exit(('ERROR X, Liczba:', x_rand, ' Iteracja', i + 1))
                 break
@@ -293,17 +296,20 @@ class function_check():
             elif wrong_z == 3:
                 exit(('ERROR Z, Liczba:', z_rand, ' Iteracja', i + 1))
             else:
+                wrong_x = wrong_y = wrong_z = 0
                 pass
         exit('SUKCES po 1000 prób!')
+
 
 fct_chk = function_check()
 out_interval_bigger = closed(3, 6)
 interval_smaller = closed(2, 5)
 in_interval_bigger = closed(1, 6)
-box0 = box3D(interval_smaller, interval_smaller, interval_smaller)
-box1 = box3D(in_interval_bigger, in_interval_bigger, in_interval_bigger)
+box0 = box3D(out_interval_bigger, interval_smaller, interval_smaller)
+box1 = box3D(interval_smaller, in_interval_bigger, in_interval_bigger)
 tst = TEST()
-fct_chk.test_funkcji_uniwersalny(box0, box1, tst.iI_II_iI_II_iI_II(box0, box1))
+fct_chk.test_funkcji_uniwersalny(box0, box1, tst.oII_I_iI_II_iI_II(box0, box1))
+
 '''
 import unittest
 class testing(unittest.TestCase):
