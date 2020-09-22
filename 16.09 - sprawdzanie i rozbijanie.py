@@ -7,56 +7,41 @@ import math
 class TEST:
 
     def oI_II_oI_II_oI_II(self, box1, box2):
-        x = self.divide_out(box1.interval_x, box2.interval_x)
-        y = self.divide_out(box1.interval_y, box2.interval_y)
-        z = self.divide_out(box1.interval_z, box2.interval_z)
-        table = [[x[0], y[0], z[0]], [x[1], y[1], z[2]], [x[2], y[2], z[2]]]
+        x_cut = self.divide_in(box1.interval_x, box2.interval_x)
+        y_cut = self.divide_in(box1.interval_y, box2.interval_y)
+        z_cut = self.divide_in(box1.interval_z, box2.interval_z)
+        table = [[]]
         return table
 
     def oI_II_oI_II_oII_I(self, box1, box2):
-        x = self.divide_out(box1.interval_x, box2.interval_x)
-        y = self.divide_out(box1.interval_y, box2.interval_y)
-        z = self.divide_out(box1.interval_z, box2.interval_z)
-        table = [[x[0], y[0], z[0]], [x[1], y[1], z[2]], [x[2], y[2], z[2]]]
+
+        table = [[]]
         return table
 
     def oI_II_oII_I_oII_I(self, box1, box2):
-        x = self.divide_out(box1.interval_x, box2.interval_x)
-        y = self.divide_out(box1.interval_y, box2.interval_y)
-        z = self.divide_out(box1.interval_z, box2.interval_z)
-        table = [[x[0], y[0], z[0]], [x[2] - x[1], y[2] - y[1], z[2]], [x[1], y[1], z[2] - z[1]]]
+        table = []
         return table
 
     def oII_I_oII_I_oII_I(self, box1, box2):
-        table = [[box1.interval_x, box1.interval_y, box1.interval_z],
-                [closed(box2.interval_x.lower, box1.interval_x.lower), box1.interval_y & box2.interval_y, box2.interval_z],
-                [closed(box1.interval_x.upper, box2.interval_x.upper), box1.interval_y & box2.interval_y, box2.interval_z]]
+        table = []
         return table
 
-    def iI_II_i_I_II_iI_II(self, box1, box2):
-        x = self.divide_in(box1.interval_x, box2.interval_x)
-        y = self.divide_in(box1.interval_y, box2.interval_y)
-        z = self.divide_in(box1.interval_z, box2.interval_z)
-        table = [[x[0], y[0], z[0]]]
+    def iI_II_iI_II_iI_II(self, box1, box2):
+        x, y, z = box2.interval_x, box2.interval_y, box2.interval_z
+        table = [[x], [y], [z]]
         return table
 
-    def iI_II_i_I_II_iII_I(self, box1, box2):
-        table = [[box1.interval_x, box1.interval_y, box1.interval_z],
-                [box2.interval_x, box2.interval_y, closed(box2.interval_z.lower, box1.interval_z.lower)],
-                [box2.interval_x, box2.interval_y, closed(box1.interval_z.lower, box2.interval_z.lower)]]
+    def iI_II_iI_II_iII_I(self, box1, box2):
+        table = []
         return table
 
-    def iI_II_i_II_I_iII_I(self, box1, box2):
-        table = [[box1.interval_x, box1.interval_y, box1.interval_z],
-                [closed(box2.interval_x.lower, box1.interval_x.lower), box2.interval_y, box2.interval_z],
-                [closed(box1.interval_x.upper, box2.interval_x.upper), box2.interval_y, box2.interval_z]]
+    def iI_II_iII_I_iII_I(self, box1, box2):
+        table = []
         return table
 
-    def iII_I_i_II_I_iII_I(self, box1, box2):
-        x = self.divide_in(box1.interval_x, box2.interval_x)
-        y = self.divide_in(box1.interval_y, box2.interval_y)
-        z = self.divide_in(box1.interval_z, box2.interval_z)
-        table = [[x[0], y[0], z[0]]]
+    def iII_I_iII_I_iII_I(self, box1, box2):
+        x, y, z = box1.interval_x, box1.interval_y, box1.interval_z
+        table = [[x], [y], [z]]
         return table
 
     def oII_I_iI_II_iI_II(self, box1, box2):
@@ -84,11 +69,7 @@ class TEST:
         return
 
     def oI_II_iI_II_iI_II(self, box1, box2):
-        x = self.divide_out(box1.interval_x, box2.interval_x)
-        y = self.divide_in(box1.interval_y, box2.interval_y)
-        z = self.divide_in(box1.interval_z, box2.interval_z)
-        table = [[x[2], y[0], z[0]], [x[0] - x[1], box1.interval_y, box1.interval_z]]
-        return table
+        return
 
     def oI_II_iI_II_iII_I(self, box1, box2):
         return
@@ -149,10 +130,10 @@ class TEST:
                    tuple([0, 1, 1]): oI_II_oII_I_oII_I,
                    tuple([1, 1, 1]): oII_I_oII_I_oII_I,
 
-                   tuple([2, 2, 2]): iI_II_i_I_II_iI_II,
-                   tuple([2, 2, 3]): iI_II_i_I_II_iII_I,
-                   tuple([2, 3, 3]): iI_II_i_II_I_iII_I,
-                   tuple([3, 3, 3]): iII_I_i_II_I_iII_I,
+                   tuple([2, 2, 2]): iI_II_iI_II_iI_II,
+                   tuple([2, 2, 3]): iI_II_iI_II_iII_I,
+                   tuple([2, 3, 3]): iI_II_iII_I_iII_I,
+                   tuple([3, 3, 3]): iII_I_iII_I_iII_I,
 
                    tuple([0, 0, 2]): oI_II_oI_II_iI_II,
                    tuple([0, 1, 2]): oI_II_oII_I_iI_II,
@@ -279,19 +260,24 @@ for i in range(len(int1)):
 import unittest
 class testing(unittest.TestCase):
     def setUp(self):
-        self.box0 = box3D(closed(2, 5), closed(2, 5), closed(2, 5))
-        self.box1 = box3D(closed(3, 6), closed(3, 6), closed(3, 6))
+        self.out_interval_bigger = closed(3, 6)
+        self.interval_smaller = closed(2, 5)
+        self.in_interval_bigger = closed(1, 6)
         self.tst = TEST()
-    def test_funkcji_oI_II_oI_II_oI_II(self):
-        self.assertEqual(self.tst.oI_II_oI_II_oI_II(self.box0, self.box1),
-                         [[self.box0.interval_x - self.box1.interval_x, self.box0.interval_y - self.box1.interval_y, self.box0.interval_z - self.box1.interval_z],
-                          [self.box0.interval_x & self.box1.interval_x, self.box0.interval_y & self.box1.interval_y, self.box1.interval_z - (self.box0.interval_z & self.box1.interval_z)],
-                          [self.box1.interval_x - (self.box0.interval_x & self.box1.interval_x), self.box1.interval_y - self.box0.interval_y, self.box1.interval_z - self.box0.interval_z]])
-    def test_funkcji_oI_II_oI_II_oII_I(self):
-        self.assertEqual(self.tst.oI_II_oI_II_oII_I(self.box0, self.box1),
-                         [[self.box0.interval_x - self.box1.interval_x, self.box0.interval_y - self.box1.interval_y, self.box0.interval_z - self.box1.interval_z],
-                          [self.box0.interval_x & self.box1.interval_x, self.box0.interval_y & self.box1.interval_y, self.box1.interval_z - self.box0.interval_z],
-                          [self.box1.interval_x - self.box0.interval_x, self.box1.interval_y - self.box0.interval_y, self.box1.interval_z - self.box0.interval_z]])
+
+    def test_funkcji_iI_II_iI_II_iI_II(self):
+        self.box0 = box3D(self.interval_smaller, self.interval_smaller, self.interval_smaller)
+        self.box1 = box3D(self.in_interval_bigger, self.in_interval_bigger, self.in_interval_bigger)
+        self.assertEqual(self.tst.iI_II_iI_II_iI_II(self.box0, self.box1),
+                         [[self.in_interval_bigger], [self.in_interval_bigger], [self.in_interval_bigger]])
+
+    def test_funkcji_iII_I_iII_I_iII_I(self):
+        self.box0 = box3D(self.in_interval_bigger, self.in_interval_bigger, self.in_interval_bigger)
+        self.box1 = box3D(self.interval_smaller, self.interval_smaller, self.interval_smaller)
+        self.assertEqual(self.tst.iII_I_iII_I_iII_I(self.box0, self.box1),
+                         [[self.in_interval_bigger], [self.in_interval_bigger], [self.in_interval_bigger]])
+
+
 
 if __name__ == '__main__':
     unittest.main()
