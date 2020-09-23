@@ -71,6 +71,7 @@ class TEST:
         return
 
     def oII_I_iI_II_i_II_I(self, box1, box2):
+
         return
 
     def oI_II_iI_II_iI_II(self, box1, box2):
@@ -83,7 +84,10 @@ class TEST:
         return
 
     def oI_II_iII_I_iII_I(self, box1, box2):
-        return
+        x1, y1, z1 = box1.interval_x, box1.interval_y, box1.interval_z
+        x2, y2, z2 = box2.interval_x, box2.interval_y, box2.interval_z
+        table = [[x1, y1, z1], [x2 - x1, y2, z2]]
+        return table
 
     def oII_I_iII_I_iII_I(self, box1, box2):
         return
@@ -278,15 +282,15 @@ class function_check():
                 if not (x_rand in closed(split[j][0].lower, split[j][0].upper)):
                     wrong_x += 1
                 else:
-                    print('Num x: ', x_rand, 'Pod:', i, ': pass!')
+                    print('Num x: ', x_rand, 'Pod:', i + 1, ': pass!')
                 if not (y_rand in closed(split[j][1].lower, split[j][1].upper)):
                     wrong_y += 1
                 else:
-                    print('Num y: ', y_rand, 'Pod:', i, ': pass!')
+                    print('Num y: ', y_rand, 'Pod:', i + 1, ': pass!')
                 if not (z_rand in closed(split[j][2].lower, split[j][2].upper)):
                     wrong_z += 1
                 else:
-                    print('Num z: ', z_rand, 'Pod:', i, ': pass!')
+                    print('Num z: ', z_rand, 'Pod:', i + 1, ': pass!')
             if wrong_x == 3:
                 exit(('ERROR X, Liczba:', x_rand, ' Iteracja', i + 1))
                 break
@@ -305,10 +309,10 @@ fct_chk = function_check()
 out_interval_bigger = closed(3, 6)
 interval_smaller = closed(2, 5)
 in_interval_bigger = closed(1, 6)
-box0 = box3D(out_interval_bigger, interval_smaller, interval_smaller)
-box1 = box3D(interval_smaller, in_interval_bigger, in_interval_bigger)
+box0 = box3D(interval_smaller, in_interval_bigger, in_interval_bigger)
+box1 = box3D(out_interval_bigger, interval_smaller, interval_smaller)
 tst = TEST()
-fct_chk.test_funkcji_uniwersalny(box0, box1, tst.oII_I_iI_II_iI_II(box0, box1))
+fct_chk.test_funkcji_uniwersalny(box0, box1, tst.oI_II_iII_I_iII_I(box0, box1))
 
 '''
 import unittest
