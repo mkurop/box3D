@@ -107,7 +107,31 @@ class TEST:
     potrzebna jest funkcja która zwraca sygnaturę dla pary interwałów wejściowych
     sygnatury są ze zbioru oI_II,oII_I, iI_II, iII_I
     """
+    def mylen(self, interval):
+        if interval.empty():
+            return 0
+        else:
+            length = interval.upper - interval.lower
+            return length
+
     def get_signature(self, interval1, interval2):
+        if self.is_in(interval1, interval2):
+            if interval1.upper < interval2.upper:
+                return self.idx_sig['iI_II']
+            else:
+                return self.idx_sigp['iII_I']
+        elif self.is_out(interval1, interval2):
+            if interval1.upper < interval2.upper:
+                return self.idx_sig['oI_II']
+            else:
+                return self.idx_sig['oII_I']
+        elif self.is_separate(interval1, interval2):
+            return self.idx_sig['sep']
+        elif self.is_equal(interval1, interval2):
+            return self.idx_sig['iI_II']
+        elif
+
+        '''
         if self.is_out(interval1, interval2):
             return self.idx_sig['oI_II'] if interval2.upper > interval1.upper else self.idx_sig['oII_I']
         elif self.is_in(interval1, interval2):
@@ -115,13 +139,13 @@ class TEST:
         elif self.is_equal(interval1, interval2):
             return self.idx_sig['iI_II']
         elif self.is_half_out(interval1, interval2):
-            if self.divide_out[1] == (0, 0):
+            if self.divide_out[2] == closed(math.inf, math.-inf):
                 return self.idx_sig['oI_II'] if interval2.upper > interval1.upper else self.idx_sig['oII_I']
             else:
                 return self.idx_sig['iI_II'] if interval2.upper > interval1.upper else self.idx_sig['iII_I']
         else:
             return self.idx_sig['sep']
-
+        '''
 
 
     """
@@ -164,45 +188,37 @@ class TEST:
     """
     Tworzymy liste indeksów dla sygnatur z ts
     """
-    def sort_signatures(self, box1, box2):
-        idx_sig = self.get_signatures_triple(box1, box2)
-        ts = self.get_signatures_triple(box1, box2)
-        tsi = [idx_sig[ts[0]], idx_sig[ts[1]], idx_sig[ts[2]]]
-        a, b, c = self.my_sort(tsi)
-        ts = self.permute(ts, b)
-        box1 = self.permute([box1.interval_x, box1.interval_y, box1.interval_z], b)
-        box2 = self.permute([box2.interval_x, box2.interval_y, box2.interval_z], b)
-        split, table = [], self.rozbij_dict[ts](box1, box2)
-        split.extend(box3D(i[0], i[1], i[2]) for i in table)
-        box1, box2 = self.permute(box1, c), self.permute(box2, c)
-        return split, box1, box2
-    """
-    następnie my_sort na tsi
-    """
+    def main_signatures(self, box1, box2):
+        idx_sign = self.get_signatures_triple(box1, box2)
+        sort, in2sorted, sorted2in = self.my_sort(idx_sign)
+        tri_sign, tri_sign_i = self.sort_signatures(box1, box2, in2sorted)
+        split = self.split(idx_sign, tri_sign, tri_sign_i)
+        table = [self.ret_original_order(split, sorted2in)]
+        return table
+
+    def split(self, idx_sign, tri_sign, tri_sign_i):
+        box1, box2 = box3D(tri_sign[0], tri_sign[1], tri_sign[2]), box3D(tri_sign_i[0], tri_sign_i[1], tri_sign_i[2])
+        split = self.rozbij_dict[idx_sign](box1, box2)
+        return split
+
+    def sort_signatures(self, box1, box2, in2sorted):
+        box_tab1, box_tab2 = [box1.interval_x, box1.interval_y, box1.interval_z], [box2.interval_x, box2.interval_y, box2.interval_z]
+        tri_sign = self.permute([[box_tab1[0]], [box_tab1[1]], [box_tab1[2]]], in2sorted)
+        tri_sign_i = self.permute([[box_tab2[0]], [box_tab2[1]], [box_tab2[2]]], in2sorted)
+        return tri_sign, tri_sign_i
+
+    def ret_original_order(self, tri_sign, tri_sign_i, sorted2in):
+        tri_sign = self.permute(tri_sign, sorted2in)
+        tri_sign_i = self.permute(tri_sign_i, sorted2in)
+        return tri_sign, tri_sign_i
 
 
-    """
-    sprowadzamy ts do postaci kanonicznej przy pomocy permute
-    """
 
-    """
-    sprowadzamy interwały w box1 i box2 do postaci kanonicznej przy pomocy permute
-    """
+    def permute_signatures(self, box1, box2, sorted2in):
+        box1, box2 = self.permute(box1, sorted2in), self.permute(box2, sorted2in)
+        return box1, box2
 
-    """
-    tworzymy słownik dla funkcji rozbijających
-    
-    rozbij_dict = {(kanoniczna trójka sygnatur) : (odpowiadająca jej funkcja rozbijająca)}
-    """
-
-    """
-    stosujemy odpowiednią funkcję do rozbicia naszych pudełek box1 i box2, z interwałami w kolejności kanonicznej
-    funkcję rozbijającą pobieramy ze słownika
-    """
-
-    """
-    cofamy permutację interwałów w box1 i box2 do pierwotnej kolejności przy pomocy funkcji permute
-    """
+    def
 
     def permute(self, sortin, permutation):
         assert len(sortin) == len(permutation)
@@ -234,6 +250,10 @@ class TEST:
     def divide_out(self, int1, int2):
         inter = int1 & int2
         return [int1 - inter, inter, int2 - inter]
+
+    def is_separate(self, int1, int2):
+        intersect = int1 & int2
+        return True if self.mylen(intersect) == 0 else False
 
     def divide_in(self, int1, int2):
         return [int1 | int2]
