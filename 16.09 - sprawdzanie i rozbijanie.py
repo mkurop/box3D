@@ -1,7 +1,3 @@
-"""
-najpierw trzeba stworzyć 20 funkcji rozbijających kanoniczne trójki sygnatur
-lista kanoniczny trójek sygnatur jest następująca:
-"""
 import math
 
 class TEST:
@@ -71,7 +67,6 @@ class TEST:
         return
 
     def oII_I_iI_II_i_II_I(self, box1, box2):
-
         return
 
     def oI_II_iI_II_iI_II(self, box1, box2):
@@ -92,21 +87,6 @@ class TEST:
     def oII_I_iII_I_iII_I(self, box1, box2):
         return
 
-    """
-    ...
-    i tak dalej
-    """
-
-    """
-    potrzebny jest słownik który przyporządkowuje indeksy do słownika sygnatur
-    """
-
-    idx_sig = {'oI_II': 0, 'oII_I': 1, 'iI_II': 2, 'iII_I': 3, 'sep': 4}
-
-    """
-    potrzebna jest funkcja która zwraca sygnaturę dla pary interwałów wejściowych
-    sygnatury są ze zbioru oI_II,oII_I, iI_II, iII_I
-    """
     def mylen(self, interval):
         if interval.empty():
             return 0
@@ -116,78 +96,59 @@ class TEST:
 
     def get_signature(self, interval1, interval2):
         if self.is_in(interval1, interval2):
-            if interval1.upper < interval2.upper:
-                return self.idx_sig['iI_II']
-            else:
-                return self.idx_sigp['iII_I']
-        elif self.is_out(interval1, interval2):
-            if interval1.upper < interval2.upper:
-                return self.idx_sig['oI_II']
-            else:
-                return self.idx_sig['oII_I']
+            return self.signature_in(interval1, interval2)
+        elif self.is_out(interval1, interval2) or ((interval1.lower == interval2.lower) ^ (interval1.upper == interval2.upper)):
+            return self.signature_out(interval1, interval2)
+        elif self.is_equal(interval1, interval2):
+            return 'ii12'
         elif self.is_separate(interval1, interval2):
-            return self.idx_sig['sep']
-        elif self.is_equal(interval1, interval2):
-            return self.idx_sig['iI_II']
-        elif
+            return 'isep'
 
-        '''
-        if self.is_out(interval1, interval2):
-            return self.idx_sig['oI_II'] if interval2.upper > interval1.upper else self.idx_sig['oII_I']
-        elif self.is_in(interval1, interval2):
-            return self.idx_sig['iI_II'] if interval2.lower < interval1.lower else self.idx_sig['iII_I']
-        elif self.is_equal(interval1, interval2):
-            return self.idx_sig['iI_II']
-        elif self.is_half_out(interval1, interval2):
-            if self.divide_out[2] == closed(math.inf, math.-inf):
-                return self.idx_sig['oI_II'] if interval2.upper > interval1.upper else self.idx_sig['oII_I']
-            else:
-                return self.idx_sig['iI_II'] if interval2.upper > interval1.upper else self.idx_sig['iII_I']
-        else:
-            return self.idx_sig['sep']
-        '''
-
-
-    """
-    funkcja która dla pary pudełek zwraca trójkę sygnatur (możliwe że niekanoniczną)
-    """
+    def ii21(self, interval1, interval2):
+        if self.is_in(interval1, interval2) & interval1.upper < interval2.upper:
+            return 'ii21'
+    def io12(self, interval1, interval2):
+        if interval1.upper < interval2.upper:
+            return 'io12'
+    def ii12(self, interval1, interval2):
+        if self.is_in(interval1, interval2) & interval2.upper < interval1.upper:
+            return 'ii12'
+    def io21(self, interval1, interval2):
+        if interval2.upper < interval1.upper:
+            return 'io21'
 
     def get_signatures_triple(self, box1, box2):
         x1, y1, z1, x2, y2, z2 = box1.interval_x, box1.interval_y, box1.interval_z, box2.interval_x, box2.interval_y, box2.interval_z
         return self.get_signature(x1, x2), self.get_signature(y1, y2), self.get_signature(z1, z2)
 
-    """
-    Powiedzmy że powyższa funkcja zwraca trójkę sygnatur ts
-    """
-#    idx_sig = {'oI_II': 0, 'oII_I': 1, 'iI_II': 2, 'iII_I': 3, 'sep': 4}
 
-    rozbij_dict = {tuple([0, 0, 0]): oI_II_oI_II_oI_II,
-                   tuple([0, 0, 1]): oI_II_oI_II_oII_I,
-                   tuple([0, 1, 1]): oI_II_oII_I_oII_I,
-                   tuple([1, 1, 1]): oII_I_oII_I_oII_I,
+    #idx_sig = {'oI_II': 'out1_2', 'oII_I': 'out2_1', 'iI_II': 'in1_2', 'iII_I': 'in2_1', 'sep': 'separate'}
 
-                   tuple([2, 2, 2]): iI_II_iI_II_iI_II,
-                   tuple([2, 2, 3]): iI_II_iI_II_iII_I,
-                   tuple([2, 3, 3]): iI_II_iII_I_iII_I,
-                   tuple([3, 3, 3]): iII_I_iII_I_iII_I,
+    rozbij_dict = {('io12', 'io12', 'io12'): oI_II_oI_II_oI_II,
+                   ('io12', 'io12', 'io21'): oI_II_oI_II_oII_I,
+                   ('io12', 'io21', 'io21'): oI_II_oII_I_oII_I,
+                   ('io21', 'io21', 'io21'): oII_I_oII_I_oII_I,
 
-                   tuple([0, 0, 2]): oI_II_oI_II_iI_II,
-                   tuple([0, 1, 2]): oI_II_oII_I_iI_II,
-                   tuple([1, 1, 2]): oII_I_oII_I_iI_II,
-                   tuple([1, 2, 2]): oII_I_iI_II_iI_II,
+                   ('ii12', 'ii12', 'ii12'): iI_II_iI_II_iI_II,
+                   ('ii12', 'ii12', 'ii21'): iI_II_iI_II_iII_I,
+                   ('ii12', 'ii21', 'ii21'): iI_II_iII_I_iII_I,
+                   ('ii21', 'ii21', 'ii21'): iII_I_iII_I_iII_I,
 
-                   tuple([0, 0, 3]): oI_II_oI_II_iII_I,
-                   tuple([0, 1, 3]): oI_II_oII_I_iII_I,
-                   tuple([1, 1, 3]): oII_I_oII_I_iII_I,
-                   tuple([1, 3, 3]): oII_I_iII_I_iII_I,
+                   ('io12', 'io12', 'ii12'): oI_II_oI_II_iI_II,
+                   ('io12', 'io21', 'ii12'): oI_II_oII_I_iI_II,
+                   ('io21', 'io21', 'ii12'): oII_I_oII_I_iI_II,
+                   ('io21', 'ii12', 'ii12'): oII_I_iI_II_iI_II,
 
-                   tuple([1, 2, 3]): oII_I_iI_II_i_II_I,
-                   tuple([0, 2, 2]): oI_II_iI_II_iI_II,
-                   tuple([0, 2, 3]): oI_II_iI_II_iII_I,
-                   tuple([0, 3, 3]): oI_II_iII_I_iII_I}
-    """
-    Tworzymy liste indeksów dla sygnatur z ts
-    """
+                   ('io12', 'io12', 'ii21'): oI_II_oI_II_iII_I,
+                   ('io12', 'io21', 'ii21'): oI_II_oII_I_iII_I,
+                   ('io21', 'io21', 'ii21'): oII_I_oII_I_iII_I,
+                   ('io21', 'ii21', 'ii21'): oII_I_iII_I_iII_I,
+
+                   ('io21', 'ii12', 'ii21'): oII_I_iI_II_i_II_I,
+                   ('io12', 'ii12', 'ii12'): oI_II_iI_II_iI_II,
+                   ('io12', 'ii12', 'ii21'): oI_II_iI_II_iII_I,
+                   ('io12', 'ii21', 'ii21'): oI_II_iII_I_iII_I}
+
     def main_signatures(self, box1, box2):
         idx_sign = self.get_signatures_triple(box1, box2)
         sort, in2sorted, sorted2in = self.my_sort(idx_sign)
@@ -212,13 +173,9 @@ class TEST:
         tri_sign_i = self.permute(tri_sign_i, sorted2in)
         return tri_sign, tri_sign_i
 
-
-
     def permute_signatures(self, box1, box2, sorted2in):
         box1, box2 = self.permute(box1, sorted2in), self.permute(box2, sorted2in)
         return box1, box2
-
-    def
 
     def permute(self, sortin, permutation):
         assert len(sortin) == len(permutation)
