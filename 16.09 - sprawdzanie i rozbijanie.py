@@ -269,7 +269,7 @@ class function_check():
                     wrong += 1
                 else:
                     pass
-            self.check(wrong, len(split), interval_rand)
+            self.check(wrong, len(split), interval_rand, i, j, rand, split)
             wrong = 0
 
     def choose_interval(self, interval_rand, x1, y1, z1, x2, y2, z2):
@@ -281,7 +281,7 @@ class function_check():
             rand = rnd.randint(min(z1.lower, z2.lower), max(z1.upper, z2.upper))
         return rand
 
-    def check(self, wrong, length, interval_rand):
+    def check(self, wrong, length, interval_rand, i, j, rand, split):
         if wrong == length:
             if interval_rand == 0:
                 exit(('ERROR X, Liczba:', rand, ' Iteracja', i + 1,  'Pudełko: ', j + 1,'Tablica po rozbiciach:', split))
