@@ -258,31 +258,42 @@ for i in range(len(int1)):
 #unit testy
 import random as rnd
 class function_check():
-    def test_funkcji_uniwersalny(self, box0, box1, split):
+
+    def loop_test(self, split, x1, y1, z1, x2, y2, z2):
         wrong = 0
-        x1, y1, z1 = box0.interval_x, box0.interval_y, box0.interval_z
-        x2, y2, z2 = box1.interval_x, box1.interval_y, box1.interval_z
         for i in range(1000):
             interval_rand = rnd.randrange(2)
-            if interval_rand == 0:
-                rand = rnd.randint(min(x1.lower, x2.lower), max(x1.upper, x2.upper))
-            elif interval_rand == 1:
-                rand = rnd.randint(min(y1.lower, y2.lower), max(y1.upper, y2.upper))
-            elif interval_rand == 2:
-                rand = rnd.randint(min(z1.lower, z2.lower), max(z1.upper, z2.upper))
+            rand = self.choose_interval(interval_rand, x1, y1, z1, x2, y2, z2)
             for j in range(len(split)):
                 if not (rand in split[j][interval_rand]):
                     wrong += 1
                 else:
                     pass
-            if wrong == len(split):
-                if interval_rand == 0:
-                    exit(('ERROR X, Liczba:', rand, ' Iteracja', i + 1,  'Pudełko: ', j + 1,'Tablica po rozbiciach:', split))
-                elif interval_rand == 1:
-                    exit(('ERROR Y, Liczba:', rand, ' Iteracja', i + 1, 'Pudełko: ', j + 1, 'Tablica po rozbiciach:', split))
-                elif interval_rand == 2:
-                    exit(('ERROR Z, Liczba:', rand, ' Iteracja', i + 1, 'Pudełko: ', j + 1, 'Tablica po rozbiciach:', split))
+            self.check(wrong, len(split), interval_rand)
             wrong = 0
+
+    def choose_interval(self, interval_rand, x1, y1, z1, x2, y2, z2):
+        if interval_rand == 0:
+            rand = rnd.randint(min(x1.lower, x2.lower), max(x1.upper, x2.upper))
+        elif interval_rand == 1:
+            rand = rnd.randint(min(y1.lower, y2.lower), max(y1.upper, y2.upper))
+        elif interval_rand == 2:
+            rand = rnd.randint(min(z1.lower, z2.lower), max(z1.upper, z2.upper))
+        return rand
+
+    def check(self, wrong, length, interval_rand):
+        if wrong == length:
+            if interval_rand == 0:
+                exit(('ERROR X, Liczba:', rand, ' Iteracja', i + 1,  'Pudełko: ', j + 1,'Tablica po rozbiciach:', split))
+            elif interval_rand == 1:
+                exit(('ERROR Y, Liczba:', rand, ' Iteracja', i + 1, 'Pudełko: ', j + 1, 'Tablica po rozbiciach:', split))
+            elif interval_rand == 2:
+                exit(('ERROR Z, Liczba:', rand, ' Iteracja', i + 1, 'Pudełko: ', j + 1, 'Tablica po rozbiciach:', split))
+
+    def test_funkcji_uniwersalny(self, box0, box1, split):
+        x1, y1, z1 = box0.interval_x, box0.interval_y, box0.interval_z
+        x2, y2, z2 = box1.interval_x, box1.interval_y, box1.interval_z
+        self.loop_test(split, x1, y1, z1, x2, y2, z2)
         exit('SUKCES po 1000 prób!')
 
 
