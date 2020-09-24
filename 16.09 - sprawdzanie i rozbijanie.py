@@ -95,27 +95,38 @@ class TEST:
             return length
 
     def get_signature(self, interval1, interval2):
-        if self.is_in(interval1, interval2):
-            return self.signature_in(interval1, interval2)
-        elif self.is_out(interval1, interval2) or ((interval1.lower == interval2.lower) ^ (interval1.upper == interval2.upper)):
-            return self.signature_out(interval1, interval2)
-        elif self.is_equal(interval1, interval2):
+        if self.ii12(interval1, interval2):
             return 'ii12'
-        elif self.is_separate(interval1, interval2):
-            return 'isep'
+        elif self.ii21(interval1, interval2):
+            return 'ii21'
+        elif self.io12(interval1, interval2):
+            return 'io12'
+        elif self.io21(interval1, interval2):
+            return 'io21'
+        elif self.ie(interval1, interval2):
+            return 'ii12'
+
+
+    def ie(self, interval1, interval2):
+        return True if self.is_equal(interval1, interval2) else False
+
+    def io12(self, interval1, interval2):
+        if (self.is_out(interval1, interval2) & interval1.upper < interval2.upper) | (self.is_half_out(interval1, interval2) & (self.mylen(interval2) - self.mylen(interval1) > 0)):
+            return True
+        else:
+            return False
+
+    def ii12(self, interval1, interval2):
+        return True if self.is_in(interval1, interval2) & interval1.upper < interval2.upper else False
+
+    def io21(self, interval1, interval2):
+        if self.is_out(interval1, interval2) & interval2.upper < interval1.upper | (self.is_half_out(interval1, interval2) & (self.mylen(interval1) - self.mylen(interval2) > 0)):
+            return True
+        else:
+            return False
 
     def ii21(self, interval1, interval2):
-        if self.is_in(interval1, interval2) & interval1.upper < interval2.upper:
-            return 'ii21'
-    def io12(self, interval1, interval2):
-        if interval1.upper < interval2.upper:
-            return 'io12'
-    def ii12(self, interval1, interval2):
-        if self.is_in(interval1, interval2) & interval2.upper < interval1.upper:
-            return 'ii12'
-    def io21(self, interval1, interval2):
-        if interval2.upper < interval1.upper:
-            return 'io21'
+        return True if self.is_in(interval1, interval2) & interval2.upper < interval1.upper else False
 
     def get_signatures_triple(self, box1, box2):
         x1, y1, z1, x2, y2, z2 = box1.interval_x, box1.interval_y, box1.interval_z, box2.interval_x, box2.interval_y, box2.interval_z
@@ -248,37 +259,30 @@ for i in range(len(int1)):
 import random as rnd
 class function_check():
     def test_funkcji_uniwersalny(self, box0, box1, split):
-        wrong_x = wrong_y = wrong_z = 0
+        wrong = 0
         x1, y1, z1 = box0.interval_x, box0.interval_y, box0.interval_z
         x2, y2, z2 = box1.interval_x, box1.interval_y, box1.interval_z
         for i in range(1000):
-            x_rand = rnd.randint(min(x1.lower, x2.lower), max(x1.upper, x2.upper))
-            y_rand = rnd.randint(min(y1.lower, y2.lower), max(y1.upper, y2.upper))
-            z_rand = rnd.randint(min(z1.lower, z2.lower), max(z1.upper, z2.upper))
+            interval_rand = rnd.randrange(2)
+            if interval_rand == 0:
+                rand = rnd.randint(min(x1.lower, x2.lower), max(x1.upper, x2.upper))
+            elif interval_rand == 1:
+                rand = rnd.randint(min(y1.lower, y2.lower), max(y1.upper, y2.upper))
+            elif interval_rand == 2:
+                rand = rnd.randint(min(z1.lower, z2.lower), max(z1.upper, z2.upper))
             for j in range(len(split)):
-                if not (x_rand in closed(split[j][0].lower, split[j][0].upper)):
-                    wrong_x += 1
+                if not (rand in split[j][interval_rand]):
+                    wrong += 1
                 else:
-                    print('Num x: ', x_rand, 'Pod:', i + 1, ': pass!')
-                if not (y_rand in closed(split[j][1].lower, split[j][1].upper)):
-                    wrong_y += 1
-                else:
-                    print('Num y: ', y_rand, 'Pod:', i + 1, ': pass!')
-                if not (z_rand in closed(split[j][2].lower, split[j][2].upper)):
-                    wrong_z += 1
-                else:
-                    print('Num z: ', z_rand, 'Pod:', i + 1, ': pass!')
-            if wrong_x == 3:
-                exit(('ERROR X, Liczba:', x_rand, ' Iteracja', i + 1))
-                break
-            elif wrong_y == 3:
-                exit(('ERROR Y, Liczba:', y_rand, ' Iteracja', i + 1))
-                break
-            elif wrong_z == 3:
-                exit(('ERROR Z, Liczba:', z_rand, ' Iteracja', i + 1))
-            else:
-                wrong_x = wrong_y = wrong_z = 0
-                pass
+                    pass
+            if wrong == len(split):
+                if interval_rand == 0:
+                    exit(('ERROR X, Liczba:', rand, ' Iteracja', i + 1,  'Pudełko: ', j + 1,'Tablica po rozbiciach:', split))
+                elif interval_rand == 1:
+                    exit(('ERROR Y, Liczba:', rand, ' Iteracja', i + 1, 'Pudełko: ', j + 1, 'Tablica po rozbiciach:', split))
+                elif interval_rand == 2:
+                    exit(('ERROR Z, Liczba:', rand, ' Iteracja', i + 1, 'Pudełko: ', j + 1, 'Tablica po rozbiciach:', split))
+            wrong = 0
         exit('SUKCES po 1000 prób!')
 
 
