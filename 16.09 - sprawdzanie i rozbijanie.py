@@ -239,7 +239,7 @@ class box3D:
         return True if (num[0] in self.interval_x) & (num[1] in self.interval_y) & (num[2] in self.interval_z) else False
 
     def __ror__(self, num):
-        x, y, z = num.interval_x, num.interval_y, num.interval_z
+        x, y, z = num[0], num[1], num[2]
         is_on_border = x in set([self.interval_x.lower, self.interval_x.upper]) or y in set([self.interval_y.lower, self.interval_y.upper]) or z or set([self.interval_z.lower, self.interval_z.upper])
         is_inside_box = self.__contains__(num)
         return True if is_on_border & is_inside_box else False
@@ -277,21 +277,18 @@ class function_check():
         num_z = rnd.randrange(box.interval_z.lower, box.interval_z.upper)
         return [num_x, num_y, num_z]
 
+
+
     def loop_test(self, boxes_in, boxes_out):
         b = rnd.choice(boxes_in)
         x = self.random_point_from_a_box(b)
-        table_sum = []
-        for i in boxes_out:
-            if x | i:
-                if len(table_sum) < 1:
-                    table_sum.append(True)
-                else:
-                    return False
-            if x in i:
-                if len(table_sum) < 1:
-                    table_sum.append(True)
-                else:
-                    return False
+        num_in = sum([x in b for b in boxes_out])
+        num_boundary = sum([x | b for b in boxes_out])
+        if ((num_in == 1) or (num_in == num_boundary)) and (num_in != 0):
+           pass
+        else:
+           return False
+
 
 fct_chk = function_check()
 out_interval_bigger = closed(3, 6)
