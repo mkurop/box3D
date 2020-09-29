@@ -272,12 +272,10 @@ import random as rnd
 class algorithm_check():
 
     def random_point_from_a_box(self, box):
-        num_x = rnd.randrange(box.interval_x.lower, box.interval_x.upper)
-        num_y = rnd.randrange(box.interval_y.lower, box.interval_y.upper)
-        num_z = rnd.randrange(box.interval_z.lower, box.interval_z.upper)
+        num_x = rnd.randint(box.interval_x.lower, box.interval_x.upper)
+        num_y = rnd.randint(box.interval_y.lower, box.interval_y.upper)
+        num_z = rnd.randint(box.interval_z.lower, box.interval_z.upper)
         return [num_x, num_y, num_z]
-
-
 
     def loop_test(self, boxes_in, boxes_out):
         b = rnd.choice(boxes_in)
@@ -289,9 +287,9 @@ class algorithm_check():
         else:
            return False
 
-    def evaluate(self, boxes_in, boxes_out, iteration):
-        for i in range(iteration):
-             if fct_chk.loop_test(boxes_in, tst.oI_II_oI_II_oI_II(box0, box1)):
+    def evaluate(self, boxes_in, boxes_out, checks_num = 1000):
+        for i in range(checks_num):
+             if fct_chk.loop_test(boxes_in, boxes_out):
                  continue
              else:
                  return False
