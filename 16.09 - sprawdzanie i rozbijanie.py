@@ -232,6 +232,15 @@ class box3D:
         self.interval_y = interval_y
         self.interval_z = interval_z
 
+    def __contains__(self, num):
+        return True if (num[0] in self.interval_x) & (num[1] in self.interval_y) & (num[2] in self.interval_z) else False
+
+    def __ror__(self, num):
+        x, y, z = num[:]
+        is_on_border = x in set([self.interval_x.lower, self.interval_x.upper]) or y in set([self.interval_y.lower, self.interval_y.upper]) or z or set([self.interval_z.lower, self.interval_z.upper])
+        is_inside_box = self.__contains__(num)
+        return True if is_on_border & is_inside_box else False
+
     def get_interval_x(self):
         return self.interval_x
 
@@ -258,6 +267,13 @@ for i in range(len(int1)):
 #unit testy
 import random as rnd
 class function_check():
+
+    def random_point_from_a_box(self, box):
+        num_x = rnd.randrange(box.interval_x.lower, box.interval_x.upper)
+        num_y = rnd.randrange(box.interval_y.lower, box.interval_y.upper)
+        num_z = rnd.randrange(box.interval_z.lower, box.interval_z.upper)
+        return [num_x, num_y, num_z]
+
 
     def loop_test(self, split, x1, y1, z1, x2, y2, z2):
         wrong = 0
@@ -291,6 +307,10 @@ class function_check():
                 exit(('ERROR Z, Liczba:', rand, ' Iteracja', i + 1, 'Pudełko: ', j + 1, 'Tablica po rozbiciach:', split))
 
     def test_funkcji_uniwersalny(self, box0, box1, split):
+        rnd.random([box0, box1])
+        
+
+
         x1, y1, z1 = box0.interval_x, box0.interval_y, box0.interval_z
         x2, y2, z2 = box1.interval_x, box1.interval_y, box1.interval_z
         self.loop_test(split, x1, y1, z1, x2, y2, z2)
