@@ -291,7 +291,7 @@ class algorithm_check():
 
     def evaluate(self, boxes_in, boxes_out, iteration):
         for i in range(iteration):
-             if fct_chk.loop_test([box0, box1], tst.oI_II_oI_II_oI_II(box0, box1)):
+             if fct_chk.loop_test(boxes_in, tst.oI_II_oI_II_oI_II(box0, box1)):
                  continue
              else:
                  return False
