@@ -5,12 +5,13 @@ class TEST:
     def oI_II_oI_II_oI_II(self, box1, box2):
         x1, y1, z1 = box1.interval_x, box1.interval_y, box1.interval_z
         x2, y2, z2 = box2.interval_x, box2.interval_y, box2.interval_z
-        table = [[x1, y1, z1], [x2, closed(y1.upper, y2.upper), z2], [closed(x1.upper, x2.upper), y2, z2]]
+        table = [box3D(x1, y1, z1), box3D(x2, closed(y1.upper, y2.upper), z2), box3D(closed(x1.upper, x2.upper), y2, z2)]
         return table
 
     def oI_II_oI_II_oII_I(self, box1, box2):
-
-        table = [[]]
+        x1, y1, z1 = box1.interval_x, box1.interval_y, box1.interval_z
+        x2, y2, z2 = box2.interval_x, box2.interval_y, box2.interval_z
+        table = [[x1, y1, z1], [], [x2, closed(y2.lower, y1.lower), ]]
         return table
 
     def oI_II_oII_I_oII_I(self, box1, box2):
@@ -23,31 +24,31 @@ class TEST:
 
     def iI_II_iI_II_iI_II(self, box1, box2):
         x, y, z = box2.interval_x, box2.interval_y, box2.interval_z
-        table = [[x, y, z]]
+        table = [box3D(x, y, z)]
         return table
 
     def iI_II_iI_II_iII_I(self, box1, box2):
         x1, x2, y1, y2 = box1.interval_x, box2.interval_x, box1.interval_y, box2.interval_y
         z_cut = self.divide_out(box1.interval_z, box2.interval_z)
-        table = [[x1, y1, box1.interval_z], [x2, y2, z_cut[0]], [x2, y2, z_cut[2]]]
+        table = [box3D(x1, y1, box1.interval_z), box3D(x2, y2, z_cut[0]), box3D(x2, y2, z_cut[2])]
         return table
 
     def iI_II_iII_I_iII_I(self, box1, box2):
         x1, y1, z1 = box1.interval_x, box1.interval_y, box1.interval_z
         x2, y2, z2 = box2.interval_x, box2.interval_y, box2.interval_z
         x_cut = self.divide_out(x1, x2)
-        table = [[x1, y1, z1], [x_cut[0], y2, z2], [x_cut[2], y2, z2]]
+        table = [box3D(x1, y1, z1), box3D(x_cut[0], y2, z2), box3D(x_cut[2], y2, z2)]
         return table
 
     def iII_I_iII_I_iII_I(self, box1, box2):
         x, y, z = box1.interval_x, box1.interval_y, box1.interval_z
-        table = [[x, y, z]]
+        table = [box3D(x, y, z)]
         return table
 
     def oII_I_iI_II_iI_II(self, box1, box2):
         x1, y1, z1 = box1.interval_x, box1.interval_y, box1.interval_z
         x2, y2, z2 = box2.interval_x, box2.interval_y, box2.interval_z
-        table = [[x2, y2, z2], [x1 - x2, y1, z1]]
+        table = [box3D(x2, y2, z2), box3D(x1 - x2, y1, z1)]
         return table
 
     def oI_II_oI_II_iII_I(self, box1, box2):
@@ -74,7 +75,7 @@ class TEST:
     def oI_II_iI_II_iI_II(self, box1, box2):
         x1, y1, z1 = box1.interval_x, box1.interval_y, box1.interval_z
         x2, y2, z2 = box2.interval_x, box2.interval_y, box2.interval_z
-        table = [[x2, y2, z2], [x1, y1, z1 - z2]]
+        table = [box3D(x2, y2, z2), box3D(x1, y1, z1 - z2)]
         return table
 
     def oI_II_iI_II_iII_I(self, box1, box2):
@@ -83,7 +84,7 @@ class TEST:
     def oI_II_iII_I_iII_I(self, box1, box2):
         x1, y1, z1 = box1.interval_x, box1.interval_y, box1.interval_z
         x2, y2, z2 = box2.interval_x, box2.interval_y, box2.interval_z
-        table = [[x1, y1, z1], [x2 - x1, y2, z2]]
+        table = [box3D(x1, y1, z1), box3D(x2 - x1, y2, z2)]
         return table
 
     def oII_I_iII_I_iII_I(self, box1, box2):
@@ -238,7 +239,7 @@ class box3D:
         return True if (num[0] in self.interval_x) & (num[1] in self.interval_y) & (num[2] in self.interval_z) else False
 
     def __ror__(self, num):
-        x, y, z = num[:]
+        x, y, z = num.interval_x, num.interval_y, num.interval_z
         is_on_border = x in set([self.interval_x.lower, self.interval_x.upper]) or y in set([self.interval_y.lower, self.interval_y.upper]) or z or set([self.interval_z.lower, self.interval_z.upper])
         is_inside_box = self.__contains__(num)
         return True if is_on_border & is_inside_box else False
@@ -276,15 +277,21 @@ class function_check():
         num_z = rnd.randrange(box.interval_z.lower, box.interval_z.upper)
         return [num_x, num_y, num_z]
 
-
-    def loop_test(self, box0, box1, split):
-        b = box0 if rnd.randrange(1) == 0 else box1
+    def loop_test(self, boxes_in, boxes_out):
+        b = rnd.choice(boxes_in)
         x = self.random_point_from_a_box(b)
-        table = [box3D(s[0], s[1], s[2]) for s in split]
-        if any(s.__ror__(x) for s in table) | any(s in b for s in split):
-            pass
-        else:
-            exit('Split contains overlaping boxes!')
+        table_sum = []
+        for i in boxes_out:
+            if x | i:
+                if len(table_sum) < 1:
+                    table_sum.append(True)
+                else:
+                    return False
+            if x in i:
+                if len(table_sum) < 1:
+                    table_sum.append(True)
+                else:
+                    return False
 
 fct_chk = function_check()
 out_interval_bigger = closed(3, 6)
@@ -294,7 +301,7 @@ box0 = box3D(interval_smaller, interval_smaller, interval_smaller)
 box1 = box3D(out_interval_bigger, out_interval_bigger, out_interval_bigger)
 tst = TEST()
 for i in range(1000):
-    fct_chk.loop_test(box0, box1, tst.oI_II_oI_II_oI_II(box0, box1))
+    fct_chk.loop_test([box0, box1], tst.oI_II_oI_II_oI_II(box0, box1))
 
 '''
 import unittest
