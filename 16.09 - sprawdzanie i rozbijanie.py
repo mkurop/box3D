@@ -269,7 +269,7 @@ for i in range(len(int1)):
 
 #unit testy
 import random as rnd
-class function_check():
+class algorithm_check():
 
     def random_point_from_a_box(self, box):
         num_x = rnd.randrange(box.interval_x.lower, box.interval_x.upper)
@@ -285,20 +285,26 @@ class function_check():
         num_in = sum([x in b for b in boxes_out])
         num_boundary = sum([x | b for b in boxes_out])
         if ((num_in == 1) or (num_in == num_boundary)) and (num_in != 0):
-           pass
+           return True
         else:
            return False
 
+    def evaluate(self, boxes_in, boxes_out, iteration):
+        for i in range(iteration):
+             if fct_chk.loop_test([box0, box1], tst.oI_II_oI_II_oI_II(box0, box1)):
+                 continue
+             else:
+                 return False
+        return True
 
-fct_chk = function_check()
+fct_chk = algorithm_check()
 out_interval_bigger = closed(3, 6)
 interval_smaller = closed(2, 5)
 in_interval_bigger = closed(1, 6)
 box0 = box3D(interval_smaller, interval_smaller, interval_smaller)
 box1 = box3D(out_interval_bigger, out_interval_bigger, out_interval_bigger)
 tst = TEST()
-for i in range(1000):
-    fct_chk.loop_test([box0, box1], tst.oI_II_oI_II_oI_II(box0, box1))
+
 
 '''
 import unittest
