@@ -3,7 +3,9 @@ import math
 class TEST:
 
     def oI_II_oI_II_oI_II(self, box1, box2):
-        table = [[]]
+        x1, y1, z1 = box1.interval_x, box1.interval_y, box1.interval_z
+        x2, y2, z2 = box2.interval_x, box2.interval_y, box2.interval_z
+        table = [[x1, y1, z1], [x2, closed(y1.upper, y2.upper), z2], [closed(x1.upper, x2.upper), y2, z2]]
         return table
 
     def oI_II_oI_II_oII_I(self, box1, box2):
@@ -275,56 +277,24 @@ class function_check():
         return [num_x, num_y, num_z]
 
 
-    def loop_test(self, split, x1, y1, z1, x2, y2, z2):
-        wrong = 0
-        for i in range(1000):
-            interval_rand = rnd.randrange(2)
-            rand = self.choose_interval(interval_rand, x1, y1, z1, x2, y2, z2)
-            for j in range(len(split)):
-                if not (rand in split[j][interval_rand]):
-                    wrong += 1
-                else:
-                    pass
-            self.check(wrong, len(split), interval_rand, i, j, rand, split)
-            wrong = 0
-
-    def choose_interval(self, interval_rand, x1, y1, z1, x2, y2, z2):
-        if interval_rand == 0:
-            rand = rnd.randint(min(x1.lower, x2.lower), max(x1.upper, x2.upper))
-        elif interval_rand == 1:
-            rand = rnd.randint(min(y1.lower, y2.lower), max(y1.upper, y2.upper))
-        elif interval_rand == 2:
-            rand = rnd.randint(min(z1.lower, z2.lower), max(z1.upper, z2.upper))
-        return rand
-
-    def check(self, wrong, length, interval_rand, i, j, rand, split):
-        if wrong == length:
-            if interval_rand == 0:
-                exit(('ERROR X, Liczba:', rand, ' Iteracja', i + 1,  'Pudełko: ', j + 1,'Tablica po rozbiciach:', split))
-            elif interval_rand == 1:
-                exit(('ERROR Y, Liczba:', rand, ' Iteracja', i + 1, 'Pudełko: ', j + 1, 'Tablica po rozbiciach:', split))
-            elif interval_rand == 2:
-                exit(('ERROR Z, Liczba:', rand, ' Iteracja', i + 1, 'Pudełko: ', j + 1, 'Tablica po rozbiciach:', split))
-
-    def test_funkcji_uniwersalny(self, box0, box1, split):
-        rnd.random([box0, box1])
-        
-
-
-        x1, y1, z1 = box0.interval_x, box0.interval_y, box0.interval_z
-        x2, y2, z2 = box1.interval_x, box1.interval_y, box1.interval_z
-        self.loop_test(split, x1, y1, z1, x2, y2, z2)
-        exit('SUKCES po 1000 prób!')
-
+    def loop_test(self, box0, box1, split):
+        b = box0 if rnd.randrange(1) == 0 else box1
+        x = self.random_point_from_a_box(b)
+        table = [box3D(s[0], s[1], s[2]) for s in split]
+        if any(s.__ror__(x) for s in table) | any(s in b for s in split):
+            pass
+        else:
+            exit('Split contains overlaping boxes!')
 
 fct_chk = function_check()
 out_interval_bigger = closed(3, 6)
 interval_smaller = closed(2, 5)
 in_interval_bigger = closed(1, 6)
-box0 = box3D(interval_smaller, in_interval_bigger, in_interval_bigger)
-box1 = box3D(out_interval_bigger, interval_smaller, interval_smaller)
+box0 = box3D(interval_smaller, interval_smaller, interval_smaller)
+box1 = box3D(out_interval_bigger, out_interval_bigger, out_interval_bigger)
 tst = TEST()
-fct_chk.test_funkcji_uniwersalny(box0, box1, tst.oI_II_iII_I_iII_I(box0, box1))
+for i in range(1000):
+    fct_chk.loop_test(box0, box1, tst.oI_II_oI_II_oI_II(box0, box1))
 
 '''
 import unittest
