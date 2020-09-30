@@ -34,7 +34,7 @@ class TEST:
     def iI_II_iI_II_iII_I(self, box1, box2):
         x1, y1, z1 = box1.interval_x, box1.interval_y, box1.interval_z
         x2, y2, z2 = box2.interval_x, box2.interval_y, box2.interval_z
-        table = [box3D(x1, y1, z1), box3D(closed(x2.lower, x1.lower), y2, z2), box3D(closed(x1.upper, x2.upper), y2, z2)]
+        table = [box3D(x1, y1, z1), box3D(x2, closed(y2.lower, y1.lower), z2), box3D(x2, closed(y1.upper, y2.upper), z2)]
         return table
 
     def iI_II_iII_I_iII_I(self, box1, box2):
@@ -105,7 +105,7 @@ class TEST:
     def oI_II_iI_II_iII_I(self, box1, box2):
         x1, y1, z1 = box1.interval_x, box1.interval_y, box1.interval_z
         x2, y2, z2 = box2.interval_x, box2.interval_y, box2.interval_z
-        table = [box3D(x1, y1, z1), box3D(x2 - x1, y2, z2)]
+        table = [box3D(x1, y1, z1), box3D(x2 - x1, y2, z2), box3D(x1 & x2, closed(y2.lower, y1.lower), z2), box3D(x1 & x2, closed(y1.upper, y2.upper), z2)]
         return table
 
     def oI_II_iII_I_iII_I(self, box1, box2):
