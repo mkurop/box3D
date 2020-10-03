@@ -110,7 +110,8 @@ class algorytm:
     def iI_II_iI_II_iII_I(self, box1, box2):
         x1, y1, z1 = box1.interval_x, box1.interval_y, box1.interval_z
         x2, y2, z2 = box2.interval_x, box2.interval_y, box2.interval_z
-        table = [box3D(x1, y1, z1), box3D(x2, closed(y2.lower, y1.lower), z2), box3D(x2, closed(y1.upper, y2.upper), z2)]
+        z_union = [int for int in z1 - z2]
+        table = [box3D(x2, y2, z2), box3D(x1, y1, z_union[0]), box3D(x1, y1, z_union[1])]
         return table
 
     def iI_II_iII_I_iII_I(self, box1, box2):
@@ -127,7 +128,7 @@ class algorytm:
     def oII_I_iI_II_iI_II(self, box1, box2):
         x1, y1, z1 = box1.interval_x, box1.interval_y, box1.interval_z
         x2, y2, z2 = box2.interval_x, box2.interval_y, box2.interval_z
-        table = [box3D(x2, y2, z2), box3D(x1 - x2, y1, z1)]
+        table = [box3D(x2, y2, z2), box3D(closed(x2.upper, x1.lower), y1, z1)]
         return table
 
     def oI_II_oI_II_iII_I(self, box1, box2):
@@ -200,7 +201,7 @@ class algorytm:
         if interval == closed(math.inf, -math.inf):
             return 0
         else:
-            length = interval.upper - interval.lower
+            length = interval.upper - interval.lower if interval.lower > 0 else interval.upper + interval.lower
             return length
 
     def divide_in(self, int1, int2):
@@ -253,24 +254,28 @@ class algorytm:
         return True if self.is_equal(interval1, interval2) else False
 
     def io12(self, interval1, interval2):
-        if (self.is_out(interval1, interval2) & (interval1.upper < interval2.upper)) | (self.is_half_out(interval1, interval2) & ((self.mylen(interval2) - self.mylen(interval1)) > 0)):
+        len1, len2 = (self.mylen(interval1), self.mylen(interval2))
+        difference = len2 - len1 if len1 > 0 else len1 + len2
+        if (self.is_out(interval1, interval2) & (interval1.upper < interval2.upper)) | (self.is_half_out(interval1, interval2) & (difference > 0)):
             return True
         else:
             return False
 
     def ii12(self, interval1, interval2):
         union = interval1 & interval2
-        return True if (union.lower == interval1.lower) and (union.upper == interval1.upper) and interval1.lower > interval2.lower and interval1.upper < interval2.upper else False
+        return True if ((union.lower == interval1.lower) and (union.upper == interval1.upper) and interval1.lower > interval2.lower and interval1.upper < interval2.upper) else False
 
     def io21(self, interval1, interval2):
-        if (self.is_out(interval1, interval2) & (interval2.upper < interval1.upper)) | ((self.is_half_out(interval1, interval2)) & ((self.mylen(interval1) - self.mylen(interval2) > 0))):
+        len1, len2 = (self.mylen(interval1), self.mylen(interval2))
+        difference = len1 - len2 if len2 > 0 else len1 + len2
+        if (self.is_out(interval1, interval2) & (interval2.upper < interval1.upper)) | (self.is_half_out(interval1, interval2) & (difference > 0)):
             return True
         else:
             return False
 
     def ii21(self, interval1, interval2):
         union = interval1 & interval2
-        return True if (union.lower == interval2.lower) and (union.upper == interval2.upper) and interval1.lower < interval2.lower and interval1.upper > interval2.upper else False
+        return True if ((union.lower == interval2.lower) and (union.upper == interval2.upper) and (interval1.lower < interval2.lower) and (interval1.upper > interval2.upper)) else False
 
     def get_signatures_triple(self, box1, box2):
         x1, y1, z1, x2, y2, z2 = box1.interval_x, box1.interval_y, box1.interval_z, box2.interval_x, box2.interval_y, box2.interval_z
@@ -281,8 +286,15 @@ class algorytm:
         idx_sign = self.get_signatures_triple(box1, box2)
         sort, in2sorted, sorted2in = self.my_sort(idx_sign)
         tri_sign, tri_sign_i = self.sort_signatures(box1, box2, in2sorted)
-        split = self.split(idx_sign, tri_sign, tri_sign_i)
+        split = self.split(tuple(sort), tri_sign, tri_sign_i)
+        for i in range(len(split)):
+            print('split = ', [split[i].interval_x, split[i].interval_y, split[i].interval_z])
+
         table = self.ret_original_order(split, sorted2in)
+
+        for i in range(len(split)):
+            print('table = ', [table[i].interval_x, table[i].interval_y, table[i].interval_z])
+
         return table
 
     def split(self, idx_sign, tri_sign, tri_sign_i):
@@ -292,25 +304,26 @@ class algorytm:
                        ('io12', 'io12', 'io21'): self.oI_II_oI_II_oII_I,
                        ('io12', 'io21', 'io21'): self.oI_II_oII_I_oII_I,
                        ('io21', 'io21', 'io21'): self.oII_I_oII_I_oII_I,
+
                        ('ii12', 'ii12', 'ii12'): self.iI_II_iI_II_iI_II,
                        ('ii12', 'ii12', 'ii21'): self.iI_II_iI_II_iII_I,
                        ('ii12', 'ii21', 'ii21'): self.iI_II_iII_I_iII_I,
                        ('ii21', 'ii21', 'ii21'): self.iII_I_iII_I_iII_I,
 
-                       ('io12', 'io12', 'ii12'): self.oI_II_oI_II_iI_II,
-                       ('io12', 'io21', 'ii12'): self.oI_II_oII_I_iI_II,
-                       ('io21', 'io21', 'ii12'): self.oII_I_oII_I_iI_II,
-                       ('io21', 'ii12', 'ii12'): self.oII_I_iI_II_iI_II,
+                       ('ii12', 'io12', 'io12'): self.oI_II_oI_II_iI_II,
+                       ('ii12', 'io12', 'io21'): self.oI_II_oII_I_iI_II,
+                       ('ii12', 'io21', 'io21'): self.oII_I_oII_I_iI_II,
+                       ('ii12', 'ii12', 'io21'): self.oII_I_iI_II_iI_II,
 
-                       ('io12', 'io12', 'ii21'): self.oI_II_oI_II_iII_I,
-                       ('io12', 'io21', 'ii21'): self.oI_II_oII_I_iII_I,
-                       ('io21', 'io21', 'ii21'): self.oII_I_oII_I_iII_I,
-                       ('io21', 'ii21', 'ii21'): self.oII_I_iII_I_iII_I,
+                       ('ii21', 'io12', 'io12'): self.oI_II_oI_II_iII_I,
+                       ('ii21', 'io12', 'io21'): self.oI_II_oII_I_iII_I,
+                       ('ii21', 'io21', 'io21'): self.oII_I_oII_I_iII_I,
+                       ('ii21', 'ii21', 'io21'): self.oII_I_iII_I_iII_I,
 
-                       ('io21', 'ii12', 'ii21'): self.oII_I_iI_II_i_II_I,
-                       ('io12', 'ii12', 'ii12'): self.oI_II_iI_II_iI_II,
-                       ('io12', 'ii12', 'ii21'): self.oI_II_iI_II_iII_I,
-                       ('io12', 'ii21', 'ii21'): self.oI_II_iII_I_iII_I}
+                       ('ii12', 'ii21', 'io21'): self.oII_I_iI_II_i_II_I,
+                       ('ii12', 'ii12', 'io12'): self.oI_II_iI_II_iI_II,
+                       ('ii12', 'ii21', 'io12'): self.oI_II_iI_II_iII_I,
+                       ('ii21', 'ii21', 'io12'): self.oI_II_iII_I_iII_I}
         print(idx_sign)
         split = rozbij_dict[idx_sign](box1, box2)
         return split
@@ -351,25 +364,28 @@ class algorytm:
     def algorytm(Q, tree):
         iD = 0
         alg = algorytm()
-        #SPR
-        lista = []
         while not len(Q.get_stack()) == 0:
             q = Q.pop()
             if list(tree.tree.intersection((q.interval_x.lower,  q.interval_y.lower, q.interval_z.lower, q.interval_x.upper, q.interval_y.upper,  q.interval_z.upper))):
                 i = list(tree.tree.intersection((q.interval_x.lower,  q.interval_y.lower, q.interval_z.lower, q.interval_x.upper, q.interval_y.upper,  q.interval_z.upper), True))[0]
-                inter = [item for item in i.bbox]
-                tree.tree.delete(i.id, [i.bounds[0], i.bounds[1], i.bounds[2], i.bounds[3], i.bounds[4], i.bounds[5]])
-                i = box3D.factory(inter[0], inter[1], inter[2], inter[3], inter[4], inter[5])
-                Q.extend(alg.main_signatures(q, i))
+                inter = [i.bounds[0], i.bounds[1], i.bounds[2], i.bounds[3], i.bounds[4], i.bounds[5]]
+                print(inter)
+                tree.tree.delete(i.id, [i.bounds[0], i.bounds[2], i.bounds[4], i.bounds[1], i.bounds[3], i.bounds[5]])
+                j = box3D(closed(inter[0], inter[1]), closed(inter[2], inter[3]), closed(inter[4], inter[5]))
+                Q.extend(alg.main_signatures(q, j))
             else:
-                tree.tree.insert(iD, [q.interval_x.lower,  q.interval_y.lower, q.interval_z.lower, q.interval_x.upper, q.interval_y.upper,  q.interval_z.upper])
+                tree.tree.insert(iD, [q.interval_x.lower,  q.interval_y.lower, q.interval_z.lower, q.interval_x.upper, q.interval_y.upper, q.interval_z.upper])
                 iD += 1
-                #SPR
-                lista.append([q.interval_x, q.interval_y, q.interval_z])
-
+        # wypisanie drzewa
+        lista = tree.tree.intersection(tree.tree.get_bounds(), True)
+        lista = [(item.bbox)for item in lista]
         print('\n')
         for i in lista:
-            print(i, '\n')
+            print([i[0], i[3]], end = '') if i[0] != i[3] else print([i[0]], end = '')
+            print(' x ', end = '')
+            print([i[1], i[4]], end = '') if i[1] != i[4] else print([i[1]], end = '')
+            print(' x ', end = '')
+            print([i[2], i[5]], end = '\n') if i[2] != i[5] else print([i[2]], end = '\n')
         return tree.tree
 
 

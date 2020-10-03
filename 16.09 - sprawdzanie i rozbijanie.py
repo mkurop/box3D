@@ -5,13 +5,13 @@ class TEST:
     def oI_II_oI_II_oI_II(self, box1, box2):
         x1, y1, z1 = box1.interval_x, box1.interval_y, box1.interval_z
         x2, y2, z2 = box2.interval_x, box2.interval_y, box2.interval_z
-        table = [box3D(x1, y1, z1), box3D(x1 & x2, y1 & y2, z2 - z1), box3D(x2, y2 - y1, z2), box3D(x2 - x1, y2, z2)]
+        table = [box3D(x2, y2, z2), box3D(closed(x2.lower, x1.upper), closed(y2.lower, y1.upper), closed(z1.lower, z2.lower)), box3D(x2, closed(y1.lower, y2.lower), z1), box3D(closed(x1.lower, x2.lower), y1, z1)]
         return table
 
     def oI_II_oI_II_oII_I(self, box1, box2):
         x1, y1, z1 = box1.interval_x, box1.interval_y, box1.interval_z
         x2, y2, z2 = box2.interval_x, box2.interval_y, box2.interval_z
-        table = [box3D(x1, y1, z1), box3D(x1 & x2, y1 & y2, z2 - z1), box3D(x2, y2 - y1, z2), box3D(x2 - x1, y2, z2)]
+        table = [box3D(x2, y2, z2), box3D(closed(x2.lower, x1.upper), closed(x2.lower, x1.upper), closed(z2.upper, z1.upper)), box3D(x1, closed(y1.lower, y2.lower), z1), box3D(closed(x1.lower, x2.lower), closed(y2.lower, y1.upper), z1)]
         return table
 
     def oI_II_oII_I_oII_I(self, box1, box2):
@@ -34,13 +34,13 @@ class TEST:
     def iI_II_iI_II_iII_I(self, box1, box2):
         x1, y1, z1 = box1.interval_x, box1.interval_y, box1.interval_z
         x2, y2, z2 = box2.interval_x, box2.interval_y, box2.interval_z
-        table = [box3D(x1, y1, z1), box3D(x2, closed(y2.lower, y1.lower), z2), box3D(x2, closed(y1.upper, y2.upper), z2)]
+        table = [box3D(x2, y2, z2), box3D(x1, y1, closedopen(z1.lower, z2.lower)), box3D(x1, y1, openclosed(z2.upper, z1.upper))]
         return table
 
     def iI_II_iII_I_iII_I(self, box1, box2):
         x1, y1, z1 = box1.interval_x, box1.interval_y, box1.interval_z
         x2, y2, z2 = box2.interval_x, box2.interval_y, box2.interval_z
-        table = [box3D(x1, y1, z1), box3D(x1 - x2, y2, z2), box3D(x2 - x1, y2, z2)]
+        table = [box3D(x1, y1, z1), box3D(closed(x2.lower, x1.lower), y2, z2), box3D(closed(x1.upper, x2.upper), y2, z2)]
         return table
 
     def iII_I_iII_I_iII_I(self, box1, box2):
@@ -51,7 +51,7 @@ class TEST:
     def oII_I_iI_II_iI_II(self, box1, box2):
         x1, y1, z1 = box1.interval_x, box1.interval_y, box1.interval_z
         x2, y2, z2 = box2.interval_x, box2.interval_y, box2.interval_z
-        table = [box3D(x2, y2, z2), box3D(x1 - x2, y1, z1)]
+        table = [box3D(x2, y2, z2), box3D(closed(x2.upper, x1.upper), y1, z1)]
         return table
 
     def oI_II_oI_II_iII_I(self, box1, box2):
@@ -69,55 +69,57 @@ class TEST:
     def oI_II_oII_I_iI_II(self, box1, box2):
         x1, y1, z1 = box1.interval_x, box1.interval_y, box1.interval_z
         x2, y2, z2 = box2.interval_x, box2.interval_y, box2.interval_z
-        table = [box3D(x2, y2, z2), box3D(x1 - x2, y1 & y2, z1), box3D(x1, y1 - y2, z1)]
+        table = [box3D(x2, y2, z2), box3D(closed(x1.lower, x2.lower), y1 & y2, z1), box3D(x1, closed(y2.upper, y1.upper), z1)]
         return table
 
+
+#####DO POPRAWY ORAZ WSTAWIĆ WSZĘDZIE CLOSED ZAMIAST - ORAZ &
     def oI_II_oII_I_iII_I(self, box1, box2):
         x1, y1, z1 = box1.interval_x, box1.interval_y, box1.interval_z
         x2, y2, z2 = box2.interval_x, box2.interval_y, box2.interval_z
-        table = [box3D(x2, y2, z2), box3D(x1 - x2, y1 & y2, z1), box3D(x1, y1 - y2, z1)]
+        table = [box3D(x1, y1, z1), box3D(closed(x2.lower, x1.lower), closed(y1.upper, y2.upper), z2), box3D(closed(x1.upper, x2.upper), closed(y1.upper, y2.upper), z2)]
         return table
-
+#####
     def oII_I_oII_I_iII_I(self, box1, box2):
         x1, y1, z1 = box1.interval_x, box1.interval_y, box1.interval_z
         x2, y2, z2 = box2.interval_x, box2.interval_y, box2.interval_z
-        table = [box3D(x1, y1, z1), box3D(x2 - x1, y1 & y2, z2), box3D(x2, y2 - y1, z2)]
+        table = [box3D(x1, y1, z1), box3D(x2, closed(y2.lower, y1.lower), z2), box3D(closed(x2.lower, x1.lower), closed(y2.lower, y1.upper), z2)]
         return table
 
     def oII_I_oII_I_iI_II(self, box1, box2):
         x1, y1, z1 = box1.interval_x, box1.interval_y, box1.interval_z
         x2, y2, z2 = box2.interval_x, box2.interval_y, box2.interval_z
-        table = [box3D(x2, y2, z2), box3D(x1 - x2, y1 & y2, z1), box3D(x1, y1 - y2, z1)]
+        table = [box3D(x2, y2, z2), box3D(closed(x2.upper, x1.upper), closed(y1.lower, y2.upper), z1), box3D(x1, closed(y2.upper, y1.upper), z1)]
         return table
 
     def oII_I_iI_II_i_II_I(self, box1, box2):
         x1, y1, z1 = box1.interval_x, box1.interval_y, box1.interval_z
         x2, y2, z2 = box2.interval_x, box2.interval_y, box2.interval_z
-        table = [box3D(x1, y1, z1), box3D(x2 - x1, y2, z2), box3D(x1 & x2, closed(y2.lower, y1.lower), z2), box3D(x1 & x2, closed(y1.upper, y2.upper), z2)]
+        table = [box3D(x1, y1, z1), box3D(x2, closed(y2.lower, y2.lower), z2), box3D(x2, closed(y1.upper, y2.upper), z2), box3D(closed(x1.upper, x2.upper), y2, z2)]
         return table
 
     def oI_II_iI_II_iI_II(self, box1, box2):
         x1, y1, z1 = box1.interval_x, box1.interval_y, box1.interval_z
         x2, y2, z2 = box2.interval_x, box2.interval_y, box2.interval_z
-        table = [box3D(x2, y2, z2), box3D(x1 - x2, y1, z1)]
+        table = [box3D(x2, y2, z2), box3D(closed(x1.lower, x2.lower), y1, z1)]
         return table
 
     def oI_II_iI_II_iII_I(self, box1, box2):
         x1, y1, z1 = box1.interval_x, box1.interval_y, box1.interval_z
         x2, y2, z2 = box2.interval_x, box2.interval_y, box2.interval_z
-        table = [box3D(x1, y1, z1), box3D(x2 - x1, y2, z2), box3D(x1 & x2, closed(y2.lower, y1.lower), z2), box3D(x1 & x2, closed(y1.upper, y2.upper), z2)]
+        table = [box3D(x1, y1, z1), box3D(closed(x1.upper, x2.upper), y2, z2), box3D(x2, closed(y2.lower, y1.lower), z2), box3D(x2, closed(y1.upper, y2.upper), z2)]
         return table
 
     def oI_II_iII_I_iII_I(self, box1, box2):
         x1, y1, z1 = box1.interval_x, box1.interval_y, box1.interval_z
         x2, y2, z2 = box2.interval_x, box2.interval_y, box2.interval_z
-        table = [box3D(x1, y1, z1), box3D(x2 - x1, y2, z2)]
+        table = [box3D(x1, y1, z1), box3D(closed(x1.upper, x2.upper), y2, z2)]
         return table
 
     def oII_I_iII_I_iII_I(self, box1, box2):
         x1, y1, z1 = box1.interval_x, box1.interval_y, box1.interval_z
         x2, y2, z2 = box2.interval_x, box2.interval_y, box2.interval_z
-        table = [box3D(x1, y1, z1), box3D(x2 - x1, y2, z2)]
+        table = [box3D(x1, y1, z1), box3D(closed(x2.lower, x1.lower), y2, z2)]
         return table
 
     def mylen(self, interval):
@@ -237,7 +239,7 @@ class TEST:
 
     def is_in(self, interval1, interval2):
         union = interval1 & interval2
-        return True if ((union == interval1) ^ (union == interval2)) and (interval2.lower != interval1.lower and interval1.upper != interval2.upper)  else False
+        return True if ((union == interval1) ^ (union == interval2)) and (interval2.lower != interval1.lower and interval1.upper != interval2.upper) else False
 
     def is_out(self, interval1, interval2):
         return True if (interval1.lower != interval2.lower) and (interval2.upper != interval1.upper) and (interval1 & interval2) else False
@@ -287,7 +289,7 @@ class box3D:
     def factory(x1, y1, z1, x2, y2, z2):
         return box3D(closed(x1, x2), closed(y1, y2), closed(z1, z2))
 
-from portion import closed
+from portion import closed, closedopen, openclosed
 
 '''
 tst = TEST()
@@ -333,64 +335,64 @@ tst = TEST()
 
 box0 = box3D(interval_smaller, interval_smaller, interval_smaller)
 box1 = box3D(out_interval_bigger, out_interval_bigger, out_interval_bigger)
-print(fct_chk.loop_test([box0, box1], tst.oI_II_oI_II_oI_II(box0, box1)))
+print(fct_chk.evaluate([box0, box1], tst.oI_II_oI_II_oI_II(box0, box1)))
 box0 = box3D(interval_smaller, interval_smaller, out_interval_bigger)
 box1 = box3D(out_interval_bigger, out_interval_bigger, interval_smaller)
-print(fct_chk.loop_test([box0, box1], tst.oI_II_oI_II_oII_I(box0, box1)))
+print(fct_chk.evaluate([box0, box1], tst.oI_II_oI_II_oII_I(box0, box1)))
 box0 = box3D(interval_smaller, out_interval_bigger, out_interval_bigger)
 box1 = box3D(out_interval_bigger, interval_smaller, interval_smaller)
-print(fct_chk.loop_test([box0, box1], tst.oI_II_oII_I_oII_I(box0, box1)))
+print(fct_chk.evaluate([box0, box1], tst.oI_II_oII_I_oII_I(box0, box1)))
 box0 = box3D(out_interval_bigger, out_interval_bigger, out_interval_bigger)
 box1 = box3D(interval_smaller, interval_smaller, interval_smaller)
-print(fct_chk.loop_test([box0, box1], tst.oII_I_oII_I_oII_I(box0, box1)))
+print(fct_chk.evaluate([box0, box1], tst.oII_I_oII_I_oII_I(box0, box1)))
 box0 = box3D(interval_smaller, interval_smaller, interval_smaller)
 box1 = box3D(in_interval_bigger, in_interval_bigger, in_interval_bigger)
-print(fct_chk.loop_test([box0, box1], tst.iI_II_iI_II_iI_II(box0, box1)))
+print(fct_chk.evaluate([box0, box1], tst.iI_II_iI_II_iI_II(box0, box1)))
 box0 = box3D(interval_smaller, interval_smaller, in_interval_bigger)
 box1 = box3D(in_interval_bigger, in_interval_bigger, interval_smaller)
-print(fct_chk.loop_test([box0, box1], tst.iI_II_iI_II_iII_I(box0, box1)))
+print(fct_chk.evaluate([box0, box1], tst.iI_II_iI_II_iII_I(box0, box1)))
 box0 = box3D(interval_smaller, in_interval_bigger, in_interval_bigger)
 box1 = box3D(in_interval_bigger, interval_smaller, interval_smaller)
-print(fct_chk.loop_test([box0, box1], tst.iI_II_iII_I_iII_I(box0, box1)))
+print(fct_chk.evaluate([box0, box1], tst.iI_II_iII_I_iII_I(box0, box1)))
 box0 = box3D(in_interval_bigger, in_interval_bigger, in_interval_bigger)
 box1 = box3D(interval_smaller, interval_smaller, interval_smaller)
-print(fct_chk.loop_test([box0, box1], tst.iII_I_iII_I_iII_I(box0, box1)))
+print(fct_chk.evaluate([box0, box1], tst.iII_I_iII_I_iII_I(box0, box1)))
 box0 = box3D(out_interval_bigger, interval_smaller, interval_smaller)
 box1 = box3D(interval_smaller, in_interval_bigger, in_interval_bigger)
-print(fct_chk.loop_test([box0, box1], tst.oII_I_iI_II_iI_II(box0, box1)))
+print(fct_chk.evaluate([box0, box1], tst.oII_I_iI_II_iI_II(box0, box1)))
 box0 = box3D(interval_smaller, interval_smaller, in_interval_bigger)
 box1 = box3D(out_interval_bigger, out_interval_bigger, interval_smaller)
-print(fct_chk.loop_test([box0, box1], tst.oI_II_oI_II_iII_I(box0, box1)))
+print(fct_chk.evaluate([box0, box1], tst.oI_II_oI_II_iII_I(box0, box1)))
 box0 = box3D(interval_smaller, interval_smaller, interval_smaller)
 box1 = box3D(out_interval_bigger, out_interval_bigger, in_interval_bigger)
-print(fct_chk.loop_test([box0, box1], tst.oI_II_oI_II_iI_II(box0, box1)))
+print(fct_chk.evaluate([box0, box1], tst.oI_II_oI_II_iI_II(box0, box1)))
 box0 = box3D(interval_smaller, out_interval_bigger, interval_smaller)
 box1 = box3D(out_interval_bigger, interval_smaller, in_interval_bigger)
-print(fct_chk.loop_test([box0, box1], tst.oI_II_oII_I_iI_II(box0, box1)))
+print(fct_chk.evaluate([box0, box1], tst.oI_II_oII_I_iI_II(box0, box1)))
 box0 = box3D(interval_smaller, out_interval_bigger, interval_smaller)
 box1 = box3D(out_interval_bigger, interval_smaller, in_interval_bigger)
-print(fct_chk.loop_test([box0, box1], tst.oI_II_oII_I_iII_I(box0, box1)))
+print(fct_chk.evaluate([box0, box1], tst.oI_II_oII_I_iII_I(box0, box1)))
 box0 = box3D(out_interval_bigger, out_interval_bigger, in_interval_bigger)
 box1 = box3D(interval_smaller, interval_smaller, interval_smaller)
-print(fct_chk.loop_test([box0, box1], tst.oII_I_oII_I_iII_I(box0, box1)))
+print(fct_chk.evaluate([box0, box1], tst.oII_I_oII_I_iII_I(box0, box1)))
 box0 = box3D(out_interval_bigger, out_interval_bigger, interval_smaller)
 box1 = box3D(interval_smaller, interval_smaller, in_interval_bigger)
-print(fct_chk.loop_test([box0, box1], tst.oII_I_oII_I_iI_II(box0, box1)))
+print(fct_chk.evaluate([box0, box1], tst.oII_I_oII_I_iI_II(box0, box1)))
 box0 = box3D(interval_smaller, interval_smaller, in_interval_bigger)
 box1 = box3D(out_interval_bigger, in_interval_bigger, interval_smaller)
-print(fct_chk.loop_test([box0, box1], tst.oII_I_iI_II_i_II_I(box0, box1)))
+print(fct_chk.evaluate([box0, box1], tst.oII_I_iI_II_i_II_I(box0, box1)))
 box0 = box3D(interval_smaller, interval_smaller, interval_smaller)
 box1 = box3D(out_interval_bigger, in_interval_bigger, in_interval_bigger)
-print(fct_chk.loop_test([box0, box1], tst.oI_II_iI_II_iI_II(box0, box1)))
+print(fct_chk.evaluate([box0, box1], tst.oI_II_iI_II_iI_II(box0, box1)))
 box0 = box3D(interval_smaller, interval_smaller, in_interval_bigger)
 box1 = box3D(out_interval_bigger, in_interval_bigger, interval_smaller)
-print(fct_chk.loop_test([box0, box1], tst.oI_II_iI_II_iII_I(box0, box1)))
+print(fct_chk.evaluate([box0, box1], tst.oI_II_iI_II_iII_I(box0, box1)))
 box0 = box3D(interval_smaller, in_interval_bigger, in_interval_bigger)
 box1 = box3D(out_interval_bigger, interval_smaller, interval_smaller)
-print(fct_chk.loop_test([box0, box1], tst.oI_II_iII_I_iII_I(box0, box1)))
+print(fct_chk.evaluate([box0, box1], tst.oI_II_iII_I_iII_I(box0, box1)))
 box0 = box3D(out_interval_bigger, in_interval_bigger, in_interval_bigger)
 box1 = box3D(interval_smaller, interval_smaller, interval_smaller)
-print(fct_chk.loop_test([box0, box1], tst.oII_I_iII_I_iII_I(box0, box1)))
+print(fct_chk.evaluate([box0, box1], tst.oII_I_iII_I_iII_I(box0, box1)))
 '''
 import unittest
 class testing(unittest.TestCase):
