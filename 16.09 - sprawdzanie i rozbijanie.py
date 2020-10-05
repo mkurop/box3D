@@ -1,20 +1,23 @@
 import math
 
 class TEST:
-
+###PROBLEMY: 1 - funkcje są w zlej kolejności interwałów względem mysort (in12 powinno być np jako pierwsze a jest po o21)
+###2 - funkcja rozbija na przecinające sie pudełka
     def oI_II_oI_II_oI_II(self, box1, box2):
         x1, y1, z1 = box1.interval_x, box1.interval_y, box1.interval_z
         x2, y2, z2 = box2.interval_x, box2.interval_y, box2.interval_z
-        table = [box3D(x2, y2, z2), box3D(closed(x2.lower, x1.upper), closed(y2.lower, y1.upper), closed(z1.lower, z2.lower)), box3D(x2, closed(y1.lower, y2.lower), z1), box3D(closed(x1.lower, x2.lower), y1, z1)]
-        return table
-
-    def oI_II_oI_II_oII_I(self, box1, box2):
-        x1, y1, z1 = box1.interval_x, box1.interval_y, box1.interval_z
-        x2, y2, z2 = box2.interval_x, box2.interval_y, box2.interval_z
-        table = [box3D(x2, y2, z2), box3D(closed(x2.lower, x1.upper), closed(x2.lower, x1.upper), closed(z2.upper, z1.upper)), box3D(x1, closed(y1.lower, y2.lower), z1), box3D(closed(x1.lower, x2.lower), closed(y2.lower, y1.upper), z1)]
+        table = [box3D(x1, y1, z1), box3D(closed(x2.lower, x1.upper), closed(y2.lower, y1.upper ), closed(z1.upper + 1, z2.upper)), box3D(closed(x1.upper + 1, x2.upper), closed(y2.lower, y1.upper), z2), box3D(x2, closed(y1.upper + 1, y2.upper), z2)]
         return table
 
     def oI_II_oII_I_oII_I(self, box1, box2):
+        x1, y1, z1 = box1.interval_x, box1.interval_y, box1.interval_z
+        x2, y2, z2 = box2.interval_x, box2.interval_y, box2.interval_z
+        table = [box3D(x1, y1, z1), box3D(x1 & x2, y1 & y2, closed(z2.lower, z1.lower)), box3D(x2, closed(y2.lower, y1.lower - 1), z2), box3D(closed(x1.upper + 1, x2.upper), closed(y1.lower, y2.upper), z2)]
+        return table
+
+
+####
+    def oI_II_oI_II_oII_I(self, box1, box2):
         x1, y1, z1 = box1.interval_x, box1.interval_y, box1.interval_z
         x2, y2, z2 = box2.interval_x, box2.interval_y, box2.interval_z
         table = [box3D(x1, y1, z1), box3D(x1 & x2, y1 & y2, z2 - z1), box3D(x2, y2 - y1, z2), box3D(x2 - x1, y2, z2)]
@@ -34,13 +37,13 @@ class TEST:
     def iI_II_iI_II_iII_I(self, box1, box2):
         x1, y1, z1 = box1.interval_x, box1.interval_y, box1.interval_z
         x2, y2, z2 = box2.interval_x, box2.interval_y, box2.interval_z
-        table = [box3D(x2, y2, z2), box3D(x1, y1, closedopen(z1.lower, z2.lower)), box3D(x1, y1, openclosed(z2.upper, z1.upper))]
+        table = [box3D(x1, y1, z1), box3D(x2, closed(y2.lower, y1.lower), z2), box3D(x2, closed(y1.upper, y2.upper), z2)]
         return table
 
     def iI_II_iII_I_iII_I(self, box1, box2):
         x1, y1, z1 = box1.interval_x, box1.interval_y, box1.interval_z
         x2, y2, z2 = box2.interval_x, box2.interval_y, box2.interval_z
-        table = [box3D(x1, y1, z1), box3D(closed(x2.lower, x1.lower), y2, z2), box3D(closed(x1.upper, x2.upper), y2, z2)]
+        table = [box3D(x1, y1, z1), box3D(x1 - x2, y2, z2), box3D(x2 - x1, y2, z2)]
         return table
 
     def iII_I_iII_I_iII_I(self, box1, box2):
@@ -51,7 +54,7 @@ class TEST:
     def oII_I_iI_II_iI_II(self, box1, box2):
         x1, y1, z1 = box1.interval_x, box1.interval_y, box1.interval_z
         x2, y2, z2 = box2.interval_x, box2.interval_y, box2.interval_z
-        table = [box3D(x2, y2, z2), box3D(closed(x2.upper, x1.upper), y1, z1)]
+        table = [box3D(x2, y2, z2), box3D(x1 - x2, y1, z1)]
         return table
 
     def oI_II_oI_II_iII_I(self, box1, box2):
@@ -69,57 +72,55 @@ class TEST:
     def oI_II_oII_I_iI_II(self, box1, box2):
         x1, y1, z1 = box1.interval_x, box1.interval_y, box1.interval_z
         x2, y2, z2 = box2.interval_x, box2.interval_y, box2.interval_z
-        table = [box3D(x2, y2, z2), box3D(closed(x1.lower, x2.lower), y1 & y2, z1), box3D(x1, closed(y2.upper, y1.upper), z1)]
+        table = [box3D(x2, y2, z2), box3D(x1 - x2, y1 & y2, z1), box3D(x1, y1 - y2, z1)]
         return table
 
-
-#####DO POPRAWY ORAZ WSTAWIĆ WSZĘDZIE CLOSED ZAMIAST - ORAZ &
     def oI_II_oII_I_iII_I(self, box1, box2):
         x1, y1, z1 = box1.interval_x, box1.interval_y, box1.interval_z
         x2, y2, z2 = box2.interval_x, box2.interval_y, box2.interval_z
-        table = [box3D(x1, y1, z1), box3D(closed(x2.lower, x1.lower), closed(y1.upper, y2.upper), z2), box3D(closed(x1.upper, x2.upper), closed(y1.upper, y2.upper), z2)]
+        table = [box3D(x2, y2, z2), box3D(x1 - x2, y1 & y2, z1), box3D(x1, y1 - y2, z1)]
         return table
-#####
+
     def oII_I_oII_I_iII_I(self, box1, box2):
         x1, y1, z1 = box1.interval_x, box1.interval_y, box1.interval_z
         x2, y2, z2 = box2.interval_x, box2.interval_y, box2.interval_z
-        table = [box3D(x1, y1, z1), box3D(x2, closed(y2.lower, y1.lower), z2), box3D(closed(x2.lower, x1.lower), closed(y2.lower, y1.upper), z2)]
+        table = [box3D(x1, y1, z1), box3D(x2 - x1, y1 & y2, z2), box3D(x2, y2 - y1, z2)]
         return table
 
     def oII_I_oII_I_iI_II(self, box1, box2):
         x1, y1, z1 = box1.interval_x, box1.interval_y, box1.interval_z
         x2, y2, z2 = box2.interval_x, box2.interval_y, box2.interval_z
-        table = [box3D(x2, y2, z2), box3D(closed(x2.upper, x1.upper), closed(y1.lower, y2.upper), z1), box3D(x1, closed(y2.upper, y1.upper), z1)]
+        table = [box3D(x2, y2, z2), box3D(x1 - x2, y1 & y2, z1), box3D(x1, y1 - y2, z1)]
         return table
 
     def oII_I_iI_II_i_II_I(self, box1, box2):
         x1, y1, z1 = box1.interval_x, box1.interval_y, box1.interval_z
         x2, y2, z2 = box2.interval_x, box2.interval_y, box2.interval_z
-        table = [box3D(x1, y1, z1), box3D(x2, closed(y2.lower, y2.lower), z2), box3D(x2, closed(y1.upper, y2.upper), z2), box3D(closed(x1.upper, x2.upper), y2, z2)]
+        table = [box3D(x1, y1, z1), box3D(x2 - x1, y2, z2), box3D(x1 & x2, closed(y2.lower, y1.lower), z2), box3D(x1 & x2, closed(y1.upper, y2.upper), z2)]
         return table
 
     def oI_II_iI_II_iI_II(self, box1, box2):
         x1, y1, z1 = box1.interval_x, box1.interval_y, box1.interval_z
         x2, y2, z2 = box2.interval_x, box2.interval_y, box2.interval_z
-        table = [box3D(x2, y2, z2), box3D(closed(x1.lower, x2.lower), y1, z1)]
+        table = [box3D(x2, y2, z2), box3D(x1 - x2, y1, z1)]
         return table
 
     def oI_II_iI_II_iII_I(self, box1, box2):
         x1, y1, z1 = box1.interval_x, box1.interval_y, box1.interval_z
         x2, y2, z2 = box2.interval_x, box2.interval_y, box2.interval_z
-        table = [box3D(x1, y1, z1), box3D(closed(x1.upper, x2.upper), y2, z2), box3D(x2, closed(y2.lower, y1.lower), z2), box3D(x2, closed(y1.upper, y2.upper), z2)]
+        table = [box3D(x1, y1, z1), box3D(x2 - x1, y2, z2), box3D(x1 & x2, closed(y2.lower, y1.lower), z2), box3D(x1 & x2, closed(y1.upper, y2.upper), z2)]
         return table
 
     def oI_II_iII_I_iII_I(self, box1, box2):
         x1, y1, z1 = box1.interval_x, box1.interval_y, box1.interval_z
         x2, y2, z2 = box2.interval_x, box2.interval_y, box2.interval_z
-        table = [box3D(x1, y1, z1), box3D(closed(x1.upper, x2.upper), y2, z2)]
+        table = [box3D(x1, y1, z1), box3D(x2 - x1, y2, z2)]
         return table
 
     def oII_I_iII_I_iII_I(self, box1, box2):
         x1, y1, z1 = box1.interval_x, box1.interval_y, box1.interval_z
         x2, y2, z2 = box2.interval_x, box2.interval_y, box2.interval_z
-        table = [box3D(x1, y1, z1), box3D(closed(x2.lower, x1.lower), y2, z2)]
+        table = [box3D(x1, y1, z1), box3D(x2 - x1, y2, z2)]
         return table
 
     def mylen(self, interval):
@@ -146,7 +147,7 @@ class TEST:
         return True if self.is_equal(interval1, interval2) else False
 
     def io12(self, interval1, interval2):
-        if (self.is_out(interval1, interval2) & interval1.upper < interval2.upper) | (self.is_half_out(interval1, interval2) & (self.mylen(interval2) - self.mylen(interval1) > 0)):
+        if (interval1.upper < interval2.upper) & (self.is_out(interval1, interval2)) | (self.is_half_out(interval1, interval2) & ((interval1.lower < interval2.lower) | (interval1.upper < interval2.upper))):
             return True
         else:
             return False
@@ -155,7 +156,7 @@ class TEST:
         return True if self.is_in(interval1, interval2) & interval1.upper < interval2.upper else False
 
     def io21(self, interval1, interval2):
-        if self.is_out(interval1, interval2) & interval2.upper < interval1.upper | (self.is_half_out(interval1, interval2) & (self.mylen(interval1) - self.mylen(interval2) > 0)):
+        if (interval2.upper < interval1.upper) & (self.is_out(interval1, interval2)) | (self.is_half_out(interval1, interval2) & ((interval2.lower < interval1.lower) | (interval2.upper < interval1.upper))):
             return True
         else:
             return False
@@ -167,12 +168,12 @@ class TEST:
         x1, y1, z1, x2, y2, z2 = box1.interval_x, box1.interval_y, box1.interval_z, box2.interval_x, box2.interval_y, box2.interval_z
         return self.get_signature(x1, x2), self.get_signature(y1, y2), self.get_signature(z1, z2)
 
-
-    #idx_sig = {'oI_II': 'out1_2', 'oII_I': 'out2_1', 'iI_II': 'in1_2', 'iII_I': 'in2_1', 'sep': 'separate'}
-
     rozbij_dict = {('io12', 'io12', 'io12'): oI_II_oI_II_oI_II,
-                   ('io12', 'io12', 'io21'): oI_II_oI_II_oII_I,
                    ('io12', 'io21', 'io21'): oI_II_oII_I_oII_I,
+                    #dotąd zrobione
+
+
+                   ('io12', 'io12', 'io21'): oI_II_oI_II_oII_I,
                    ('io21', 'io21', 'io21'): oII_I_oII_I_oII_I,
 
                    ('ii12', 'ii12', 'ii12'): iI_II_iI_II_iI_II,
@@ -248,7 +249,10 @@ class TEST:
         return True if interval1 == interval2 else False
 
     def is_half_out(self, int1, int2):
-        return True if ((int1.lower == int2.lower) ^ (int2.upper == int1.upper)) and ((int2 == int2 & int1) ^ (int1 == int1 & int2)) else False
+        len1, len2 = (self.mylen(int1), self.mylen(int2))
+        difference2 = len2 - len1 if len1 > 0 else len1 + len2
+        difference1 = len1 - len2 if len2 > 0 else len1 + len2
+        return True if ((int1.lower == int2.lower) ^ (int2.upper == int1.upper)) and ((difference1 > 0) | (difference2 > 0)) else False
 
     def divide_out(self, int1, int2):
         inter = int1 & int2
@@ -272,7 +276,7 @@ class box3D:
 
     def __ror__(self, num):
         x, y, z = num[0], num[1], num[2]
-        is_on_border = x in set([self.interval_x.lower, self.interval_x.upper]) or y in set([self.interval_y.lower, self.interval_y.upper]) or z or set([self.interval_z.lower, self.interval_z.upper])
+        is_on_border = x in set([self.interval_x.lower, self.interval_x.upper]) or y in set([self.interval_y.lower, self.interval_y.upper]) or z in set([self.interval_z.lower, self.interval_z.upper])
         is_inside_box = self.__contains__(num)
         return True if is_on_border & is_inside_box else False
 
@@ -312,19 +316,19 @@ class algorithm_check():
     def loop_test(self, boxes_in, boxes_out):
         b = rnd.choice(boxes_in)
         x = self.random_point_from_a_box(b)
-        num_in = sum([x in b for b in boxes_out])
-        num_boundary = sum([x | b for b in boxes_out])
-        if ((num_in == 1) or (num_in == num_boundary)) and (num_in != 0):
-           return True
+        num_in = sum([b.__contains__(x) for b in boxes_out])
+        num_boundary = sum([b.__ror__(x) for b in boxes_out])
+        if (num_in == 1) or ((num_in == num_boundary) and (num_in != 0)):
+            return True
         else:
-           return False
+            return False
 
     def evaluate(self, boxes_in, boxes_out, checks_num = 1000):
         for i in range(checks_num):
-             if fct_chk.loop_test(boxes_in, boxes_out):
-                 continue
-             else:
-                 return False
+            if fct_chk.loop_test(boxes_in, boxes_out):
+                continue
+            else:
+                return False
         return True
 
 fct_chk = algorithm_check()
