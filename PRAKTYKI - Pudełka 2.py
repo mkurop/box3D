@@ -2,7 +2,9 @@
 import os
 import rtree
 import math
-from portion import closed
+from portion import *
+import portion
+
 # Notatka, bo nie przyjmuje nie zmienionego kodu
 # usuwanie plików z poprzedniego działania programu
 try:
@@ -79,12 +81,36 @@ class tree:
         self.tree = new_tree
 
 
+class boxPortion(portion):
+    eps = 1e-7
+
+    @property
+    def upper_eps(self):
+        return self.upper + self.eps
+
+    @property
+    def upper_meps(self):
+        return self.upper - self.eps
+
+    @property
+    def lower_eps(self):
+        return self.lower + self.eps
+
+    @property
+    def lower_meps(self):
+        return self.lower - self.eps
+
 class algorytm:
 
     def oI_II_oI_II_oI_II(self, box1, box2):
-        x1, y1, z1 = box1.interval_x, box1.interval_y, box1.interval_z
-        x2, y2, z2 = box2.interval_x, box2.interval_y, box2.interval_z
-        table = [box3D(x1, y1, z1), box3D(closed(x2.lower, x1.upper), closed(y2.lower, y1.upper), closed(z1.upper + 1, z2.upper)), box3D(closed(x1.upper + 1, x2.upper), closed(y2.lower, y1.upper), z2), box3D(x2, closed(y1.upper + 1, y2.upper), z2)]
+        boxP1, boxP2 = boxPortion(), boxPortion()
+        boxP1.x, boxP1.y, boxP1.z = boxPortion.closed(box1.interval_x.lower, box1.interval_x.upper), \
+                     boxPortion.closed(box1.interval_y.lower, box1.interval_y.upper), \
+                     boxPortion.closed(box1.interval_z.lower, box1.interval_z.upper)
+        boxP2.x, boxP2.y, boxP2.z = boxPortion.closed(box2.interval_x.lower, box2.interval_x.upper), \
+                     boxPortion.closed(box2.interval_y.lower, box2.interval_y.upper), \
+                     boxPortion.closed(box2.interval_z.lower, box2.interval_z.upper)
+        table = [box3D(boxP1.x, boxP1.y, boxP1.z), box3D(boxP1.x & boxP2.x, boxP1.y & boxP2.y, (boxP2.z - boxP1.z).reshape(lower=boxP1.z.upper_eps)), box3D((boxP2.x - boxP1.x).reshape(lower=boxP1.z.upper_eps), boxP2.y & boxP1.y, boxP2.z), box3D(boxP2.x, (boxP2.y - boxP1.y).reshape(lower=boxP1.y.upper_eps), boxP2.z)]
         return table
 
     def oI_II_oI_II_oII_I(self, box1, box2):
@@ -96,9 +122,8 @@ class algorytm:
     def oI_II_oII_I_oII_I(self, box1, box2):
         x1, y1, z1 = box1.interval_x, box1.interval_y, box1.interval_z
         x2, y2, z2 = box2.interval_x, box2.interval_y, box2.interval_z
-        table = [box3D(x1, y1, z1), box3D(x1 & x2, y1 & y2, closed(z2.lower, z1.lower)), box3D(x2, closed(y2.lower, y1.lower - 1), z2), box3D(closed(x1.upper + 1, x2.upper), closed(y1.lower, y2.upper), z2)]
+        table = [box3D(x1, y1, z1), box3D(x1 & x2, y1 & y2, closed(z2.lower, z1.lower)), box3D(x2, closed(y2.lower, y1.lower - self.eps), z2), box3D(closed(x1.upper + self.eps, x2.upper), closed(y1.lower, y2.upper), z2)]
         return table
-
 
     def oII_I_oII_I_oII_I(self, box1, box2):
         x1, y1, z1 = box1.interval_x, box1.interval_y, box1.interval_z
@@ -250,7 +275,7 @@ class algorytm:
         return True if self.is_equal(interval1, interval2) else False
 
     def io12(self, interval1, interval2):
-        if (interval1.upper < interval2.upper) & (self.is_out(interval1, interval2)) | (self.is_half_out(interval1, interval2) & ((interval1.lower < interval2.lower) | (interval1.upper < interval2.upper))):
+        if ((interval1.upper < interval2.upper) & (self.is_out(interval1, interval2))) | (self.is_half_out(interval1, interval2) & ((interval1.lower < interval2.lower) ^ (interval1.upper < interval2.upper))):
             return True
         else:
             return False
@@ -260,7 +285,7 @@ class algorytm:
         return True if (union.lower == interval1.lower) and (union.upper == interval1.upper) and (interval1.lower < interval2.lower) and (interval1.upper < interval2.upper) else False
 
     def io21(self, interval1, interval2):
-        if (interval2.upper < interval1.upper) & (self.is_out(interval1, interval2)) | (self.is_half_out(interval1, interval2) & ((interval2.lower < interval1.lower) | (interval2.upper < interval1.upper))):
+        if ((interval2.upper < interval1.upper) & (self.is_out(interval1, interval2))) | (self.is_half_out(interval1, interval2) & ((interval2.lower < interval1.lower) ^ (interval2.upper < interval1.upper))):
             return True
         else:
             return False
