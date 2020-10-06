@@ -81,7 +81,7 @@ class tree:
         self.tree = new_tree
 
 
-class boxPortion(portion):
+class boxPortion(portion.Interval):
     eps = 1e-7
 
     @property
@@ -103,14 +103,13 @@ class boxPortion(portion):
 class algorytm:
 
     def oI_II_oI_II_oI_II(self, box1, box2):
-        boxP1, boxP2 = boxPortion(), boxPortion()
-        boxP1.x, boxP1.y, boxP1.z = boxPortion.closed(box1.interval_x.lower, box1.interval_x.upper), \
-                     boxPortion.closed(box1.interval_y.lower, box1.interval_y.upper), \
-                     boxPortion.closed(box1.interval_z.lower, box1.interval_z.upper)
-        boxP2.x, boxP2.y, boxP2.z = boxPortion.closed(box2.interval_x.lower, box2.interval_x.upper), \
-                     boxPortion.closed(box2.interval_y.lower, box2.interval_y.upper), \
-                     boxPortion.closed(box2.interval_z.lower, box2.interval_z.upper)
-        table = [box3D(boxP1.x, boxP1.y, boxP1.z), box3D(boxP1.x & boxP2.x, boxP1.y & boxP2.y, (boxP2.z - boxP1.z).reshape(lower=boxP1.z.upper_eps)), box3D((boxP2.x - boxP1.x).reshape(lower=boxP1.z.upper_eps), boxP2.y & boxP1.y, boxP2.z), box3D(boxP2.x, (boxP2.y - boxP1.y).reshape(lower=boxP1.y.upper_eps), boxP2.z)]
+        x1, y1, z1 = closed(box1.interval_x.lower, box1.interval_x.upper), \
+                     closed(box1.interval_y.lower, box1.interval_y.upper), \
+                     closed(box1.interval_z.lower, box1.interval_z.upper)
+        x2, y2, z2 = closed(box2.interval_x.lower, box2.interval_x.upper), \
+                     closed(box2.interval_y.lower, box2.interval_y.upper), \
+                     closed(box2.interval_z.lower, box2.interval_z.upper)
+        table = [box3D(x1, y1, z1), box3D(x1 & x2, y1 & y2, (z2 - z1).replace(lower=boxPortion(upper=z2.upper).upper_eps)), box3D((x2 - x1).replace(lower=boxPortion(upper=z1.upper).upper_eps), y2 & y1, z2), box3D(x2, (y2 - y1).replace(lower=boxPortion(upper=y1.upper).upper_eps), z2)]
         return table
 
     def oI_II_oI_II_oII_I(self, box1, box2):
