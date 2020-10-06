@@ -1,18 +1,23 @@
 import math
-
+from numpy import finfo
+from numpy import float as ft
 class TEST:
 ###PROBLEMY: 1 - funkcje są w zlej kolejności interwałów względem mysort (in12 powinno być np jako pierwsze a jest po o21)
 ###2 - funkcja rozbija na przecinające sie pudełka
+
+    def __init__(self):
+        self.eps = 1e-7
+
     def oI_II_oI_II_oI_II(self, box1, box2):
         x1, y1, z1 = box1.interval_x, box1.interval_y, box1.interval_z
         x2, y2, z2 = box2.interval_x, box2.interval_y, box2.interval_z
-        table = [box3D(x1, y1, z1), box3D(closed(x2.lower, x1.upper), closed(y2.lower, y1.upper ), closed(z1.upper + 1, z2.upper)), box3D(closed(x1.upper + 1, x2.upper), closed(y2.lower, y1.upper), z2), box3D(x2, closed(y1.upper + 1, y2.upper), z2)]
+        table = [box3D(x1, y1, z1), box3D(closed(x2.lower, x1.upper), closed(y2.lower, y1.upper), closed(z1.upper + self.eps, z2.upper)), box3D(closed(x1.upper + self.eps, x2.upper), closed(y2.lower, y1.upper), z2), box3D(x2, closed(y1.upper + self.eps, y2.upper), z2)]
         return table
 
     def oI_II_oII_I_oII_I(self, box1, box2):
         x1, y1, z1 = box1.interval_x, box1.interval_y, box1.interval_z
         x2, y2, z2 = box2.interval_x, box2.interval_y, box2.interval_z
-        table = [box3D(x1, y1, z1), box3D(x1 & x2, y1 & y2, closed(z2.lower, z1.lower)), box3D(x2, closed(y2.lower, y1.lower - 1), z2), box3D(closed(x1.upper + 1, x2.upper), closed(y1.lower, y2.upper), z2)]
+        table = [box3D(x1, y1, z1), box3D(x1 & x2, y1 & y2, closed(z2.lower, z1.lower)), box3D(x2, closed(y2.lower, y1.lower - self.eps), z2), box3D(closed(x1.upper + self.eps, x2.upper), closed(y1.lower, y2.upper), z2)]
         return table
 
 
@@ -264,6 +269,8 @@ class TEST:
 
     def divide_in(self, int1, int2):
         return [int1 | int2]
+
+
 
 class box3D:
     def __init__(self, interval_x, interval_y, interval_z):
