@@ -4,7 +4,7 @@ import rtree
 import math
 from portion import *
 import portion
-
+import portion.const
 # Notatka, bo nie przyjmuje nie zmienionego kodu
 # usuwanie plików z poprzedniego działania programu
 try:
@@ -64,7 +64,6 @@ class boxStack:
     def pop(self):
         return self.stack.pop()
 
-
 class tree:
 
     def __init__(self):
@@ -80,8 +79,10 @@ class tree:
     def set_tree(self, new_tree):
         self.tree = new_tree
 
+def my_closed(lower, upper):
+    return myInterval.from_atomic(portion.const.Bound.CLOSED, lower, upper, portion.const.Bound.CLOSED)
 
-class boxPortion(portion.Interval):
+class myInterval(portion.Interval):
     eps = 1e-7
 
     @property
@@ -100,16 +101,85 @@ class boxPortion(portion.Interval):
     def lower_meps(self):
         return self.lower - self.eps
 
-class algorytm:
+    @upper_eps.setter
+    def upper_eps(self, value):
+        self.upper_eps = value + self.eps
 
+    @lower_meps.setter
+    def lower_meps(self, value):
+        self.lower_meps = value - self.eps
+
+    @upper_eps.setter
+    def upper_eps(self, value):
+        self.upper_eps = value + self.eps
+
+    @upper_meps.setter
+    def upper_meps(self, value):
+        self.upper_meps = value - self.eps
+
+    @upper_eps.getter
+    def upper_eps(self):
+        return self.upper_eps
+
+    @lower_meps.getter
+    def lower_meps(self):
+        return self.lower_meps
+
+    @upper_eps.getter
+    def upper_eps(self):
+        return self.upper_eps
+
+    @upper_meps.getter
+    def upper_meps(self):
+        return self.upper_meps
+
+    def box_cut_execute(self, interval, i, int):
+        if (i > 0) & (i + 1 < len(interval)):
+            interval[i].int.replace(upper=interval[i].upper_meps)
+            interval[i + 1].int.replace(lower=interval[i].lower_eps)
+        elif i == 0:
+            interval[i].int.replace(lower=interval[i].lower_eps)
+        elif i + 1 == len(interval):
+            interval[i].int.replace(upper=interval[i].upper_meps)
+
+    def box_cut(self, boxes):
+        new_boxes = []
+        for i in range(len(boxes)):
+            if i < len(boxes) & boxes[i].interval_x.upper == boxes[i + 1].lower:
+                self.box_cut_execute(boxes, i, boxes[i].interval_x)
+                pass
+            elif i > 0 & boxes[i].interval_x.lower == boxes[i - 1]:
+                self.box_cut_execute(boxes, i, boxes[i].interval_x)
+                pass
+            if i < len(boxes) & boxes[i].interval_y.upper == boxes[i + 1].lower:
+                self.box_cut_execute(boxes, i, boxes[i].interval_y)
+                pass
+            elif i > 0 & boxes[i].interval_y.lower == boxes[i - 1]:
+                self.box_cut_execute(boxes, i, boxes[i].interval_y)
+                pass
+            if i < len(boxes) & boxes[i].interval_z.upper == boxes[i + 1].lower:
+                self.box_cut_execute(boxes, i, boxes[i].interval_z)
+                pass
+            elif i > 0 & boxes[i].interval_z.lower == boxes[i - 1]:
+                self.box_cut_execute(boxes, i, boxes[i].interval_z)
+                pass
+
+            box = box3D(closed(boxes[i].interval_x, boxes[i].interval_y, boxes[i].interval_z))
+            new_boxes.append(box)
+        return new_boxes
+
+class algorytm:
+    my_int = myInterval()
     def oI_II_oI_II_oI_II(self, box1, box2):
-        x1, y1, z1 = closed(box1.interval_x.lower, box1.interval_x.upper), \
-                     closed(box1.interval_y.lower, box1.interval_y.upper), \
-                     closed(box1.interval_z.lower, box1.interval_z.upper)
-        x2, y2, z2 = closed(box2.interval_x.lower, box2.interval_x.upper), \
-                     closed(box2.interval_y.lower, box2.interval_y.upper), \
-                     closed(box2.interval_z.lower, box2.interval_z.upper)
-        table = [box3D(x1, y1, z1), box3D(x1 & x2, y1 & y2, (z2 - z1).replace(lower=boxPortion(upper=z2.upper).upper_eps)), box3D((x2 - x1).replace(lower=boxPortion(upper=z1.upper).upper_eps), y2 & y1, z2), box3D(x2, (y2 - y1).replace(lower=boxPortion(upper=y1.upper).upper_eps), z2)]
+        x1, y1, z1 = my_closed(float(box1.interval_x.lower), float(box1.interval_x.upper)), \
+                     my_closed(float(box1.interval_y.lower), float(box1.interval_y.upper)), \
+                     my_closed(float(box1.interval_z.lower), float(box1.interval_z.upper))
+        x2, y2, z2 = my_closed(float(box2.interval_x.lower), float(box2.interval_x.upper)), \
+                     my_closed(float(box2.interval_y.lower), float(box2.interval_y.upper)), \
+                     my_closed(float(box2.interval_z.lower), float(box2.interval_z.upper))
+        z2_cut, x1_cut, y2_cut = my_closed(float(z1.upper), float(z2.upper)), my_closed(float(x1.upper), float(x2.upper)), my_closed(float(y1.upper), float(y2.upper))
+        table = myInterval().box_cut([(x1, y1, z1), (x1 & x2, y1 & y2, z2_cut), (x1_cut, y2 & y1, z2), (x2, y2_cut, z2)])
+        table = myInterval.box_cut(table)
         return table
 
     def oI_II_oI_II_oII_I(self, box1, box2):
