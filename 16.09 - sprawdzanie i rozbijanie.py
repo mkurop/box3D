@@ -17,18 +17,10 @@ class TEST:
     def oI_II_oII_I_oII_I(self, box1, box2):
         x1, y1, z1 = box1.interval_x, box1.interval_y, box1.interval_z
         x2, y2, z2 = box2.interval_x, box2.interval_y, box2.interval_z
-        table = [box3D(x1, y1, z1), box3D(x1 & x2, y1 & y2, closed(z2.lower, z1.lower)), box3D(x2, closed(y2.lower, y1.lower - self.eps), z2), box3D(closed(x1.upper + self.eps, x2.upper), closed(y1.lower, y2.upper), z2)]
+        table = [box3D(x1, y1, z1), box3D(x1 & x2, y1 & y2, closed(z2.lower, z1.lower)), box3D(x2, closed(y2.lower, y1.lower), z2), box3D(closed(x1.upper, x2.upper), closed(y1.lower, y2.upper), z2)]
         return table
 
-
-####
     def oI_II_oI_II_oII_I(self, box1, box2):
-        x1, y1, z1 = box1.interval_x, box1.interval_y, box1.interval_z
-        x2, y2, z2 = box2.interval_x, box2.interval_y, box2.interval_z
-        table = [box3D(x1, y1, z1), box3D(x1 & x2, y1 & y2, z2 - z1), box3D(x2, y2 - y1, z2), box3D(x2 - x1, y2, z2)]
-        return table
-
-    def oII_I_oII_I_oII_I(self, box1, box2):
         x1, y1, z1 = box1.interval_x, box1.interval_y, box1.interval_z
         x2, y2, z2 = box2.interval_x, box2.interval_y, box2.interval_z
         table = [box3D(x1, y1, z1), box3D(x1 & x2, y1 & y2, z2 - z1), box3D(x2, y2 - y1, z2), box3D(x2 - x1, y2, z2)]
@@ -38,6 +30,18 @@ class TEST:
         x, y, z = box2.interval_x, box2.interval_y, box2.interval_z
         table = [box3D(x, y, z)]
         return table
+
+
+####
+
+
+    def oII_I_oII_I_oII_I(self, box1, box2):
+        x1, y1, z1 = box1.interval_x, box1.interval_y, box1.interval_z
+        x2, y2, z2 = box2.interval_x, box2.interval_y, box2.interval_z
+        table = [box3D(x1, y1, z1), box3D(x1 & x2, y1 & y2, z2 - z1), box3D(x2, y2 - y1, z2), box3D(x2 - x1, y2, z2)]
+        return table
+
+
 
     def iI_II_iI_II_iII_I(self, box1, box2):
         x1, y1, z1 = box1.interval_x, box1.interval_y, box1.interval_z
@@ -73,11 +77,11 @@ class TEST:
         x2, y2, z2 = box2.interval_x, box2.interval_y, box2.interval_z
         table = [box3D(x2, y2, z2), box3D(x1 - x2, y1 & y2, z1), box3D(x1, y1 - y2, z1)]
         return table
-
+#######TU SKOŃCZYŁEŚ!!!!#######
     def oI_II_oII_I_iI_II(self, box1, box2):
         x1, y1, z1 = box1.interval_x, box1.interval_y, box1.interval_z
         x2, y2, z2 = box2.interval_x, box2.interval_y, box2.interval_z
-        table = [box3D(x2, y2, z2), box3D(x1 - x2, y1 & y2, z1), box3D(x1, y1 - y2, z1)]
+        table = [box3D(x2, y2, z2), box3D(), box3D()]
         return table
 
     def oI_II_oII_I_iII_I(self, box1, box2):
