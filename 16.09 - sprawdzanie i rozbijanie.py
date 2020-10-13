@@ -1,23 +1,82 @@
 import math
 from numpy import finfo
 from numpy import float as ft
+import portion
+
+def my_closed(lower, upper):
+    return myInterval.from_atomic(portion.const.Bound.CLOSED, lower, upper, portion.const.Bound.CLOSED)
+class myInterval(portion.Interval):
+    eps = 1e-7
+
+    @property
+    def upper_eps(self):
+        return self.upper + self.eps
+
+    @property
+    def upper_meps(self):
+        return self.upper - self.eps
+
+    @property
+    def lower_eps(self):
+        return self.lower + self.eps
+
+    @property
+    def lower_meps(self):
+        return self.lower - self.eps
+
+    @lower_eps.getter
+    def get_lower_eps(self):
+        return self.lower_eps
+
+    @lower_meps.getter
+    def get_lower_meps(self):
+        return self.lower_meps
+
+    @upper_eps.getter
+    def get_upper_eps(self):
+        return self.upper_eps
+
+    @upper_meps.getter
+    def get_upper_meps(self):
+        return self.upper_meps
+
+    def box_cut_execute(self, interval):
+        myInt = myInterval(interval)
+        if interval.lower % 1 == 0:
+            interval = closed(myInt.get_lower_eps, interval.upper)
+        if interval.upper % 1 == 0:
+            interval = closed(interval.lower, myInt.get_upper_meps)
+        return interval
+
+    def box_cut(self, boxes):
+        new_boxes = []
+        for i in range(len(boxes)):
+            x = self.box_cut_execute(boxes[i].interval_x)
+            y = self.box_cut_execute(boxes[i].interval_y)
+            z = self.box_cut_execute(boxes[i].interval_z)
+            box = box3D(x, y, z)
+            new_boxes.append(box)
+        return new_boxes
+
 class TEST:
 ###PROBLEMY: 1 - funkcje są w zlej kolejności interwałów względem mysort (in12 powinno być np jako pierwsze a jest po o21)
 ###2 - funkcja rozbija na przecinające sie pudełka
-
+    my_int = myInterval()
     def __init__(self):
         self.eps = 1e-7
 
     def oI_II_oI_II_oI_II(self, box1, box2):
         x1, y1, z1 = box1.interval_x, box1.interval_y, box1.interval_z
         x2, y2, z2 = box2.interval_x, box2.interval_y, box2.interval_z
-        table = [box3D(x1, y1, z1), box3D(closed(x2.lower, x1.upper), closed(y2.lower, y1.upper), closed(z1.upper + self.eps, z2.upper)), box3D(closed(x1.upper + self.eps, x2.upper), closed(y2.lower, y1.upper), z2), box3D(x2, closed(y1.upper + self.eps, y2.upper), z2)]
+        z2_cut, x1_cut, y2_cut = closed(z1.upper, z2.upper), closed(x1.upper, x2.upper),\
+                                 closed(y1.upper, y2.upper)
+        table = [box3D(x1, y1, z1), box3D(x1 & x2, y1 & y2, z2_cut), box3D(x1_cut, y2 & y1, z2), box3D(x2, y2_cut, z2)]
         return table
 
     def oI_II_oII_I_oII_I(self, box1, box2):
         x1, y1, z1 = box1.interval_x, box1.interval_y, box1.interval_z
         x2, y2, z2 = box2.interval_x, box2.interval_y, box2.interval_z
-        table = [box3D(x1, y1, z1), box3D(x1 & x2, y1 & y2, closed(z2.lower, z1.lower)), box3D(x2, closed(y2.lower, y1.lower), z2), box3D(closed(x1.upper, x2.upper), closed(y1.lower, y2.upper), z2)]
+        table = [box3D(x1, y1, z1), box3D(x1 & x2, y1 & y2, z2 - z1), box3D(x2 - x1, y2, z2), box3D(x2 & x1, y2 - y1, z2)]
         return table
 
     def oI_II_oI_II_oII_I(self, box1, box2):
@@ -38,21 +97,21 @@ class TEST:
     def oII_I_oII_I_oII_I(self, box1, box2):
         x1, y1, z1 = box1.interval_x, box1.interval_y, box1.interval_z
         x2, y2, z2 = box2.interval_x, box2.interval_y, box2.interval_z
-        table = [box3D(x1, y1, z1), box3D(x1 & x2, y1 & y2, z2 - z1), box3D(x2, y2 - y1, z2), box3D(x2 - x1, y2, z2)]
+        table = [box3D(x1, y1, z1), box3D(x2, y2 - y1, z2), box3D(x2 - x1, y2 & y1, z2), box3D(x1 & x2, y1 & y2, z2 - z1)]
         return table
-
-
 
     def iI_II_iI_II_iII_I(self, box1, box2):
         x1, y1, z1 = box1.interval_x, box1.interval_y, box1.interval_z
         x2, y2, z2 = box2.interval_x, box2.interval_y, box2.interval_z
-        table = [box3D(x1, y1, z1), box3D(x2, closed(y2.lower, y1.lower), z2), box3D(x2, closed(y1.upper, y2.upper), z2)]
+        z = [i for i in z1 - z2]
+        table = [box3D(x2, y2, z2), box3D(x1, y1, z[0]), box3D(x1, y1, z[1])]
         return table
 
     def iI_II_iII_I_iII_I(self, box1, box2):
         x1, y1, z1 = box1.interval_x, box1.interval_y, box1.interval_z
         x2, y2, z2 = box2.interval_x, box2.interval_y, box2.interval_z
-        table = [box3D(x1, y1, z1), box3D(x1 - x2, y2, z2), box3D(x2 - x1, y2, z2)]
+        x = [i for i in x2 - x1]
+        table = [box3D(x1, y1, z1), box3D(x[0], y2, z2),  box3D(x[1], y2, z2)]
         return table
 
     def iII_I_iII_I_iII_I(self, box1, box2):
@@ -81,7 +140,7 @@ class TEST:
     def oI_II_oII_I_iI_II(self, box1, box2):
         x1, y1, z1 = box1.interval_x, box1.interval_y, box1.interval_z
         x2, y2, z2 = box2.interval_x, box2.interval_y, box2.interval_z
-        table = [box3D(x2, y2, z2), box3D(), box3D()]
+        table = [box3D(x2, y2, z2), box3D(x1, y1 - y2, z1), box3D(x1, y2 & y1, z1 - z2)]
         return table
 
     def oI_II_oII_I_iII_I(self, box1, box2):
@@ -123,7 +182,7 @@ class TEST:
     def oI_II_iII_I_iII_I(self, box1, box2):
         x1, y1, z1 = box1.interval_x, box1.interval_y, box1.interval_z
         x2, y2, z2 = box2.interval_x, box2.interval_y, box2.interval_z
-        table = [box3D(x1, y1, z1), box3D(x2 - x1, y2, z2)]
+        table = [box3D(x1, y1, z1), box3D(x2, y2, z2 - z1)]
         return table
 
     def oII_I_iII_I_iII_I(self, box1, box2):
@@ -184,7 +243,6 @@ class TEST:
 
                    ('io12', 'io12', 'io21'): oI_II_oI_II_oII_I,
                    ('io21', 'io21', 'io21'): oII_I_oII_I_oII_I,
-
                    ('ii12', 'ii12', 'ii12'): iI_II_iI_II_iI_II,
                    ('ii12', 'ii12', 'ii21'): iI_II_iI_II_iII_I,
                    ('ii12', 'ii21', 'ii21'): iI_II_iII_I_iII_I,
@@ -381,10 +439,10 @@ print(fct_chk.evaluate([box0, box1], tst.oI_II_oI_II_iII_I(box0, box1)))
 box0 = box3D(interval_smaller, interval_smaller, interval_smaller)
 box1 = box3D(out_interval_bigger, out_interval_bigger, in_interval_bigger)
 print(fct_chk.evaluate([box0, box1], tst.oI_II_oI_II_iI_II(box0, box1)))
-box0 = box3D(interval_smaller, out_interval_bigger, interval_smaller)
-box1 = box3D(out_interval_bigger, interval_smaller, in_interval_bigger)
+box0 = box3D(interval_smaller, interval_smaller, out_interval_bigger)
+box1 = box3D(in_interval_bigger, out_interval_bigger, interval_smaller)
 print(fct_chk.evaluate([box0, box1], tst.oI_II_oII_I_iI_II(box0, box1)))
-box0 = box3D(interval_smaller, out_interval_bigger, interval_smaller)
+box0 = box3D(interval_smaller, interval_smaller, out_interval_bigger)
 box1 = box3D(out_interval_bigger, interval_smaller, in_interval_bigger)
 print(fct_chk.evaluate([box0, box1], tst.oI_II_oII_I_iII_I(box0, box1)))
 box0 = box3D(out_interval_bigger, out_interval_bigger, in_interval_bigger)
@@ -402,8 +460,8 @@ print(fct_chk.evaluate([box0, box1], tst.oI_II_iI_II_iI_II(box0, box1)))
 box0 = box3D(interval_smaller, interval_smaller, in_interval_bigger)
 box1 = box3D(out_interval_bigger, in_interval_bigger, interval_smaller)
 print(fct_chk.evaluate([box0, box1], tst.oI_II_iI_II_iII_I(box0, box1)))
-box0 = box3D(interval_smaller, in_interval_bigger, in_interval_bigger)
-box1 = box3D(out_interval_bigger, interval_smaller, interval_smaller)
+box0 = box3D(in_interval_bigger, in_interval_bigger, interval_smaller)
+box1 = box3D(interval_smaller, interval_smaller, out_interval_bigger)
 print(fct_chk.evaluate([box0, box1], tst.oI_II_iII_I_iII_I(box0, box1)))
 box0 = box3D(out_interval_bigger, in_interval_bigger, in_interval_bigger)
 box1 = box3D(interval_smaller, interval_smaller, interval_smaller)
