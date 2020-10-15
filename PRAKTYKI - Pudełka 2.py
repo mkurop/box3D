@@ -103,6 +103,24 @@ class myInterval(portion.Interval):
     def lower_meps(self):
         return self.lower - self.eps
 
+
+    @lower_eps.setter
+    def lower_eps(self):
+        self.lower_eps = self.lower + self.eps
+
+    @lower_meps.setter
+    def lower_meps(self):
+        self.lower_meps = self.lower + self.eps
+
+    @upper_eps.setter
+    def upper_eps(self):
+        self.upper_eps = self.upper + self.eps
+
+    @upper_meps.setter
+    def upper_meps(self):
+        self.upper_meps = self.upper + self.eps
+
+
     @lower_eps.getter
     def get_lower_eps(self):
         return self.lower_eps
@@ -119,23 +137,30 @@ class myInterval(portion.Interval):
     def get_upper_meps(self):
         return self.upper_meps
 
+
     def box_cut_execute(self, interval):
         myInt = myInterval(interval)
-        if interval.lower % 1 == 0:
-            interval = closed(myInt.get_lower_eps, interval.upper)
-        if interval.upper % 1 == 0:
-            interval = closed(interval.lower, myInt.get_upper_meps)
+        interval = my_closed(myInt.get_lower_eps, myInt.get_upper_meps)
         return interval
 
-    def box_cut(self, boxes):
-        new_boxes = []
-        for i in range(len(boxes)):
-            x = self.box_cut_execute(boxes[i].interval_x)
-            y = self.box_cut_execute(boxes[i].interval_y)
-            z = self.box_cut_execute(boxes[i].interval_z)
-            box = box3D(x, y, z)
-            new_boxes.append(box)
-        return new_boxes
+    def box_cut(self, box1):
+        x = self.box_cut_execute(box1.interval_x)
+        y = self.box_cut_execute(box1.interval_y)
+        z = self.box_cut_execute(box1.interval_z)
+        box = box3D(x, y, z)
+        return box
+
+    def box_uncut_execute(self, interval):
+        myInt = myInterval(interval)
+        interval = my_closed(myInt.get_lower_meps, myInt.get_upper_eps)
+        return interval
+
+    def box_uncut(self, box1):
+        x = self.box_uncut_execute(box1.interval_x)
+        y = self.box_uncut_execute(box1.interval_y)
+        z = self.box_uncut_execute(box1.interval_z)
+        box = box3D(x, y, z)
+        return box
 
 class algorytm:
     my_int = myInterval()
@@ -146,8 +171,7 @@ class algorytm:
         x2, y2, z2 = my_closed(box2.interval_x.lower, box2.interval_x.upper), \
                      my_closed(box2.interval_y.lower, box2.interval_y.upper), \
                      my_closed(box2.interval_z.lower, box2.interval_z.upper)
-        table = [box3D(x1, y1, z1), box3D(x1 & x2, y1 & y2, z2 - z1), box3D(x1 - x2, y2 & y1, z2), box3D(x2, y2 - y1, z2)]
-        table = self.my_int.box_cut(table)
+        table = [box3D(x1, y1, z1), box3D(x1 & x2, y1 & y2, z2 - z1), box3D(x2 - x1, y2 & y1, z2), box3D(x2, y2 - y1, z2)]
         return table
 
     def oI_II_oI_II_oII_I(self, box1, box2):
@@ -158,7 +182,6 @@ class algorytm:
                      my_closed(box2.interval_y.lower, box2.interval_y.upper), \
                      my_closed(box2.interval_z.lower, box2.interval_z.upper)
         table = [box3D(x1, y1, z1), box3D(x1 & x2, y1 & y2, z2 - z1), box3D(x2 - x1, y2, z2), box3D(x2 & x1, y2 - y1, z2)]
-        table = self.my_int.box_cut(table)
         return table
 
     def oI_II_oII_I_oII_I(self, box1, box2):
@@ -169,7 +192,6 @@ class algorytm:
                      my_closed(box2.interval_y.lower, box2.interval_y.upper), \
                      my_closed(box2.interval_z.lower, box2.interval_z.upper)
         table = [box3D(x1, y1, z1), box3D(x1 & x2, y1 & y2, closed(z2.lower, z1.lower)), box3D(x2, closed(y2.lower, y1.lower), z2), box3D(closed(x1.upper, x2.upper), closed(y1.lower, y2.upper), z2)]
-        table = self.my_int.box_cut(table)
         return table
 
     def oII_I_oII_I_oII_I(self, box1, box2):
@@ -180,7 +202,6 @@ class algorytm:
                      my_closed(box2.interval_y.lower, box2.interval_y.upper), \
                      my_closed(box2.interval_z.lower, box2.interval_z.upper)
         table = [box3D(x1, y1, z1), box3D(x2, y2 - y1, z2), box3D(x2 - x1, y2 & y1, z2), box3D(x1 & x2, y1 & y2, z2 - z1)]
-        table = self.my_int.box_cut(table)
         return table
 
     def iI_II_iI_II_iI_II(self, box1, box2):
@@ -188,7 +209,6 @@ class algorytm:
                      my_closed(box2.interval_y.lower, box2.interval_y.upper), \
                      my_closed(box2.interval_z.lower, box2.interval_z.upper)
         table = [box3D(x2, y2, z2)]
-        table = self.my_int.box_cut(table)
         return table
 
     def iI_II_iI_II_iII_I(self, box1, box2):
@@ -198,13 +218,18 @@ class algorytm:
         x2, y2, z2 = my_closed(box2.interval_x.lower, box2.interval_x.upper), \
                      my_closed(box2.interval_y.lower, box2.interval_y.upper), \
                      my_closed(box2.interval_z.lower, box2.interval_z.upper)
-        x = [i for i in x2 - x1]
-        table = [box3D(x1, y1, z1)]
-        if x[0] != closed(math.inf, -math.inf):
-            table.append(box3D(x[0], y2, z2))
-        if len(x) == 2:
-            table.append(box3D(x[1], y2, z2))
-        table = self.my_int.box_cut(table)
+        table = [box3D(x2, y2, z2)]
+        z = [i for i in z1 - z2]
+        if len(z) == 2:
+            if z[0] != closed(math.inf, -math.inf) and z[1] != closed(math.inf, -math.inf):
+                table.append(box3D(x1, y1, z[0]))
+                table.append(box3D(x1, y1, z[1]))
+        if len(z) != 2 or (closed(math.inf, -math.inf) in z):
+            if z[0] != closed(math.inf, -math.inf):
+                table.append(box3D(x1, y1, z[0]))
+            if len(z) == 2:
+                if z[1] != closed(math.inf, -math.inf):
+                    table.append(x1, y1, z[1])
         return table
 
     def iI_II_iII_I_iII_I(self, box1, box2):
@@ -219,8 +244,8 @@ class algorytm:
         if x[0] != closed(math.inf, -math.inf):
             table.append(box3D(x[0], y2, z2))
         if len(x) == 2:
-            table.append(box3D(x[1], y2, z2))
-        table = self.my_int.box_cut(table)
+            if x[1] != closed(math.inf, -math.inf):
+                table.append(box3D(x[1], y2, z2))
         return table
 
     def iII_I_iII_I_iII_I(self, box1, box2):
@@ -228,7 +253,6 @@ class algorytm:
                      my_closed(box1.interval_y.lower, box1.interval_y.upper), \
                      my_closed(box1.interval_z.lower, box1.interval_z.upper)
         table = [box3D(x1, y1, z1)]
-        table = self.my_int.box_cut(table)
         return table
 
     def iI_II_oI_II_oII_I(self, box1, box2):
@@ -239,7 +263,6 @@ class algorytm:
                      my_closed(box2.interval_y.lower, box2.interval_y.upper), \
                      my_closed(box2.interval_z.lower, box2.interval_z.upper)
         table = [box3D(x2, y2, z2), box3D(x1, y1 - y2, z1), box3D(x1, y2 & y1, z1 - z2)]
-        table = self.my_int.box_cut(table)
         return table
 
     def iI_II_oI_II_oI_II(self, box1, box2):
@@ -249,8 +272,11 @@ class algorytm:
         x2, y2, z2 = my_closed(box2.interval_x.lower, box2.interval_x.upper), \
                      my_closed(box2.interval_y.lower, box2.interval_y.upper), \
                      my_closed(box2.interval_z.lower, box2.interval_z.upper)
-        table = [box3D(x2, y2, z2), box3D(x1, y1 - y2, z1), box3D(x1, y1 & y2, z1 - z2)]
-        table = self.my_int.box_cut(table)
+        if self.mylen(z2) > self.mylen(z1):
+            x = [x for x in x1 - x2]
+            table = [box3D(x2, y2, z2), box3D(x1, y1 - y2, z1), box3D(x1 & x2, y1 & y2, z1 - z2), box3D(x[0], y1 & y2, z1), box3D(x[1], y1 & y2, z1)]
+        else:
+            table = [box3D(x1, y1, z1), box3D(x2, y2 - y1, z2), box3D(x2, y1 & y2, z2 - z1)]
         return table
 
     def iI_II_oII_I_oII_I(self, box1, box2):
@@ -261,7 +287,6 @@ class algorytm:
                      my_closed(box2.interval_y.lower, box2.interval_y.upper), \
                      my_closed(box2.interval_z.lower, box2.interval_z.upper)
         table = [box3D(x2, y2, z2), box3D(x1, y1 & y2, z1 - z2), box3D(x1, y1 - y2, z1)]
-        table = self.my_int.box_cut(table)
         return table
 
     def iI_II_iI_II_oII_I(self, box1, box2):
@@ -272,7 +297,6 @@ class algorytm:
                      my_closed(box2.interval_y.lower, box2.interval_y.upper), \
                      my_closed(box2.interval_z.lower, box2.interval_z.upper)
         table = [box3D(x2, y2, z2), box3D(x1, y1, z1 - z2)]
-        table = self.my_int.box_cut(table)
         return table
 
     def iII_I_oI_II_oI_II(self, box1, box2):
@@ -283,7 +307,6 @@ class algorytm:
                      my_closed(box2.interval_y.lower, box2.interval_y.upper), \
                      my_closed(box2.interval_z.lower, box2.interval_z.upper)
         table = [box3D(x1, y1, z1), box3D(x2, y2 & y1, z2 - z1), box3D(x2, y2 - y1, z2)]
-        table = self.my_int.box_cut(table)
         return table
 
     def iII_I_oII_I_oII_I(self, box1, box2):
@@ -293,8 +316,12 @@ class algorytm:
         x2, y2, z2 = my_closed(box2.interval_x.lower, box2.interval_x.upper), \
                      my_closed(box2.interval_y.lower, box2.interval_y.upper), \
                      my_closed(box2.interval_z.lower, box2.interval_z.upper)
-        table = [box3D(x1, y1, z1), box3D(x2, y2 & y1, z2 - z1), box3D(x2, y2 - y1, z2)]
-        table = self.my_int.box_cut(table)
+        if self.mylen(z2) > self.mylen(z1):
+            x = [x for x in x2 - x1]
+            table = [box3D(x1, y1, z1), box3D(x2, y2 - y1, z2), box3D(x1 & x2, y1 & y2, z2 - z1), box3D(x[0], y1 & y2, z2), box3D(x[1], y1 & y2, z2)]
+
+        else:
+            table = [box3D(x2, y2, z2), box3D(x1, y1 - y2, z1), box3D(x1, y1 & y2, z1 - z2)]
         return table
 
     def iII_I_oI_II_oII_I(self, box1, box2):
@@ -305,7 +332,6 @@ class algorytm:
                      my_closed(box2.interval_y.lower, box2.interval_y.upper), \
                      my_closed(box2.interval_z.lower, box2.interval_z.upper)
         table = [box3D(x1, y1, z1), box3D(x2, y2 & y1, z2 - z1), box3D(x2, y2 - y1, z2)]
-        table = self.my_int.box_cut(table)
         return table
 
     def iII_I_iII_I_oII_I(self, box1, box2):
@@ -316,7 +342,6 @@ class algorytm:
                      my_closed(box2.interval_y.lower, box2.interval_y.upper), \
                      my_closed(box2.interval_z.lower, box2.interval_z.upper)
         table = [box3D(x1, y1, z1), box3D(x2, y2, z2 - z1)]
-        table = self.my_int.box_cut(table)
         return table
 
     def iI_II_i_II_I_oII_I(self, box1, box2):
@@ -328,11 +353,11 @@ class algorytm:
                      my_closed(box2.interval_z.lower, box2.interval_z.upper)
         x = [i for i in x2 - x1]
         table = [box3D(x1, y1, z1), box3D(x2 & x1, y2 & y1, z2 - z1)]
-        if x[0] != closed(math.inf, -math.inf):
+        if not (closed(math.inf, -math.inf) in x) and (len(x) == 2):
             table.append(box3D(x[0], y2, z2))
-        if len(x) == 2:
             table.append(box3D(x[1], y2, z2))
-        table = self.my_int.box_cut(table)
+        else:
+            table.append(box3D(x2 - x1, y2, z2))
         return table
 
     def iI_II_iI_II_oI_II(self, box1, box2):
@@ -353,7 +378,6 @@ class algorytm:
                      my_closed(box2.interval_y.lower, box2.interval_y.upper), \
                      my_closed(box2.interval_z.lower, box2.interval_z.upper)
         table = [box3D(x1, y1, z1), box3D(x2, y2, z2 - z1)]
-        table = self.my_int.box_cut(table)
         return table
 
     def iI_II_iII_I_oI_II(self, box1, box2):
@@ -365,12 +389,14 @@ class algorytm:
                      my_closed(box2.interval_z.lower, box2.interval_z.upper)
         x = [x for x in x2 - x1]
         table = [box3D(x1, y1, z1), box3D(x2 & x1, y2 & y1, z2 - z1)]
-        if x[0] != closed(math.inf, -math.inf):
+        if not (closed(math.inf, -math.inf) in x) and (len(x) == 2):
             table.append(box3D(x[0], y2, z2))
-        if len(x) == 2:
             table.append(box3D(x[1], y2, z2))
-        table = self.my_int.box_cut(table)
+        else:
+            table.append(box3D(x2 - x1, y2, z2))
         return table
+
+
 
     def mylen(self, interval):
         if interval == closed(math.inf, -math.inf):
@@ -419,7 +445,7 @@ class algorytm:
         return True if self.is_equal(interval1, interval2) else False
 
     def io12(self, interval1, interval2):
-        if ((interval1.upper < interval2.upper) & (self.is_out(interval1, interval2))):
+        if (interval1.upper < interval2.upper) & (self.is_out(interval1, interval2)):
             return True
         else:
             return False
@@ -445,43 +471,40 @@ class algorytm:
         signatures = [self.get_signature(x1, x2), self.get_signature(y1, y2), self.get_signature(z1, z2)]
         return signatures
 
-    def main_signatures(self, box1, box2):
+    def begin(self, box1, box2):
         idx_sign = self.get_signatures_triple(box1, box2)
         sort, in2sorted, sorted2in = self.my_sort(idx_sign)
         tri_sign, tri_sign_i = self.sort_signatures(box1, box2, in2sorted)
-
         split = self.split(tuple(sort), tri_sign, tri_sign_i)
-
         table = self.ret_original_order(split, sorted2in)
-
-        for k in range(len(split)):
-            print('table = ', [table[k].interval_x, table[k].interval_y, table[k].interval_z])
-
         return table
 
     def split(self, idx_sign, tri_sign, tri_sign_i):
         box1 = box3D(tri_sign[0], tri_sign[1], tri_sign[2])
         box2 = box3D(tri_sign_i[0], tri_sign_i[1], tri_sign_i[2])
-        rozbij_dict = {('io12', 'io12', 'io12'): self.oI_II_oI_II_oI_II,
-                       ('io12', 'io12', 'io21'): self.oI_II_oI_II_oII_I,
-                       ('io12', 'io21', 'io21'): self.oI_II_oII_I_oII_I,
-                       ('ii12', 'ii12', 'ii12'): self.iI_II_iI_II_iI_II,
+        rozbij_dict = {
+                       ('ii21', 'io21', 'io21'): self.iII_I_oII_I_oII_I,
                        ('ii12', 'io12', 'io21'): self.iI_II_oI_II_oII_I,
-                       ('io21', 'io21', 'io21'): self.oII_I_oII_I_oII_I,
                        ('ii12', 'ii12', 'ii21'): self.iI_II_iI_II_iII_I,
                        ('ii12', 'ii21', 'ii21'): self.iI_II_iII_I_iII_I,
-                       ('ii21', 'ii21', 'ii21'): self.iII_I_iII_I_iII_I,
                        ('ii12', 'io12', 'io12'): self.iI_II_oI_II_oI_II,
                        ('ii12', 'io21', 'io21'): self.iI_II_oII_I_oII_I,
                        ('ii12', 'ii12', 'io21'): self.iI_II_iI_II_oII_I,
                        ('ii21', 'io12', 'io12'): self.iII_I_oI_II_oI_II,
-                       ('ii21', 'io21', 'io21'): self.iII_I_oII_I_oII_I,
                        ('ii21', 'io12', 'io21'): self.iII_I_oI_II_oII_I,
                        ('ii21', 'ii21', 'io21'): self.iII_I_iII_I_oII_I,
                        ('ii12', 'ii21', 'io21'): self.iI_II_i_II_I_oII_I,
                        ('ii12', 'ii12', 'io12'): self.iI_II_iI_II_oI_II,
                        ('ii21', 'ii21', 'io12'): self.iII_I_iII_I_oI_II,
-                       ('ii12', 'ii21', 'io12'): self.iI_II_iII_I_oI_II}
+                       ('ii12', 'ii21', 'io12'): self.iI_II_iII_I_oI_II,
+
+                       ('io12', 'io12', 'io12'): self.oI_II_oI_II_oI_II,
+                       ('io12', 'io12', 'io21'): self.oI_II_oI_II_oII_I,
+                       ('io12', 'io21', 'io21'): self.oI_II_oII_I_oII_I,
+                       ('io21', 'io21', 'io21'): self.oII_I_oII_I_oII_I,
+                       ('ii12', 'ii12', 'ii12'): self.iI_II_iI_II_iI_II,
+                       ('ii21', 'ii21', 'ii21'): self.iII_I_iII_I_iII_I}
+
         split = rozbij_dict[idx_sign](box1, box2)
         return split
 
@@ -519,15 +542,19 @@ class algorytm:
 
     @staticmethod
     def algorytm(Q, tree):
+        my_int = myInterval()
         iD = 0
         while not len(Q.get_stack()) == 0:
             q = Q.pop()
+            print(q.interval_x, q.interval_y, q.interval_z)
+            q = my_int.box_cut(q)
             if tree.tree.count((q.interval_x.lower,  q.interval_y.lower, q.interval_z.lower, q.interval_x.upper, q.interval_y.upper,  q.interval_z.upper)) > 0:
                 i = list(tree.tree.intersection((q.interval_x.lower,  q.interval_y.lower, q.interval_z.lower, q.interval_x.upper, q.interval_y.upper,  q.interval_z.upper), objects=True))[0]
                 inter = [i.object.interval_x, i.object.interval_y, i.object.interval_z]
-                print(inter)
                 j = box3D(inter[0], inter[1], inter[2])
-                Q.extend(algorytm().main_signatures(q, j))
+                q = my_int.box_uncut(q)
+                j = my_int.box_uncut(j)
+                Q.extend(algorytm().begin(q, j))
                 tree.tree.delete(i.id, (i.bbox[0], i.bbox[1], i.bbox[2], i.bbox[3], i.bbox[4], i.bbox[5]))
             else:
                 tree.tree.add(iD, (q.interval_x.lower, q.interval_y.lower, q.interval_z.lower, q.interval_x.upper, q.interval_y.upper, q.interval_z.upper), q)
