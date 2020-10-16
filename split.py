@@ -14,7 +14,7 @@ def mylen(interval):
 '''
 klasa dzieląca pudełka
 zawiera ona 20 funkcji, z których każda rozbija pudełka
-
+Uwzględniłem możliwość wystąpienia half-out
 '''
 class split:
     #pusty interwał
