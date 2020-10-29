@@ -20,12 +20,14 @@ lecz się nie przecinają.
 
 Przykład wywołania programu
 ---------------------------
-pudelka = int(input())
-#wybranie liczby pudełek
-for i in range(pudelka):
+pudelka = int(input()) \n
+#wybranie liczby pudełek 
+
+for i in range(pudelka): 
     Q.append(box3D.factory(int(input()), int(input()), int(input()), int(input()), int(input()), int(input())))
-    #dodanie pudełek do stosu
-algorytm().algorytm(Q, tree())
+    #dodanie pudełek do stosu \n
+
+algorytm().algorytm(Q, tree()) \n
 #uruchomienie programu
 
 Układ współrzędnych kartezjańskich
