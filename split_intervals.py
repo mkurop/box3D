@@ -18,10 +18,10 @@ def mylen(interval):
 
 class split:
     '''
-    Klasa dzieląca pudełka
-    zawiera ona 20 funkcji, z których każda rozbija pudełka
-    Uwzględniłem możliwość wystąpienia half-out
-    :param empty: interwał pusty
+    Klasa dzieląca pudełka \n
+    zawiera ona 20 funkcji, z których każda rozbija pudełka \n
+    Uwzględniłem możliwość wystąpienia half-out \n
+    :param empty: interwał pusty 
     '''
 
     empty = my_closed(math.inf, -math.inf)
@@ -314,13 +314,19 @@ class split:
         else:
             table.append(box3D(x2 - x1, y2, z2))
         return table
+        
+        
+    '''
+    20 funkcji rozbijających pudełka.
+    Na wejściu 2 pudełka, na wyjściu tablica pudełek z po rozbiciu.\n
+    '''
 
     def split(self, idx_sign, tri_sign, tri_sign_i):
         '''
-        Funkcja dobierająca właściwą funkcje rozbijającą na bazie trójki interwałów
-        :param idx_sign: lista sygnatur interwałów
-        :param tri_sign: lista interwałów pierwszego pudełka
-        :param tri_sign_i: lista interwałów drugiego pudełka
+        Funkcja dobierająca właściwą funkcje rozbijającą na bazie trójki interwałów\n
+        :param idx_sign: lista sygnatur interwałów\n
+        :param tri_sign: lista interwałów pierwszego pudełka\n
+        :param tri_sign_i: lista interwałów drugiego pudełka\n
         :return: listę pudełek powstałych w wyniku rozbicia pudełek wejściowych
         '''
         box1 = box3D(tri_sign[0], tri_sign[1], tri_sign[2])
