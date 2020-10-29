@@ -26,7 +26,7 @@ Witaj w dokumentacji programu Pudełka3D!
 * :ref:`modindex`
 * :ref:`search`                                                               
 
-Dokumentacja pdf: ./pudeka3d.pdf
+Dokumentacja pdf: "https://github.com/KolRobOsk/Praktyki/blob/Final/docs/pudeka3d.pdf"
       
       
 
