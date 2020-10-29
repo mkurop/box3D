@@ -18,6 +18,18 @@ Rozbicie - jeśli dwa pudełka się przecinają, zostaje zwrócona niekoniecznie
 taka sama ilość pudełek, które unię mają równą pudełkom przecinającym się,
 lecz się nie przecinają. 
 
+Przykładowe wywołanie programu
+------------------------------
+Q = boxStack() 
+#tworzenie stosu pudełek
+pudelka = int(input())
+#ilość pudełek
+for i in range(pudelka):
+    Q.append(box3D.factory(int(input("Podaj po jednej z sześciu współrzędnych pudełka oddzielonych enterem: \n")), int(input()), int(input()), int(input()), int(input()), int(input())))
+#Dodawanie pudełek do stosu
+algorithm().algorytm(Q, tree())
+#Uruchomienie programu
+
 Układ współrzędnych kartezjańskich
 ----------------------------------
 Jest to układ współrzędnych oparty na trzech płaszczyznach: x, y oraz z.
