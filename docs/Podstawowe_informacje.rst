@@ -18,17 +18,15 @@ Rozbicie - jeśli dwa pudełka się przecinają, zostaje zwrócona niekoniecznie
 taka sama ilość pudełek, które unię mają równą pudełkom przecinającym się,
 lecz się nie przecinają. 
 
-Przykładowe wywołanie programu
-------------------------------
-Q = boxStack() 
-#tworzenie stosu pudełek
+Przykład wywołania programu
+---------------------------
 pudelka = int(input())
-#ilość pudełek
+#wybranie liczby pudełek
 for i in range(pudelka):
-    Q.append(box3D.factory(int(input("Podaj po jednej z sześciu współrzędnych pudełka oddzielonych enterem: \n")), int(input()), int(input()), int(input()), int(input()), int(input())))
-#Dodawanie pudełek do stosu
-algorithm().algorytm(Q, tree())
-#Uruchomienie programu
+    Q.append(box3D.factory(int(input()), int(input()), int(input()), int(input()), int(input()), int(input())))
+    #dodanie pudełek do stosu
+algorytm().algorytm(Q, tree())
+#uruchomienie programu
 
 Układ współrzędnych kartezjańskich
 ----------------------------------
