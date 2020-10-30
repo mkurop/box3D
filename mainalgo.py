@@ -20,7 +20,7 @@ class algorithm:
     '''
     Główna klasa programu.
     '''
-    def begin(self, box1, box2):
+    def rotate_and_execute(self, box1, box2):
         '''
         Funkcja obraca pudełka zmieniając kolejność interwałów \n
         :param box1: pudełko ze stosu \n
@@ -69,7 +69,7 @@ class algorithm:
                 q = my_int.box_uncut(q)
                 j = my_int.box_uncut(j)
                 #cofnięcie przycięcia dla pudełek które mają być rozbite
-                Q.extend(algorithm().begin(q, j))
+                Q.extend(algorithm().rotate_and_execute(q, j))
                 #wprowadzenie wyniku rozbicia na stos
                 tree.tree.delete(i.id, (i.bbox[0], i.bbox[1], i.bbox[2], i.bbox[3], i.bbox[4], i.bbox[5]))
                 #usunięcie starego pudełka z drzewa

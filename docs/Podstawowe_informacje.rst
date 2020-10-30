@@ -10,25 +10,20 @@ https://www.gnu.org/licenses/licenses.pl.html
 
 Założenia działania programu
 ----------------------------
-Program bierze dowolną liczbę pudełek które mogą się przecinać i zwraca pudełka nie przecinające się mające jako unię unię pudełek na wejściu
+Program bierze dowolną liczbę pudełek, które mogą się przecinać i zwraca pudełka nie przecinające się mające jako unię unię pudełek na wejściu
 
 Przecinanie - pudełka przecinają się jeżeli tworzące je interwały mają niepustą cześć wspólną dla osi x, y i z.
 
 Rozbicie - jeśli dwa pudełka się przecinają, zostaje zwrócona niekoniecznie
-taka sama ilość pudełek, które unię mają równą pudełkom przecinającym się,
+taka sama liczba pudełek, które unię mają równą pudełkom przecinającym się,
 lecz się nie przecinają. 
 
 Przykład wywołania programu
 ---------------------------
-pudelka = int(input()) \n
-#wybranie liczby pudełek 
 
-for i in range(pudelka): 
-    Q.append(box3D.factory(int(input()), int(input()), int(input()), int(input()), int(input()), int(input())))
-    #dodanie pudełek do stosu \n
-
-algorytm().algorytm(Q, tree()) \n
-#uruchomienie programu
+.. literalinclude:: example.py
+  
+   
 
 Układ współrzędnych kartezjańskich
 ----------------------------------
@@ -43,7 +38,7 @@ Interwał to odcinek o dwóch atrybutach granicznych.
 pudełka
 -------
 Pudełka to obiekty przedstawione przez 3 interwały, 
-po jednym na każdą z płaszczyzn. Można je sobie wyobrazić
+po jednym na każdą z osi. Można je sobie wyobrazić
 jako zwykłe prostopadłościany.
 
 drzewo

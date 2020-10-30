@@ -8,7 +8,7 @@ def mylen(interval):
     Funkcja licząca długość interwału potrzebna do funkcji is_half_out\n
     :param interval: interwał do zmierzenia długości\n
     :return: długość interwału\n
-    :rtype: complex
+    :rtype: float
     '''
     if interval == my_closed(math.inf, -math.inf):
         return 0

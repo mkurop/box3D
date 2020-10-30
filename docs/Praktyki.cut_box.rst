@@ -1,7 +1,5 @@
 .. _Praktyki.cut_box:
 
-
-
 cut_box
 ================
 

@@ -7,7 +7,7 @@ class signatures:
         Funkcja sprawdzająca, jaką sygnaturę nadać danej parze interwałów\n
         :param interval1: interwał pierwszy do porównania\n
         :param interval2: interwał drugi do porównania\n
-        :return: True jeśli interwały są w stosunku out oraz drugi interwał jest ma przedział zaczynający się wyżej\n
+        :return: True jeśli interwały są w relacji out oraz drugi interwał jest ma przedział zaczynający się wyżej\n
         :rtype: bool
         '''
         len1, len2 = (mylen(interval1), mylen(interval2))
@@ -22,7 +22,7 @@ class signatures:
         Funkcja sprawdzająca, jaką sygnaturę nadać danej parze interwałów\n
         :param interval1: interwał pierwszy do porównania\n
         :param interval2: interwał drugi do porównania\n
-        :return: True jeśli interwały są w stosunku in oraz drugi interwał jest ma przedział zaczynający się wyżej\n
+        :return: True jeśli interwały są w relacji in oraz drugi interwał jest ma przedział zaczynający się wyżej\n
         :rtype: bool
         '''
         return True if (self.is_in(interval1, interval2) & (interval1.upper < interval2.upper)) else False
@@ -32,7 +32,7 @@ class signatures:
         Funkcja sprawdzająca, jaką sygnaturę nadać danej parze interwałów\n
         :param interval1: interwał pierwszy do porównania\n
         :param interval2: interwał drugi do porównania\n
-        :return: True jeśli interwały są w stosunku out oraz pierwszy interwał jest ma przedział zaczynający się wyżej\n
+        :return: True jeśli interwały są w relacji out oraz pierwszy interwał jest ma przedział zaczynający się wyżej\n
         :rtype: bool
         '''
         len1, len2 = (mylen(interval1), mylen(interval2))
@@ -47,7 +47,7 @@ class signatures:
         Funkcja sprawdzająca, jaką sygnaturę nadać danej parze interwałów\n
         :param interval1: interwał pierwszy do porównania\n
         :param interval2: interwał drugi do porównania\n
-        :return: True jeśli interwały są w stosunku in oraz pierwszy interwał jest ma przedział zaczynający się wyżej\n
+        :return: True jeśli interwały są w relacji in oraz pierwszy interwał jest ma przedział zaczynający się wyżej\n
         :rtype: bool
         '''
         return True if (self.is_in(interval1, interval2) & (interval1.upper > interval2.upper)) else False
@@ -57,7 +57,7 @@ class signatures:
         Funkcja zwracająca listę z trzema sygnaturami interwałów\n
         :param box1: pierwsze z pudełek, na podstawie których program dobiera zestaw sygnatur\n
         :param box2: drugie z pudełek, na podstawie których program dobiera zestaw sygnatur\n
-        :return: listę sygnatur stosunku położenia interwałów dla pudełek wprowadzonych\n
+        :return: listę sygnatur relacji położenia interwałów dla pudełek wprowadzonych\n
         :rtype: list
         '''
         x1, y1, z1, x2, y2, z2 = box1.interval_x, box1.interval_y, box1.interval_z, box2.interval_x, box2.interval_y, box2.interval_z
@@ -70,7 +70,7 @@ class signatures:
         :param box1: pierwsze pudełko z nieposortowanymi interwałami\n
         :param box2: drugie pudełko z nieposortowanymi interwałami\n
         :param in2sorted: lista z kolejnością do permutowania interwałów\n
-        :return: 2 listy interwałów po permutacji według zadanej kolejności\n
+        :return: dwie listy interwałów po permutacji według zadanej kolejności\n
         :rtype: list, list
         '''
         box_tab1 = [box1.interval_x, box1.interval_y, box1.interval_z]
@@ -93,7 +93,7 @@ class signatures:
         '''
         Funkcja przeprowadzająca operację permutacji\n
         :param sortin: lista zmiennych do permutacji\n
-        :param permutation: kolejność permutacji\n
+        :param permutation: permutacja\n
         :return: lista po permutacji\n
         :rtype: list
         '''
@@ -104,7 +104,8 @@ class signatures:
         '''
         Funkcja sortująca sygnatury interwałów\n
         :param inputlist: lista\n
-        :return:
+        :return: 3 listy: posortowanych sygnatur, kolejność w jakiej należy ustawić sygnatury aby uzyskać kolejność po posortowaniu oraz przywrócić kolejność sprzed sortowania
+        :rtype: list        
         '''
         inputlist = zip(inputlist, range(len(inputlist)))
         aux = sorted(inputlist, key=lambda x: x[0])
@@ -117,10 +118,10 @@ class signatures:
 
     def is_in(self, interval1, interval2):
         '''
-        Funkcja sprawdzająca czy interwały są w stosunku in\n
+        Funkcja sprawdzająca czy interwały są w relacji in\n
         :param interval1: pierwszy z interwałów do porównania\n
         :param interval2: drugi z interwałów do porównania\n
-        :return: True jeśli pudełka są w stosunku in, inaczej False\n
+        :return: True jeśli pudełka są w relacji in, inaczej False\n
         :rtype: bool
         '''
         union = interval1 & interval2
@@ -129,10 +130,10 @@ class signatures:
 
     def is_equal(self, interval1, interval2):
         '''
-        Funkcja sprawdzająca czy interwały są w stosunku equal\n
+        Funkcja sprawdzająca czy interwały są w relacji equal\n
         :param interval1: pierwszy z interwałów do porównania\n
         :param interval2: drugi z interwałów do porównania\n
-        :return: True jeśli pudełka są w stosunku equal, inaczej False\n
+        :return: True jeśli pudełka są w relacji equal, inaczej False\n
         :rtype: bool
         '''
         return True if interval1 == interval2 else False
@@ -140,10 +141,10 @@ class signatures:
 
     def is_out(self, interval1, interval2):
         '''
-        Funkcja sprawdzająca czy interwały są w stosunku out\n
+        Funkcja sprawdzająca czy interwały są w relacji out\n
         :param interval1: pierwszy z interwałów do porównania\n
         :param interval2: drugi z interwałów do porównania\n
-        :return: True jeśli pudełka są w stosunku out, inaczej False\n
+        :return: True jeśli pudełka są w relacji out, inaczej False\n
         :rtype: bool
         '''
         return True if (interval1.lower != interval2.lower) and (interval2.upper != interval1.upper) and (interval1 & interval2) else False
@@ -151,10 +152,10 @@ class signatures:
 
     def is_separate(self, int1, int2):
         '''
-        Funkcja sprawdzająca czy interwały są w stosunku separate\n
+        Funkcja sprawdzająca czy interwały są w relacji separate\n
         :param interval1: pierwszy z interwałów do porównania\n
         :param interval2: drugi z interwałów do porównania\n
-        :return: True jeśli pudełka są w stosunku separate, inaczej False\n
+        :return: True jeśli pudełka są w relacji separate, inaczej False\n
         :rtype: bool
         '''
         intersect = int1 & int2
@@ -162,10 +163,10 @@ class signatures:
 
     def is_half_out(self, int1, int2):
         '''
-        Funkcja sprawdzająca czy interwały są w stosunku half out\n
+        Funkcja sprawdzająca czy interwały są w relacji half out\n
         :param interval1: pierwszy z interwałów do porównania\n
         :param interval2: drugi z interwałów do porównania\n
-        :return: True jeśli pudełka są w stosunku half out, inaczej False\n
+        :return: True jeśli pudełka są w relacji half out, inaczej False\n
         :rtype: bool
         '''
         return True if (int1.lower == int2.lower) ^ (int2.upper == int1.upper) else False
@@ -175,7 +176,7 @@ class signatures:
         Funkcja sprawdzająca, jaką sygnaturę nadać danej parze interwałów\n
         :param interval1: pierwszy z interwałów do porównania\n
         :param interval2: drugi z interwałów do porównania\n
-        :return: True jeśli pudełka są w stosunku equal, inaczej False\n
+        :return: True jeśli pudełka są w relacji equal, inaczej False\n
         :rtype: bool
         '''
         return True if self.is_equal(interval1, interval2) else False
@@ -185,7 +186,7 @@ class signatures:
         Funkcja nadająca sygnatury parom interwałów\n
         :param interval1: pierwszy z interwałów do porównania\n
         :param interval2: drugi z interwałów do porównania\n
-        :return: sygnaturę zależnie od stosunku porównywanych interwałów\n
+        :return: sygnaturę zależnie od relacji porównywanych interwałów\n
         :rtype: string
         '''
         if self.ii12(interval1, interval2):

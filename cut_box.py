@@ -84,13 +84,16 @@ def my_closed(lower, upper):
     return myInterval.from_atomic(portion.const.Bound.CLOSED, lower, upper, portion.const.Bound.CLOSED)
 
 class myInterval(portion.Interval):
-    eps = 1e-7
     '''
     Klasa dziedzicząca z funkcji interwał\n
     :param eps: liczba potrzebna do przycięcia pudełek,
     bez tego są liczone jako przecinające się nawet jak
     tylko nachodzą na siebie granicami
     '''
+    
+    def __init__(self):
+    	self.eps = 1e-7
+
 
     @property
     def upper_eps(self):

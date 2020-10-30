@@ -25,17 +25,10 @@ class boxStack:
         '''
         self.stack = new_stack
 
-    def append(self, added):
-        '''
-        Funkcja append stosu\n
-        :param added: element do dodania do stosu
-        '''
-        self.stack.append(added)
-
     def extend(self, added):
         '''
         Funkcje extend stosu\n
-        :param added: element, który posłuży do rozszerzenia stosu
+        :param added: element, który posłuży do rozszerzenia stosu o nowe elementy
         '''
         self.stack.extend(added)
 

@@ -6,7 +6,10 @@ Szczegóły techniczne
 Złożoność obliczeniowa
 ----------------------
 Złożoność obliczeniowa algorytmu wynosi:
-O(nlog^3*(n)), gdzie n to liczba pudełek wyjściowych.
+
+.. math::
+   O(nlog ^ {3n}),    
+gdzie n to liczba pudełek wyjściowych.
 
 Wersja języka programowania
 ---------------------------
