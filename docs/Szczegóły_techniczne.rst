@@ -8,7 +8,7 @@ Złożoność obliczeniowa
 Złożoność obliczeniowa algorytmu wynosi:
 
 .. math::
-   O(nlog ^ {3n}),    
+   n\log^3(n)
 gdzie n to liczba pudełek wyjściowych.
 
 Wersja języka programowania
