@@ -1,6 +1,7 @@
 import portion
 from math import inf
 from collections import namedtuple
+import random
 
 Atomic = namedtuple('Atomic', ['left', 'lower', 'upper', 'right'])
 
@@ -62,6 +63,22 @@ class box3D:
         is_inside_box = self.__contains__(num)
         return True if is_on_border & is_inside_box else False
 
+    @staticmethod
+    def random(corner_range=100, side_range=20):
+        """
+        Generates a random box3D where the orgin of the box is in [0 corner_range] x [0 corner_range] x [0 corner_range],
+        and the sides lenghts are in [0 side_range]
+        :param self:
+        :param corner_range: range for box origin
+        :param side_range: range for the length of the side
+        :return: losowe pudełko
+        :rtype: box3D
+        """
+        side_x, side_y, side_z = random.randint(0, side_range), random.randint(0, side_range), random.randint(0, side_range)
+        corner_x, corner_y, corner_z = random.randint(0, corner_range), random.randint(0, corner_range), random.randint( 0, corner_range)
+        return box3D(my_closed(corner_x, corner_x + side_x), my_closed(corner_y, corner_y + side_y), my_closed(corner_z, corner_z + side_z))
+        
+    
     @staticmethod
     def factory(x1, y1, z1, x2, y2, z2):
         '''

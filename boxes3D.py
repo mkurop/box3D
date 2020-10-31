@@ -10,6 +10,14 @@ class boxStack:
         '''Stos pudełek'''
         self.stack = []
 
+    def empty(self):
+        '''
+        Czy pusty stos?
+        :return: informację czy stos jest pusty
+        :rtype: bool
+        '''
+        return not bool(self.get_stack())
+        
     def get_stack(self):
         '''
         Funkcja get stosu\n

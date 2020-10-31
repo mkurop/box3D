@@ -53,7 +53,7 @@ class algorithm:
         #zmienna potrzebna do wprowadzania pudełka w unikalne miejsce do drzewa
         iD = 0
         #pętla działa dopóki stos nie zostanie pusty
-        while not len(Q.get_stack()) == 0:
+        while not Q.empty():
             #zdjęcie ostatniego pudełka ze stosu i przycięcie go
             q = Q.pop()
             q = my_int.box_cut(q)
@@ -87,3 +87,4 @@ class algorithm:
             print([i[1], i[4]], end = '') if i[1] != i[4] else print([i[1]], end = '')
             print(' x ', end = '')
             print([i[2], i[5]], end = '\n') if i[2] != i[5] else print([i[2]], end = '\n')
+        
