@@ -1,4 +1,9 @@
 import portion
+from math import inf
+from collections import namedtuple
+
+Atomic = namedtuple('Atomic', ['left', 'lower', 'upper', 'right'])
+
 
 class box3D:
     '''Klasa przechowująca instrukcje dot. pudełek'''
@@ -81,7 +86,7 @@ def my_closed(lower, upper):
     :return: nowy interwał o dodanych właściwościach\n
     :rtype: myInterval
     '''
-    return myInterval.from_atomic(portion.const.Bound.CLOSED, lower, upper, portion.const.Bound.CLOSED)
+    return myInterval.my_from_atomic(portion.const.Bound.CLOSED, lower, upper, portion.const.Bound.CLOSED)
 
 class myInterval(portion.Interval):
     '''
@@ -92,8 +97,9 @@ class myInterval(portion.Interval):
     '''
     
     def __init__(self):
-    	self.eps = 1e-7
-
+        super().__init__()
+        self.eps = 1e-7
+        
 
     @property
     def upper_eps(self):
@@ -199,14 +205,13 @@ class myInterval(portion.Interval):
         '''
         return self.upper_meps
 
-    def box_cut_execute(self, interval):
+    def box_cut_execute(self, myInt):
         '''
         Funkcja która przycina 1 interwał\n
         :param interval: interwał do przycięcia\n
         :return: interwał przycięty o epsilon z obu wartości granicznych\n
         :rtype: myInterval
         '''
-        myInt = myInterval(interval)
         interval = my_closed(myInt.get_lower_eps, myInt.get_upper_meps)
         return interval
 
@@ -223,14 +228,13 @@ class myInterval(portion.Interval):
         box = box3D(x, y, z)
         return box
 
-    def box_uncut_execute(self, interval):
+    def box_uncut_execute(self, myInt):
         '''
         Funkcja która cofa przycięcie 1 interwału\n
         :param interval: interwał przycięty o epsilon, produkt funkcji box_cut_execute\n
         :return: interwał w stanie takim samym jak przed przycięciem\n
         :rtype: myInterval
         '''
-        myInt = myInterval(interval)
         interval = my_closed(myInt.get_lower_meps, myInt.get_upper_eps)
         return interval
 
@@ -246,3 +250,12 @@ class myInterval(portion.Interval):
         z = self.box_uncut_execute(box1.interval_z)
         box = box3D(x, y, z)
         return box
+    
+    @staticmethod
+    def my_from_atomic(left, lower, upper, right):
+        instance = myInterval()
+        left = left if lower not in [inf, -inf] else portion.Bound.OPEN
+        right = right if upper not in [inf, -inf] else portion.const.Bound.OPEN
+        instance._intervals = [Atomic(left, lower, upper, right)]
+        if instance.empty:
+            return myInterval() 
