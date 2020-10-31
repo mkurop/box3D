@@ -6,6 +6,7 @@ import portion
 
 def my_closed(lower, upper):
     return myInterval.from_atomic(portion.const.Bound.CLOSED, lower, upper, portion.const.Bound.CLOSED)
+
 class myInterval(portion.Interval):
     eps = 1e-7
 

@@ -87,4 +87,3 @@ class algorithm:
             print([i[1], i[4]], end = '') if i[1] != i[4] else print([i[1]], end = '')
             print(' x ', end = '')
             print([i[2], i[5]], end = '\n') if i[2] != i[5] else print([i[2]], end = '\n')
-        
