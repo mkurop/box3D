@@ -222,9 +222,13 @@ class myInterval(portion.Interval):
         :return: pudełko po przycięciu\n
         :rtype: box3D
         '''
-        x = self.box_cut_execute(box1.interval_x)
-        y = self.box_cut_execute(box1.interval_y)
-        z = self.box_cut_execute(box1.interval_z)
+        x, y, z = box1.interval_x, box1.interval_y, box1.interval_z
+        x = my_closed(x.lower, x.upper)
+        y = my_closed(y.lower, y.upper)
+        z = my_closed(z.lower, z.upper)
+        x = self.box_cut_execute(x)
+        y = self.box_cut_execute(y)
+        z = self.box_cut_execute(z)
         box = box3D(x, y, z)
         return box
 
@@ -245,9 +249,13 @@ class myInterval(portion.Interval):
         :return: pudełko z cofniętym przycięciem interwałów\n
         :rtype: box3D
         '''
-        x = self.box_uncut_execute(box1.interval_x)
-        y = self.box_uncut_execute(box1.interval_y)
-        z = self.box_uncut_execute(box1.interval_z)
+        x, y, z = box1.interval_x, box1.interval_y, box1.interval_z
+        x = my_closed(x.lower, x.upper)
+        y = my_closed(y.lower, y.upper)
+        z = my_closed(z.lower, z.upper)
+        x = self.box_uncut_execute(x)
+        y = self.box_uncut_execute(y)
+        z = self.box_uncut_execute(z)
         box = box3D(x, y, z)
         return box
     
@@ -259,3 +267,4 @@ class myInterval(portion.Interval):
         instance._intervals = [Atomic(left, lower, upper, right)]
         if instance.empty:
             return myInterval() 
+        return instance

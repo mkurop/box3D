@@ -12,7 +12,7 @@ class tree_test(tree):
         '''Tworzenie drzewa'''
         self.properties = rtree.index.Property()
         self.properties.dimension = 3
-        self.tree = rtree.index.Index('3d_index', properties=self.properties)    
+        self.tree = rtree.index.Index('3d_index_test', properties=self.properties)    
 
 class testing(unittest.TestCase):
     algo_test = algorithm()
@@ -74,13 +74,10 @@ class testing(unittest.TestCase):
                 tree.tree.add(iD, (q.interval_x.lower, q.interval_y.lower, q.interval_z.lower, q.interval_x.upper, q.interval_y.upper, q.interval_z.upper), q)
                 #dodanie nowego pudełka do drzewa i zwiększenie zmiennej iD o 1
                 iD += 1
-        #kilka instrukcji wypisujących efekt działania całego 
-        return tree		
-
 
     def test_funkcji_algorytm(self):
         ile_pudelek = self.ready_vars()
-        self.assertEqual(algorithm.algorytm(self.stack, self.tree1), testing.funkcja_uniwersalna(self.stack_2, self.tree2))
+        self.assertEqual(testing.funkcja_uniwersalna(self.stack_2, self.tree2),algorithm.algorytm(self.stack, self.tree1))
 
 
 
