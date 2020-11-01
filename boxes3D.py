@@ -76,6 +76,6 @@ class tree:
 
     def ret_boxes(self):
         boxes = self.tree.intersection(self.tree.get_bounds(), True)
-        boxes = [item for item in boxes]
-        boxes = [box3D(item.object.interval_x, item.object.interval_y, item.object.interval_z) for item in boxes]
+        boxes = [item.bbox for item in boxes]
+        boxes = [box3D.factory(item[0], item[1], item[2], item[3], item[4], item[5]) for item in boxes]
         return boxes
