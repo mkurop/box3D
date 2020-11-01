@@ -23,21 +23,24 @@ class algorithm_test(unittest.TestCase):
         ile_pudelek = randint(2,10)
         for j in range(ile_pudelek):
             table.append(box3D.random())
-        table2 = self.copy_box_list(table)
+        table_copy = self.copy_box_list(table)
         stack = boxStack()
         stack2 = boxStack()
         stack.extend(table)
-        stack2.extend(table2)
+        stack2.extend(table_copy)
         drzewo = tree()
-        stack_temp = []
+        table_out = []
         algorithm().algorytm(stack, drzewo)
         for i in drzewo.ret_boxes():
             print(i.interval_x, i.interval_y, i.interval_z)
-            stack_temp.append(myInterval().box_uncut(i))
+            x1, x2 = int(round(i.interval_x.lower)), int(round(i.interval_x.upper))
+            y1, y2 = int(round(i.interval_y.lower)), int(round(i.interval_y.upper))
+            z1, z2 = int(round(i.interval_z.lower)), int(round(i.interval_z.upper))
+            table_out.append(box3D(closed(x1, x2), closed(y1, y2), closed(z1, z2)))
 
-        for i in stack_temp:
+        for i in table_out:
             print(i.interval_x, i.interval_y, i.interval_z)
-        self.assertEqual(True, algorithm_check().evaluate(stack2.get_stack(), stack_temp))
+        self.assertEqual(True, algorithm_check().evaluate(stack2.get_stack(), table_out, 10000))
 
 
 

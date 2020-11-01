@@ -256,6 +256,11 @@ class algorithm_check:
         if (num_in == 1) or ((num_in == num_boundary) and (num_in != 0)):
             return True
         else:
+            if num_in != 1 & num_in != num_boundary:
+                print('\ncontains error')
+            else:
+                print('\n__ror__ error')
+            print('\n', b.interval_x, b.interval_y, b.interval_z, '\n', x)
             return False
 
     def evaluate(self, boxes_in, boxes_out, checks_num = 1000):
