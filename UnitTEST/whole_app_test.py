@@ -31,9 +31,9 @@ class algorithm_test(unittest.TestCase):
         algorithm().algorytm(stack, drzewo)
         for i in drzewo.ret_boxes():
             print(i.interval_x, i.interval_y, i.interval_z)
-            x1, x2 = int(round(i.interval_x.lower)), int(round(i.interval_x.upper))
-            y1, y2 = int(round(i.interval_y.lower)), int(round(i.interval_y.upper))
-            z1, z2 = int(round(i.interval_z.lower)), int(round(i.interval_z.upper))
+            x1, x2 = i.interval_x.lower,i.interval_x.upper
+            y1, y2 = i.interval_y.lower, i.interval_y.upper
+            z1, z2 = i.interval_z.lower, i.interval_z.upper
             table_out.append(box3D(closed(x1, x2), closed(y1, y2), closed(z1, z2)))
 
         for i in table_out:
