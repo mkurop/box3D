@@ -1,4 +1,6 @@
 import rtree
+from portion import closed
+from cut_box import box3D
 
 class boxStack:
     '''
@@ -71,3 +73,9 @@ class tree:
         :param new_tree: nowe drzewo
         '''
         self.tree = new_tree
+
+    def ret_boxes(self):
+        boxes = self.tree.intersection(self.tree.get_bounds(), True)
+        boxes = [item for item in boxes]
+        boxes = [box3D(item.object.interval_x, item.object.interval_y, item.object.interval_z) for item in boxes]
+        return boxes

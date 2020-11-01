@@ -240,7 +240,7 @@ for i in range(len(int1)):
 
 #unit testy
 import random as rnd
-class algorithm_check():
+class algorithm_check:
 
     def random_point_from_a_box(self, box):
         num_x = rnd.randint(box.interval_x.lower, box.interval_x.upper)
@@ -260,13 +260,13 @@ class algorithm_check():
 
     def evaluate(self, boxes_in, boxes_out, checks_num = 1000):
         for i in range(checks_num):
-            if fct_chk.loop_test(boxes_in, boxes_out):
+            if self.loop_test(boxes_in, boxes_out):
                 continue
             else:
                 return False
         return True
 
-
+'''
 def multi_test():
 	fct_chk = algorithm_check()
 	out_interval_bigger = closed(3, 6)
@@ -335,3 +335,4 @@ def multi_test():
 	box1 = box3D(interval_smaller, interval_smaller, interval_smaller)
 	print(fct_chk.evaluate([box0, box1], tst.iII_I_iII_I_oII_I(box0, box1)))
 
+'''

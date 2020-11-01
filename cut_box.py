@@ -74,8 +74,8 @@ class box3D:
         :return: losowe pudełko
         :rtype: box3D
         """
-        side_x, side_y, side_z = random.randint(0, side_range), random.randint(0, side_range), random.randint(0, side_range)
-        corner_x, corner_y, corner_z = random.randint(0, corner_range), random.randint(0, corner_range), random.randint( 0, corner_range)
+        side_x, side_y, side_z = random.randint(1, side_range), random.randint(1, side_range), random.randint(1, side_range)
+        corner_x, corner_y, corner_z = random.randint(0, corner_range), random.randint(0, corner_range), random.randint(0, corner_range)
         return box3D(my_closed(corner_x, corner_x + side_x), my_closed(corner_y, corner_y + side_y), my_closed(corner_z, corner_z + side_z))
         
     
@@ -166,7 +166,7 @@ class myInterval(portion.Interval):
         :return: wartość lower interwału - eps(ilon)\n
         :rtype: complex
         '''
-        self.lower_meps = self.lower + self.eps
+        self.lower_meps = self.lower - self.eps
 
     @upper_eps.setter
     def upper_eps(self):
@@ -184,7 +184,7 @@ class myInterval(portion.Interval):
         :return: wartość upper interwału - eps(ilon)\n
         :rtype: complex
         '''
-        self.upper_meps = self.upper + self.eps
+        self.upper_meps = self.upper - self.eps
 
     @lower_eps.getter
     def get_lower_eps(self):

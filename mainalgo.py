@@ -77,6 +77,8 @@ class algorithm:
                 tree.tree.add(iD, (q.interval_x.lower, q.interval_y.lower, q.interval_z.lower, q.interval_x.upper, q.interval_y.upper, q.interval_z.upper), q)
                 #dodanie nowego pudełka do drzewa i zwiększenie zmiennej iD o 1
                 iD += 1
+
+        '''
         #kilka instrukcji wypisujących efekt działania całego programu
         lista = tree.tree.intersection(tree.tree.get_bounds(), True)
         lista = [item.bbox for item in lista]
@@ -87,3 +89,4 @@ class algorithm:
             print([i[1], i[4]], end = '') if i[1] != i[4] else print([i[1]], end = '')
             print(' x ', end = '')
             print([i[2], i[5]], end = '\n') if i[2] != i[5] else print([i[2]], end = '\n')
+        '''
