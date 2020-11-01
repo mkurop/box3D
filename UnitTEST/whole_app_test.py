@@ -27,18 +27,9 @@ class algorithm_test(unittest.TestCase):
         stack = boxStack()
         stack.extend(table)
         drzewo = tree()
-        table_out = []
         algorithm().algorytm(stack, drzewo)
-        for i in drzewo.ret_boxes():
-            print(i.interval_x, i.interval_y, i.interval_z)
-            x1, x2 = i.interval_x.lower,i.interval_x.upper
-            y1, y2 = i.interval_y.lower, i.interval_y.upper
-            z1, z2 = i.interval_z.lower, i.interval_z.upper
-            table_out.append(box3D(closed(x1, x2), closed(y1, y2), closed(z1, z2)))
-
-        for i in table_out:
-            print(i.interval_x, i.interval_y, i.interval_z)
-        self.assertEqual(True, algorithm_check().evaluate(table_copy, table_out, 10000))
+    
+        self.assertEqual(True, algorithm_check().evaluate(table_copy, drzewo.ret_boxes(), 10000))
 
 
 
