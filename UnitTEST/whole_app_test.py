@@ -25,9 +25,7 @@ class algorithm_test(unittest.TestCase):
             table.append(box3D.random())
         table_copy = self.copy_box_list(table)
         stack = boxStack()
-        stack2 = boxStack()
         stack.extend(table)
-        stack2.extend(table_copy)
         drzewo = tree()
         table_out = []
         algorithm().algorytm(stack, drzewo)
@@ -40,7 +38,7 @@ class algorithm_test(unittest.TestCase):
 
         for i in table_out:
             print(i.interval_x, i.interval_y, i.interval_z)
-        self.assertEqual(True, algorithm_check().evaluate(stack2.get_stack(), table_out, 10000))
+        self.assertEqual(True, algorithm_check().evaluate(table_copy, table_out, 10000))
 
 
 

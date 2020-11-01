@@ -59,7 +59,7 @@ class box3D:
         :rtype: bool
         '''
         x, y, z = num[0], num[1], num[2]
-        is_on_border = x in set([self.interval_x.lower, self.interval_x.upper]) or y in set([self.interval_y.lower, self.interval_y.upper]) or z or set([self.interval_z.lower, self.interval_z.upper])
+        is_on_border = x in set([self.interval_x.lower, self.interval_x.upper]) or y in set([self.interval_y.lower, self.interval_y.upper]) or z in set([self.interval_z.lower, self.interval_z.upper])
         is_inside_box = self.__contains__(num)
         return True if is_on_border & is_inside_box else False
 
