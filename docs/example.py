@@ -18,3 +18,4 @@ pudelka = algorithm.execute(table)
 #uruchomienie funkcji execute i rozbicie pudełek
 for i in pudelka:
     print(i.__str__())
+    #wypisanie pudełek końcowych
