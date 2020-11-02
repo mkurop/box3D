@@ -131,7 +131,6 @@ class myInterval(portion.Interval):
     @property
     def upper_eps(self):
         '''
-        :return: wartość upper interwału + eps(ilon)\n
         :rtype: float
         '''
         return self.upper + self.eps
@@ -139,7 +138,6 @@ class myInterval(portion.Interval):
     @property
     def upper_meps(self):
         '''
-        :return: wartość upper interwału - eps(ilon)\n
         :rtype: float
         '''
         return self.upper - self.eps
@@ -147,7 +145,6 @@ class myInterval(portion.Interval):
     @property
     def lower_eps(self):
         '''
-        :return: wartość lower interwału + eps(ilon)\n
         :rtype: float
         '''
         return self.lower + self.eps
@@ -155,7 +152,6 @@ class myInterval(portion.Interval):
     @property
     def lower_meps(self):
         '''
-        :return: wartość lower interwału - eps(ilon)\n
         :rtype: float
         '''
         return self.lower - self.eps
@@ -289,8 +285,8 @@ class myInterval(portion.Interval):
     @staticmethod
     def my_from_atomic(left, lower, upper, right):
         '''
-    	Funkcja nadpisująca funkcję from_atomic
-    	:return: interwał na podstawie podanych danych
+    	Funkcja nadpisująca funkcję from_atomic\n
+    	:return: interwał na podstawie podanych danych\n
     	:rtype: myInterval
     	'''
         instance = myInterval()
