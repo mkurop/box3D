@@ -17,4 +17,4 @@ for i in table:
 pudelka = algorithm.execute(table)
 #uruchomienie funkcji execute i rozbicie pudełek
 for i in pudelka:
-    i.__str__()
+    print(i.__str__())

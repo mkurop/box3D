@@ -72,12 +72,8 @@ class box3D:
         y = self.get_interval_y()
         z = self.get_interval_z()
         lista = [x.lower, x.upper, y.lower, y.upper, z.lower, z.upper]
-        print([lista[0], lista[1]], end = '')
-        print(' x ', end = '')
-        print([lista[2], lista[3]], end = '')
-        print(' x ', end = '')
-        print([lista[4], lista[5]], end = '\n')
-
+        intervals = '[' + str(lista[0]) + ',' + str(lista[1]) + ']' + ' x ' + '[' + str(lista[2]) + ',' + str(lista[3]) + ']' + ' x ' + '[' + str(lista[4]) + ',' + str(lista[5]) + ']' + '\n'
+        return intervals
 
     @staticmethod
     def random(corner_range=100, side_range=20):
