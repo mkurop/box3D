@@ -38,6 +38,20 @@ class algorithm:
         return table
 
     @staticmethod
+    def execute(box_list):
+        '''
+        Funkcja statyczna, która przyjmuje listę pudełek i zwraca listę rozbitych pudełek
+        :param box_list: lista pudełek do rozbicia
+        :return: lista pudełek po rozbiciu
+        :rtype: list
+        '''
+        Q, drzewo = boxStack(), tree()
+        Q.extend(box_list)
+        algorithm().algorytm(Q, drzewo)
+        return drzewo.ret_boxes()
+		
+		
+    @staticmethod
     def algorytm(Q, tree):
         '''
         Funkcja statyczna, w wyniku której wszystkie przecinające się
@@ -78,15 +92,3 @@ class algorithm:
                 #dodanie nowego pudełka do drzewa i zwiększenie zmiennej iD o 1
                 iD += 1
 
-        '''
-        #kilka instrukcji wypisujących efekt działania całego programu
-        lista = tree.tree.intersection(tree.tree.get_bounds(), True)
-        lista = [item.bbox for item in lista]
-        print('\n')
-        for i in lista:
-            print([i[0], i[3]], end = '') if i[0] != i[3] else print([i[0]], end = '')
-            print(' x ', end = '')
-            print([i[1], i[4]], end = '') if i[1] != i[4] else print([i[1]], end = '')
-            print(' x ', end = '')
-            print([i[2], i[5]], end = '\n') if i[2] != i[5] else print([i[2]], end = '\n')
-        '''

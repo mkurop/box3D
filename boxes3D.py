@@ -75,6 +75,11 @@ class tree:
         self.tree = new_tree
 
     def ret_boxes(self):
+        '''
+    	Funkcja zwracająca pudełka w drzewie
+    	:return: pudełka znajdujące się w drzewie
+    	:rtype: list
+    	'''
         boxes = self.tree.intersection(self.tree.get_bounds(), True)
         boxes = [item.bbox for item in boxes]
         boxes = [box3D.factory(int(round(item[0])), int(round(item[1])), int(round(item[2])), int(round(item[3])), int(round(item[4])), int(round(item[5]))) for item in boxes]

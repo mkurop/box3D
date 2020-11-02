@@ -63,6 +63,22 @@ class box3D:
         is_inside_box = self.__contains__(num)
         return True if is_on_border & is_inside_box else False
 
+
+    def __str__(self):
+        '''
+        Funkcja wypisująca interwały pudełka
+        '''
+        x = self.get_interval_x()
+        y = self.get_interval_y()
+        z = self.get_interval_z()
+        lista = [x.lower, x.upper, y.lower, y.upper, z.lower, z.upper]
+        print([lista[0], lista[1]], end = '')
+        print(' x ', end = '')
+        print([lista[2], lista[3]], end = '')
+        print(' x ', end = '')
+        print([lista[4], lista[5]], end = '\n')
+
+
     @staticmethod
     def random(corner_range=100, side_range=20):
         """
@@ -278,6 +294,11 @@ class myInterval(portion.Interval):
     
     @staticmethod
     def my_from_atomic(left, lower, upper, right):
+        '''
+    	Funkcja nadpisująca funkcję from_atomic
+    	:return: interwał na podstawie podanych danych
+    	:rtype: myInterval
+    	'''
         instance = myInterval()
         left = left if lower not in [inf, -inf] else portion.Bound.OPEN
         right = right if upper not in [inf, -inf] else portion.const.Bound.OPEN
