@@ -240,7 +240,13 @@ for i in range(len(int1)):
 
 #unit testy
 import random as rnd
-class algorithm_check:
+import unittest
+class algorithm_check(unittest.TestCase):
+
+    out_interval_bigger = closed(3, 6)
+    interval_smaller = closed(2, 5)
+    in_interval_bigger = closed(1, 6)
+    tst = TEST()
 
     def random_point_from_a_box(self, box):
         num_x = rnd.randint(box.interval_x.lower, box.interval_x.upper)
@@ -271,73 +277,109 @@ class algorithm_check:
                 return False
         return True
 
-'''
-def multi_test():
-	fct_chk = algorithm_check()
-	out_interval_bigger = closed(3, 6)
-	interval_smaller = closed(2, 5)
-	in_interval_bigger = closed(1, 6)
-	tst = TEST()
+    def test_oI_II_oI_II_oI_II(self):
+        box0 = box3D(self.interval_smaller, self.interval_smaller, self.interval_smaller)
+        box1 = box3D(self.out_interval_bigger, self.out_interval_bigger, self.out_interval_bigger)
+        self.assertEqual(True ,self.evaluate([box0, box1], TEST().oI_II_oI_II_oI_II(box0, box1)))
 
-	box0 = box3D(interval_smaller, interval_smaller, interval_smaller)
-	box1 = box3D(out_interval_bigger, out_interval_bigger, out_interval_bigger)
-	print(fct_chk.evaluate([box0, box1], tst.oI_II_oI_II_oI_II(box0, box1)))
-	box0 = box3D(interval_smaller, interval_smaller, out_interval_bigger)
-	box1 = box3D(out_interval_bigger, out_interval_bigger, interval_smaller)
-	print(fct_chk.evaluate([box0, box1], tst.oI_II_oI_II_oII_I(box0, box1)))
-	box0 = box3D(interval_smaller, out_interval_bigger, out_interval_bigger)
-	box1 = box3D(out_interval_bigger, interval_smaller, interval_smaller)
-	print(fct_chk.evaluate([box0, box1], tst.oI_II_oII_I_oII_I(box0, box1)))
-	box0 = box3D(out_interval_bigger, out_interval_bigger, out_interval_bigger)
-	box1 = box3D(interval_smaller, interval_smaller, interval_smaller)
-	print(fct_chk.evaluate([box0, box1], tst.oII_I_oII_I_oII_I(box0, box1)))
-	box0 = box3D(interval_smaller, interval_smaller, interval_smaller)
-	box1 = box3D(in_interval_bigger, in_interval_bigger, in_interval_bigger)
-	print(fct_chk.evaluate([box0, box1], tst.iI_II_iI_II_iI_II(box0, box1)))
-	box0 = box3D(interval_smaller, interval_smaller, in_interval_bigger)
-	box1 = box3D(in_interval_bigger, in_interval_bigger, interval_smaller)
-	print(fct_chk.evaluate([box0, box1], tst.iI_II_iI_II_iII_I(box0, box1)))
-	box0 = box3D(interval_smaller, in_interval_bigger, in_interval_bigger)
-	box1 = box3D(in_interval_bigger, interval_smaller, interval_smaller)
-	print(fct_chk.evaluate([box0, box1], tst.iI_II_iII_I_iII_I(box0, box1)))
-	box0 = box3D(in_interval_bigger, in_interval_bigger, in_interval_bigger)
-	box1 = box3D(interval_smaller, interval_smaller, interval_smaller)
-	print(fct_chk.evaluate([box0, box1], tst.iII_I_iII_I_iII_I(box0, box1)))
-	box0 = box3D(interval_smaller, interval_smaller, out_interval_bigger)
-	box1 = box3D(in_interval_bigger, in_interval_bigger, interval_smaller)
-	print(fct_chk.evaluate([box0, box1], tst.iI_II_iI_II_oII_I(box0, box1)))
-	box0 = box3D(in_interval_bigger, interval_smaller, interval_smaller)
-	box1 = box3D(interval_smaller, out_interval_bigger, out_interval_bigger)
-	print(fct_chk.evaluate([box0, box1], tst.iII_I_oI_II_oI_II(box0, box1)))
-	box0 = box3D(interval_smaller, interval_smaller, interval_smaller)
-	box1 = box3D(in_interval_bigger, out_interval_bigger, out_interval_bigger)
-	print(fct_chk.evaluate([box0, box1], tst.iI_II_oI_II_oI_II(box0, box1)))
-	box0 = box3D(interval_smaller, interval_smaller, out_interval_bigger)
-	box1 = box3D(in_interval_bigger, out_interval_bigger, interval_smaller)
-	print(fct_chk.evaluate([box0, box1], tst.iI_II_oI_II_oII_I(box0, box1)))
-	box0 = box3D(in_interval_bigger, interval_smaller, out_interval_bigger)
-	box1 = box3D(interval_smaller, out_interval_bigger, interval_smaller)
-	print(fct_chk.evaluate([box0, box1], tst.iII_I_oI_II_oII_I(box0, box1)))
-	box0 = box3D(in_interval_bigger, out_interval_bigger, out_interval_bigger)
-	box1 = box3D(interval_smaller, interval_smaller, interval_smaller)
-	print(fct_chk.evaluate([box0, box1], tst.iII_I_oII_I_oII_I(box0, box1)))
-	box0 = box3D(interval_smaller, out_interval_bigger, out_interval_bigger)
-	box1 = box3D(in_interval_bigger, interval_smaller, interval_smaller)
-	print(fct_chk.evaluate([box0, box1], tst.iI_II_oII_I_oII_I(box0, box1)))
-	box0 = box3D(interval_smaller, in_interval_bigger, interval_smaller)
-	box1 = box3D(in_interval_bigger, interval_smaller, out_interval_bigger)
-	print(fct_chk.evaluate([box0, box1], tst.iI_II_iII_I_oII_I(box0, box1)))
-	box0 = box3D(interval_smaller, interval_smaller, interval_smaller)
-	box1 = box3D(in_interval_bigger, in_interval_bigger, out_interval_bigger)
-	print(fct_chk.evaluate([box0, box1], tst.iI_II_iI_II_oI_II(box0, box1)))
-	box0 = box3D(interval_smaller, in_interval_bigger, interval_smaller)
-	box1 = box3D(in_interval_bigger, interval_smaller, out_interval_bigger)
-	print(fct_chk.evaluate([box0, box1], tst.iI_II_iII_I_oI_II(box0, box1)))
-	box0 = box3D(in_interval_bigger, in_interval_bigger, interval_smaller)
-	box1 = box3D(interval_smaller, interval_smaller, out_interval_bigger)
-	print(fct_chk.evaluate([box0, box1], tst.iII_I_iII_I_oI_II(box0, box1)))
-	box0 = box3D(in_interval_bigger, in_interval_bigger, out_interval_bigger)
-	box1 = box3D(interval_smaller, interval_smaller, interval_smaller)
-	print(fct_chk.evaluate([box0, box1], tst.iII_I_iII_I_oII_I(box0, box1)))
+    def test_oI_II_oI_II_oII_I(self):
+        box0 = box3D(self.interval_smaller, self.interval_smaller, self.out_interval_bigger)
+        box1 = box3D(self.out_interval_bigger, self.out_interval_bigger, self.interval_smaller)
+        self.assertEqual(True , self.evaluate([box0, box1], TEST().oI_II_oI_II_oII_I(box0, box1)))
+        
+    def test_oI_II_oII_I_oII_I(self):
+        box0 = box3D(self.interval_smaller, self.out_interval_bigger, self.out_interval_bigger)
+        box1 = box3D(self.out_interval_bigger, self.interval_smaller, self.interval_smaller)
+        self.assertEqual(True ,self.evaluate([box0, box1], TEST().oI_II_oII_I_oII_I(box0, box1)))
+        
+    def test_oII_I_oII_I_oII_I(self):
+        box0 = box3D(self.out_interval_bigger, self.out_interval_bigger, self.out_interval_bigger)
+        box1 = box3D(self.interval_smaller, self.interval_smaller, self.interval_smaller)
+        self.assertEqual(True ,self.evaluate([box0, box1], TEST().oII_I_oII_I_oII_I(box0, box1)))
+        
+    def test_iI_II_iI_II_iI_II(self):
+        box0 = box3D(self.interval_smaller, self.interval_smaller, self.interval_smaller)
+        box1 = box3D(self.in_interval_bigger, self.in_interval_bigger, self.in_interval_bigger)
+        self.assertEqual(True ,self.evaluate([box0, box1], TEST().iI_II_iI_II_iI_II(box0, box1)))
 
-'''
+    def test_iI_II_iI_II_iII_I(self):
+        box0 = box3D(self.interval_smaller, self.interval_smaller, self.in_interval_bigger)
+        box1 = box3D(self.in_interval_bigger, self.in_interval_bigger, self.interval_smaller)
+        self.assertEqual(True ,self.evaluate([box0, box1], TEST().iI_II_iI_II_iII_I(box0, box1)))
+
+    def test_iI_II_iII_I_iII_I(self):
+        box0 = box3D(self.interval_smaller, self.in_interval_bigger, self.in_interval_bigger)
+        box1 = box3D(self.in_interval_bigger, self.interval_smaller, self.interval_smaller)
+        self.assertEqual(True ,self.evaluate([box0, box1], TEST().iI_II_iII_I_iII_I(box0, box1)))
+
+    def test_iII_I_iII_I_iII_I(self):
+        box0 = box3D(self.in_interval_bigger, self.in_interval_bigger, self.in_interval_bigger)
+        box1 = box3D(self.interval_smaller, self.interval_smaller, self.interval_smaller)
+        self.assertEqual(True ,self.evaluate([box0, box1], TEST().iII_I_iII_I_iII_I(box0, box1)))
+
+    def test_iI_II_iI_II_oII_I(self):
+        box0 = box3D(self.interval_smaller, self.interval_smaller, self.out_interval_bigger)
+        box1 = box3D(self.in_interval_bigger, self.in_interval_bigger, self.interval_smaller)
+        self.assertEqual(True ,self.evaluate([box0, box1], TEST().iI_II_iI_II_oII_I(box0, box1)))
+ 
+    def test_iII_I_oI_II_oI_II(self):
+        box0 = box3D(self.in_interval_bigger, self.interval_smaller, self.interval_smaller)
+        box1 = box3D(self.interval_smaller, self.out_interval_bigger, self.out_interval_bigger)
+        self.assertEqual(True ,self.evaluate([box0, box1], TEST().iII_I_oI_II_oI_II(box0, box1)))
+
+    def test_iI_II_oI_II_oI_II(self):
+        box0 = box3D(self.interval_smaller, self.interval_smaller, self.interval_smaller)
+        box1 = box3D(self.in_interval_bigger, self.out_interval_bigger, self.out_interval_bigger)
+        self.assertEqual(True ,self.evaluate([box0, box1], TEST().iI_II_oI_II_oI_II(box0, box1)))
+
+    def test_iI_II_oI_II_oII_I(self):
+        box0 = box3D(self.interval_smaller, self.interval_smaller, self.out_interval_bigger)
+        box1 = box3D(self.in_interval_bigger, self.out_interval_bigger, self.interval_smaller)
+        self.assertEqual(True ,self.evaluate([box0, box1], TEST().iI_II_oI_II_oII_I(box0, box1)))
+
+
+    def test_iII_I_oI_II_oII_I(self):
+        box0 = box3D(self.in_interval_bigger, self.interval_smaller, self.out_interval_bigger)
+        box1 = box3D(self.interval_smaller, self.out_interval_bigger, self.interval_smaller)
+        self.assertEqual(True ,self.evaluate([box0, box1], TEST().iII_I_oI_II_oII_I(box0, box1)))
+
+
+    def test_iII_I_oII_I_oII_I(self):
+        box0 = box3D(self.in_interval_bigger, self.out_interval_bigger, self.out_interval_bigger)
+        box1 = box3D(self.interval_smaller, self.interval_smaller, self.interval_smaller)
+        self.assertEqual(True ,self.evaluate([box0, box1], TEST().iII_I_oII_I_oII_I(box0, box1)))
+
+    def test_iI_II_oII_I_oII_I(self):
+        box0 = box3D(self.interval_smaller, self.out_interval_bigger, self.out_interval_bigger)
+        box1 = box3D(self.in_interval_bigger, self.interval_smaller, self.interval_smaller)
+        self.assertEqual(True ,self.evaluate([box0, box1], TEST().iI_II_oII_I_oII_I(box0, box1)))
+
+    def test_iI_II_iII_I_oII_I(self):
+        box0 = box3D(self.interval_smaller, self.in_interval_bigger, self.interval_smaller)
+        box1 = box3D(self.in_interval_bigger, self.interval_smaller, self.out_interval_bigger)
+        self.assertEqual(True ,self.evaluate([box0, box1], TEST().iI_II_iII_I_oII_I(box0, box1)))
+        
+    def test_iI_II_iI_II_oI_II(self):
+        box0 = box3D(self.interval_smaller, self.interval_smaller, self.interval_smaller)
+        box1 = box3D(self.in_interval_bigger, self.in_interval_bigger, self.out_interval_bigger)
+        self.assertEqual(True ,self.evaluate([box0, box1], TEST().iI_II_iI_II_oI_II(box0, box1)))
+
+    def test_iI_II_iII_I_oI_II(self):
+        box0 = box3D(self.interval_smaller, self.in_interval_bigger, self.interval_smaller)
+        box1 = box3D(self.in_interval_bigger, self.interval_smaller, self.out_interval_bigger)
+        self.assertEqual(True ,self.evaluate([box0, box1], TEST().iI_II_iII_I_oI_II(box0, box1)))
+        
+    def test_iII_I_iII_I_oI_II(self):
+        box0 = box3D(self.in_interval_bigger, self.in_interval_bigger, self.interval_smaller)
+        box1 = box3D(self.interval_smaller, self.interval_smaller, self.out_interval_bigger)
+        self.assertEqual(True ,self.evaluate([box0, box1], TEST().iII_I_iII_I_oI_II(box0, box1)))
+        
+    def test_iII_I_iII_I_oII_I(self):
+        box0 = box3D(self.in_interval_bigger, self.in_interval_bigger, self.out_interval_bigger)
+        box1 = box3D(self.interval_smaller, self.interval_smaller, self.interval_smaller)
+        self.assertEqual(True ,self.evaluate([box0, box1], TEST().iII_I_iII_I_oII_I(box0, box1)))
+
+
+
+if __name__ == '__main__':
+    unittest.main()

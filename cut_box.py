@@ -78,12 +78,10 @@ class box3D:
     @staticmethod
     def random(corner_range=100, side_range=20):
         """
-        Generates a random box3D where the orgin of the box is in [0 corner_range] x [0 corner_range] x [0 corner_range],
-        and the sides lenghts are in [0 side_range]
-        :param self:
-        :param corner_range: range for box origin
-        :param side_range: range for the length of the side
-        :return: losowe pudełko
+        Generuje losowe pudełko, w którym interwały są determinowane przez pseudolosowe liczby całkowite z przedziału podanego przez użytkownika \n
+        :param corner_range: dolna granica każdego interwału pudełka jest liczbą pseudolosową z przedziału  [0, corner_range]\n
+        :param side_range: górna granica każdego interwału pudełka jest liczbą pseudolosową z przedziału [1 + corner_range, side_range + corner_range]\n
+        :return: losowe pudełko\n
         :rtype: box3D
         """
         side_x, side_y, side_z = random.randint(1, side_range), random.randint(1, side_range), random.randint(1, side_range)
@@ -134,7 +132,7 @@ class myInterval(portion.Interval):
     def upper_eps(self):
         '''
         :return: wartość upper interwału + eps(ilon)\n
-        :rtype: complex
+        :rtype: float
         '''
         return self.upper + self.eps
 
@@ -142,7 +140,7 @@ class myInterval(portion.Interval):
     def upper_meps(self):
         '''
         :return: wartość upper interwału - eps(ilon)\n
-        :rtype: complex
+        :rtype: float
         '''
         return self.upper - self.eps
 
@@ -150,7 +148,7 @@ class myInterval(portion.Interval):
     def lower_eps(self):
         '''
         :return: wartość lower interwału + eps(ilon)\n
-        :rtype: complex
+        :rtype: float
         '''
         return self.lower + self.eps
 
@@ -158,7 +156,7 @@ class myInterval(portion.Interval):
     def lower_meps(self):
         '''
         :return: wartość lower interwału - eps(ilon)\n
-        :rtype: complex
+        :rtype: float
         '''
         return self.lower - self.eps
 
@@ -167,7 +165,7 @@ class myInterval(portion.Interval):
         '''
         Funkcja set dla wartości lower\n
         :return: wartość lower interwału + eps(ilon)\n
-        :rtype: complex
+        :rtype: float
         '''
         self.lower_eps = self.lower + self.eps
 
@@ -176,7 +174,7 @@ class myInterval(portion.Interval):
         '''
         Funkcja get dla wartości lower\n
         :return: wartość lower interwału - eps(ilon)\n
-        :rtype: complex
+        :rtype: float
         '''
         self.lower_meps = self.lower - self.eps
 
@@ -185,7 +183,7 @@ class myInterval(portion.Interval):
         '''
         Funkcja set dla wartości upper\n
         :return: wartość upper interwału + eps(ilon)\n
-        :rtype: complex
+        :rtype: float
         '''
         self.upper_eps = self.upper + self.eps
 
@@ -194,7 +192,7 @@ class myInterval(portion.Interval):
         '''
         Funkcja set dla wartości upper\n
         :return: wartość upper interwału - eps(ilon)\n
-        :rtype: complex
+        :rtype: float
         '''
         self.upper_meps = self.upper - self.eps
 
@@ -203,7 +201,7 @@ class myInterval(portion.Interval):
         '''
         Funkcja get dla wartości lower\n
         :return: wartość lower_eps(ilon)\n
-        :rtype: complex
+        :rtype: float
         '''
         return self.lower_eps
 
@@ -212,7 +210,7 @@ class myInterval(portion.Interval):
         '''
         Funkcja get dla wartości lower\n
         :return: wartość lower_meps(ilon)\n
-        :rtype: complex
+        :rtype: float
         '''
         return self.lower_meps
 
@@ -221,7 +219,7 @@ class myInterval(portion.Interval):
         '''
         Funkcja get dla wartości upper\n
         :return: wartość upper_eps(ilon)\n
-        :rtype: complex
+        :rtype: float
         '''
         return self.upper_eps
 
@@ -230,13 +228,13 @@ class myInterval(portion.Interval):
         '''
         Funkcja set dla wartości upper\n
         :return: wartość upper_meps(ilon)\n
-        :rtype: complex
+        :rtype: float
         '''
         return self.upper_meps
 
     def box_cut_execute(self, myInt):
         '''
-        Funkcja która przycina 1 interwał\n
+        Funkcja która przycina jeden interwał\n
         :param interval: interwał do przycięcia\n
         :return: interwał przycięty o epsilon z obu wartości granicznych\n
         :rtype: myInterval
@@ -263,7 +261,7 @@ class myInterval(portion.Interval):
 
     def box_uncut_execute(self, myInt):
         '''
-        Funkcja która cofa przycięcie 1 interwału\n
+        Funkcja która cofa przycięcie jednego interwału\n
         :param interval: interwał przycięty o epsilon, produkt funkcji box_cut_execute\n
         :return: interwał w stanie takim samym jak przed przycięciem\n
         :rtype: myInterval

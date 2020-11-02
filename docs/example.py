@@ -2,7 +2,7 @@
 from mainalgo import *
 #import głównego modułu
 table = []
-#deklaracja tablicy pomocnej
+#deklaracja tablicy zawierającej pudełka na wejściu do algorytmu
 table.append(box3D.factory(2, 1, 4, 5, 7, 8))
 table.append(box3D.factory(1, 2, 3, 3, 5, 7))
 table.append(box3D.factory(2, 3, 2, 4, 7, 7))
@@ -16,4 +16,4 @@ pudelka = algorithm.execute(table)
 #uruchomienie funkcji execute i rozbicie pudełek
 for box in pudelka:
     print(box)
-    #wypisanie pudełek końcowych
+    #wypisanie pudełek na wyjściu programu
