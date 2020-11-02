@@ -40,9 +40,9 @@ class algorithm:
     @staticmethod
     def execute(box_list):
         '''
-        Funkcja statyczna, która przyjmuje listę pudełek i zwraca listę rozbitych pudełek
-        :param box_list: lista pudełek do rozbicia
-        :return: lista pudełek po rozbiciu
+        Funkcja statyczna, która przyjmuje listę pudełek i zwraca listę rozbitych pudełek\n
+        :param box_list: lista pudełek do rozbicia\n
+        :return: lista pudełek po rozbiciu\n
         :rtype: list
         '''
         Q, drzewo = boxStack(), tree()

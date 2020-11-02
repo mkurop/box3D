@@ -131,28 +131,36 @@ class myInterval(portion.Interval):
     @property
     def upper_eps(self):
         '''
-        float
+        Atrybut upper_eps\n
+        :return: górną  granicę interwału + eps(ilon)\n
+        :rtype: float
         '''
         return self.upper + self.eps
 
     @property
     def upper_meps(self):
         '''
-         float
+        Atrybut upper_meps\n
+        :return: górną  granicę interwału - eps(ilon)\n  
+        :rtype: float
         '''
         return self.upper - self.eps
 
     @property
     def lower_eps(self):
         '''
-        float
+        Atrybut lower_eps\n
+        :return: dolną  granicę interwału + eps(ilon)\n
+        :rtype: float        
         '''
         return self.lower + self.eps
 
     @property
     def lower_meps(self):
         '''
-        float
+        Atrybut lower_meps\n
+        :return: dolną  granicę interwału - eps(ilon)\n
+        :rtype: float
         '''
         return self.lower - self.eps
 
