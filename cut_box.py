@@ -131,28 +131,28 @@ class myInterval(portion.Interval):
     @property
     def upper_eps(self):
         '''
-        :rtype: float
+        float
         '''
         return self.upper + self.eps
 
     @property
     def upper_meps(self):
         '''
-        :rtype: float
+         float
         '''
         return self.upper - self.eps
 
     @property
     def lower_eps(self):
         '''
-        :rtype: float
+        float
         '''
         return self.lower + self.eps
 
     @property
     def lower_meps(self):
         '''
-        :rtype: float
+        float
         '''
         return self.lower - self.eps
 
