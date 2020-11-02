@@ -10,7 +10,7 @@ https://www.gnu.org/licenses/licenses.pl.html
 
 Założenia działania programu
 ----------------------------
-Program bierze dowolną liczbę pudełek, które mogą się przecinać i zwraca pudełka nieprzecinające się mające jako unię, unię pudełek na wejściu
+Program bierze dowolną liczbę pudełek, które mogą się przecinać i zwraca pudełka nieprzecinające się mające jako unię, unię pudełek na wejściu.
 
 Przecinanie - pudełka przecinają się, jeżeli tworzące je interwały mają niepustą cześć wspólną dla osi x, y i z.
 
