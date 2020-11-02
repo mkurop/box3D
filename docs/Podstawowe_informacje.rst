@@ -23,6 +23,10 @@ Przykład wywołania programu
 
 .. literalinclude:: example.py
   
+
+
+wyjście programu przykładowego:
+  
 .. literalinclude:: example-output.py
    
 
