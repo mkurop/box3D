@@ -24,8 +24,8 @@ master_doc = 'index'
 # -- Project information -----------------------------------------------------
 
 project = 'Pudełka 3D'
-copyright = '2020, Dr. Marcin Kuropatwiński i Robert Kolke'
-author = 'Dr. Marcin Kuropatwiński i Robert Kolke'
+copyright = '2020, dr. Marcin Kuropatwiński i Robert Kolke'
+author = 'dr. Marcin Kuropatwiński i Robert Kolke'
 
 # The full version, including alpha/beta/rc tags
 release = '1.1'
