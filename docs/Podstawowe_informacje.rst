@@ -23,6 +23,7 @@ Przykład wywołania programu
 
 .. literalinclude:: example.py
   
+.. literalinclude:: example-output.py
    
 
 Układ współrzędnych kartezjańskich
