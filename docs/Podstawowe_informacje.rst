@@ -4,6 +4,7 @@ Podstawowe informacje
 =====================
 
 Adres repozytorium
+------------------
 https://github.com/KolRobOsk/Praktyki
 
 Licencja
