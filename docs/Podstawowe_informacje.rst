@@ -3,6 +3,9 @@
 Podstawowe informacje
 =====================
 
+Adres repozytorium
+https://github.com/KolRobOsk/Praktyki
+
 Licencja
 --------
 Program jest udostępniany na licencji GNU General Public License
