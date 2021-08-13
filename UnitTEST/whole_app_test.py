@@ -1,5 +1,5 @@
 import os, sys
-from UnitTEST.functions_test import algorithm_check
+from functions_test import algorithm_check
 
 sys.path.insert(0, os.path.abspath('..'))
 sys.path.insert(0, os.path.abspath('.'))
