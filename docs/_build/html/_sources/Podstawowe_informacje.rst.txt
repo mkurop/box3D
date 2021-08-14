@@ -5,7 +5,7 @@ Podstawowe informacje
 
 Adres repozytorium
 ------------------
-https://github.com/KolRobOsk/Praktyki
+https://github.com/mkurop/boxes3D.git
 
 Licencja
 --------
