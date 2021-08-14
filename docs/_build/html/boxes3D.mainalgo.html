@@ -1,0 +1,184 @@
+
+<!DOCTYPE html>
+
+<html lang="pl">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="generator" content="Docutils 0.17.1: http://docutils.sourceforge.net/" />
+
+    <title>3.3. mainalgo &#8212; Pudełka 3D 1.1 - dokumentacja</title>
+    <link rel="stylesheet" type="text/css" href="_static/pygments.css" />
+    <link rel="stylesheet" type="text/css" href="_static/alabaster.css" />
+    <script data-url_root="./" id="documentation_options" src="_static/documentation_options.js"></script>
+    <script src="_static/jquery.js"></script>
+    <script src="_static/underscore.js"></script>
+    <script src="_static/doctools.js"></script>
+    <script src="_static/translations.js"></script>
+    <link rel="index" title="Indeks" href="genindex.html" />
+    <link rel="search" title="Szukaj" href="search.html" />
+    <link rel="next" title="3.4. signatures_setup" href="boxes3D.signatures_setup.html" />
+    <link rel="prev" title="3.2. cut_box" href="boxes3D.cut_box.html" />
+   
+  <link rel="stylesheet" href="_static/custom.css" type="text/css" />
+  
+  
+  <meta name="viewport" content="width=device-width, initial-scale=0.9, maximum-scale=0.9" />
+
+  </head><body>
+  
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          
+
+          <div class="body" role="main">
+            
+  <section id="module-mainalgo">
+<span id="mainalgo"></span><span id="boxes3d-mainalgo"></span><h1><span class="section-number">3.3. </span>mainalgo<a class="headerlink" href="#module-mainalgo" title="Stały odnośnik do tego nagłówka">¶</a></h1>
+<dl class="py class">
+<dt class="sig sig-object py" id="mainalgo.algorithm">
+<em class="property"><span class="pre">class</span> </em><span class="sig-prename descclassname"><span class="pre">mainalgo.</span></span><span class="sig-name descname"><span class="pre">algorithm</span></span><a class="reference internal" href="_modules/mainalgo.html#algorithm"><span class="viewcode-link"><span class="pre">[źródło]</span></span></a><a class="headerlink" href="#mainalgo.algorithm" title="Stały odnośnik do tej definicji">¶</a></dt>
+<dd><p>Klasy bazowe: <code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></p>
+<p>Główna klasa programu.</p>
+<dl class="py method">
+<dt class="sig sig-object py" id="mainalgo.algorithm.algorytm">
+<em class="property"><span class="pre">static</span> </em><span class="sig-name descname"><span class="pre">algorytm</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">Q</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">tree</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/mainalgo.html#algorithm.algorytm"><span class="viewcode-link"><span class="pre">[źródło]</span></span></a><a class="headerlink" href="#mainalgo.algorithm.algorytm" title="Stały odnośnik do tej definicji">¶</a></dt>
+<dd><p>Funkcja statyczna, w wyniku której wszystkie przecinające się
+pudełka ze stosu zostają rozbite i wstawione do drzewa
+:param Q: stos pudełek</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parametry</dt>
+<dd class="field-odd"><p><strong>tree</strong> – puste drzewo z indeksowaniem w trzech wymiarach</p>
+</dd>
+<dt class="field-even">Zwraca</dt>
+<dd class="field-even"><p>drzewo rtree zawierające pudełka</p>
+</dd>
+<dt class="field-odd">Typ zwracany</dt>
+<dd class="field-odd"><p>tree.tree</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="mainalgo.algorithm.execute">
+<em class="property"><span class="pre">static</span> </em><span class="sig-name descname"><span class="pre">execute</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">box_list</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/mainalgo.html#algorithm.execute"><span class="viewcode-link"><span class="pre">[źródło]</span></span></a><a class="headerlink" href="#mainalgo.algorithm.execute" title="Stały odnośnik do tej definicji">¶</a></dt>
+<dd><p>Funkcja statyczna, która przyjmuje listę pudełek i zwraca listę rozbitych pudełek</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parametry</dt>
+<dd class="field-odd"><p><strong>box_list</strong> – lista pudełek do rozbicia</p>
+</dd>
+<dt class="field-even">Zwraca</dt>
+<dd class="field-even"><p>lista pudełek po rozbiciu</p>
+</dd>
+<dt class="field-odd">Typ zwracany</dt>
+<dd class="field-odd"><p>list</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="mainalgo.algorithm.rotate_and_execute">
+<span class="sig-name descname"><span class="pre">rotate_and_execute</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">box1</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">box2</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/mainalgo.html#algorithm.rotate_and_execute"><span class="viewcode-link"><span class="pre">[źródło]</span></span></a><a class="headerlink" href="#mainalgo.algorithm.rotate_and_execute" title="Stały odnośnik do tej definicji">¶</a></dt>
+<dd><p>Funkcja obraca pudełka zmieniając kolejność interwałów</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parametry</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>box1</strong> – pudełko ze stosu</p></li>
+<li><p><strong>box2</strong> – pudełko z drzewa</p></li>
+</ul>
+</dd>
+<dt class="field-even">Zwraca</dt>
+<dd class="field-even"><p>lista table, która zawiera pudełka po rozbiciach</p>
+</dd>
+<dt class="field-odd">Typ zwracany</dt>
+<dd class="field-odd"><p>list</p>
+</dd>
+</dl>
+</dd></dl>
+
+</dd></dl>
+
+</section>
+
+
+          </div>
+          
+        </div>
+      </div>
+      <div class="sphinxsidebar" role="navigation" aria-label="main navigation">
+        <div class="sphinxsidebarwrapper">
+<h1 class="logo"><a href="index.html">Pudełka 3D</a></h1>
+
+
+
+
+
+
+
+
+<h3>Nawigacja</h3>
+<p class="caption"><span class="caption-text">Spis treści</span></p>
+<ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="Podstawowe_informacje.html">1. Podstawowe informacje</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Szczeg%C3%B3%C5%82y_techniczne.html">2. Szczegóły techniczne</a></li>
+<li class="toctree-l1 current"><a class="reference internal" href="Modu%C5%82y.html">3. Lista modułów</a><ul class="current">
+<li class="toctree-l2"><a class="reference internal" href="boxes3D.boxes3D.html">3.1. boxes3D</a></li>
+<li class="toctree-l2"><a class="reference internal" href="boxes3D.cut_box.html">3.2. cut_box</a></li>
+<li class="toctree-l2 current"><a class="current reference internal" href="#">3.3. mainalgo</a></li>
+<li class="toctree-l2"><a class="reference internal" href="boxes3D.signatures_setup.html">3.4. signatures_setup</a></li>
+<li class="toctree-l2"><a class="reference internal" href="boxes3D.split_intervals.html">3.5. split_intervals</a></li>
+</ul>
+</li>
+</ul>
+
+<div class="relations">
+<h3>Related Topics</h3>
+<ul>
+  <li><a href="index.html">Documentation overview</a><ul>
+  <li><a href="Modu%C5%82y.html"><span class="section-number">3. </span>Lista modułów</a><ul>
+      <li>Previous: <a href="boxes3D.cut_box.html" title="poprzedni rozdział"><span class="section-number">3.2. </span>cut_box</a></li>
+      <li>Next: <a href="boxes3D.signatures_setup.html" title="następny rozdział"><span class="section-number">3.4. </span>signatures_setup</a></li>
+  </ul></li>
+  </ul></li>
+</ul>
+</div>
+<div id="searchbox" style="display: none" role="search">
+  <h3 id="searchlabel">Szybkie wyszukiwanie</h3>
+    <div class="searchformwrapper">
+    <form class="search" action="search.html" method="get">
+      <input type="text" name="q" aria-labelledby="searchlabel" />
+      <input type="submit" value="Szukaj" />
+    </form>
+    </div>
+</div>
+<script>$('#searchbox').show(0);</script>
+
+
+
+
+
+
+
+
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="footer">
+      &copy;2020, dr Marcin Kuropatwiński i Robert Kolke.
+      
+      |
+      Powered by <a href="http://sphinx-doc.org/">Sphinx 4.0.2</a>
+      &amp; <a href="https://github.com/bitprophet/alabaster">Alabaster 0.7.12</a>
+      
+      |
+      <a href="_sources/boxes3D.mainalgo.rst.txt"
+          rel="nofollow">Page source</a>
+    </div>
+
+    
+
+    
+  </body>
+</html>

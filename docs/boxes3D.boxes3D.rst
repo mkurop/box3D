@@ -1,4 +1,4 @@
-.. _Praktyki.boxes3D:
+.. _boxes3D.boxes3D:
 
 boxes3D
 =============

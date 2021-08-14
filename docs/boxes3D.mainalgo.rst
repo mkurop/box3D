@@ -1,4 +1,4 @@
-.. _Praktyki.mainalgo:
+.. _boxes3D.mainalgo:
 
 mainalgo
 ========

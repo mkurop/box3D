@@ -1,7 +1,12 @@
-split\_intervals module
-=======================
+.. _boxes3D.split_intervals:
+
+
+
+split_intervals
+===============
 
 .. automodule:: split_intervals
    :members:
    :undoc-members:
    :show-inheritance:
+

@@ -1,5 +1,7 @@
-mainalgo module
-===============
+.. _boxes3D.mainalgo:
+
+mainalgo
+========
 
 .. automodule:: mainalgo
    :members:

@@ -1,4 +1,4 @@
-.. _Praktyki.signatures_setup:
+.. _boxes3D.signatures_setup:
 
 
 

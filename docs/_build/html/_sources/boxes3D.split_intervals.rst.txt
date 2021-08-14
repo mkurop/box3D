@@ -1,4 +1,4 @@
-.. _Praktyki.split_intervals:
+.. _boxes3D.split_intervals:
 
 
 
