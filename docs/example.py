@@ -1,4 +1,4 @@
-#przykładowy program należy wywołać wewnątrz katalogu ./Praktyki
+#przykładowy program należy wywołać wewnątrz katalogu ./boxes3D
 from mainalgo import *
 #import głównego modułu
 table = []
