@@ -55,7 +55,7 @@ class algorithm:
     def algorytm(Q, tree):
         '''
         Funkcja statyczna, w wyniku której wszystkie przecinające się
-        pudełka ze stosu zostają rozbite i wstawione do drzewa
+        pudełka ze stosu zostają rozbite i wstawione do drzewa\n
         :param Q: stos pudełek \n
         :param tree: puste drzewo z indeksowaniem w trzech wymiarach\n
         :return: drzewo rtree zawierające pudełka\n
