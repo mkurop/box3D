@@ -118,9 +118,7 @@ def my_closed(lower, upper):
 class myInterval(portion.Interval):
     '''
     Klasa dziedzicząca z funkcji interwał\n
-    :param eps: liczba potrzebna do przycięcia pudełek,
-    bez tego są liczone jako przecinające się nawet jak
-    tylko nachodzą na siebie granicami
+    :param eps: liczba potrzebna do przycięcia pudełek, bez tego są liczone jako przecinające się nawet jak tylko nachodzą na siebie granicami\n
     '''
     
     def __init__(self):
