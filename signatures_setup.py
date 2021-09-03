@@ -12,7 +12,7 @@ class signatures:
         '''
         len1, len2 = (mylen(interval1), mylen(interval2))
         difference = len2 - len1 if len1 > 0 else len1 + len2
-        if ((interval1.upper < interval2.upper) & (self.is_out(interval1, interval2)))| (self.is_half_out(interval1, interval2) & (difference > 0)):
+        if ((interval1.upper < interval2.upper) & (self.is_out(interval1, interval2))) or (self.is_half_out(interval1, interval2) & (difference > 0)):
             return True
         else:
             return False
@@ -37,7 +37,7 @@ class signatures:
         '''
         len1, len2 = (mylen(interval1), mylen(interval2))
         difference = len1 - len2 if len2 > 0 else len1 + len2
-        if (interval2.upper < interval1.upper) & (self.is_out(interval1, interval2)) | (self.is_half_out(interval1, interval2) & (difference > 0)):
+        if (interval2.upper < interval1.upper) & (self.is_out(interval1, interval2)) or (self.is_half_out(interval1, interval2) & (difference > 0)):
             return True
         else:
             return False
@@ -136,7 +136,7 @@ class signatures:
         :return: True jeśli pudełka są w relacji equal, inaczej False\n
         :rtype: bool
         '''
-        return True if interval1 == interval2 else False
+        return True if (interval1 & interval2) == (interval1 | interval2) else False
 
 
     def is_out(self, interval1, interval2):
@@ -181,6 +181,9 @@ class signatures:
         '''
         return True if self.is_equal(interval1, interval2) else False
 
+    def is_not(self, interval1, interval2):
+        return True if interval1.lower == interval1.upper or interval2.lower == interval2.upper else False
+
     def get_signature(self, interval1, interval2):
         '''
         Funkcja nadająca sygnatury parom interwałów\n
@@ -193,12 +196,14 @@ class signatures:
             return 'ii12'
         if self.ii21(interval1, interval2):
             return 'ii21'
+        if self.ie(interval1, interval2):
+            return 'ii12'
         if self.io12(interval1, interval2):
             return 'io12'
         if self.io21(interval1, interval2):
             return 'io21'
-        if self.ie(interval1, interval2):
-            return 'ii12'
+        if self.is_not(interval1, interval2):
+            return 'not'
 
     def ret_original_order(self, split, sorted2in):
         '''

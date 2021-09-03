@@ -23,299 +23,102 @@ class split:
     Uwzględniłem możliwość wystąpienia half-out \n
     :param empty: interwał pusty 
     '''
-
     empty = my_closed(math.inf, -math.inf)
 
-    def oI_II_oI_II_oI_II(self, box1, box2):
-        x1, y1, z1 = my_closed(box1.interval_x.lower, box1.interval_x.upper), \
-                     my_closed(box1.interval_y.lower, box1.interval_y.upper), \
-                     my_closed(box1.interval_z.lower, box1.interval_z.upper)
-        x2, y2, z2 = my_closed(box2.interval_x.lower, box2.interval_x.upper), \
-                     my_closed(box2.interval_y.lower, box2.interval_y.upper), \
-                     my_closed(box2.interval_z.lower, box2.interval_z.upper)
-        table = [box3D(x1, y1, z1)]
-        if x2 - x1 != self.empty:
-            table.append(box3D(x2 - x1, y2 & y1, z2))
-        if y2 - y1 != self.empty:
-            table.append(box3D(x2, y2 - y1, z2))
-        if z2 - z1 != self.empty:
-            table.append(box3D(x1 & x2, y1 & y2, z2 - z1))
-        return table
-
-    def oI_II_oI_II_oII_I(self, box1, box2):
-        x1, y1, z1 = my_closed(box1.interval_x.lower, box1.interval_x.upper), \
-                     my_closed(box1.interval_y.lower, box1.interval_y.upper), \
-                     my_closed(box1.interval_z.lower, box1.interval_z.upper)
-        x2, y2, z2 = my_closed(box2.interval_x.lower, box2.interval_x.upper), \
-                     my_closed(box2.interval_y.lower, box2.interval_y.upper), \
-                     my_closed(box2.interval_z.lower, box2.interval_z.upper)
-        table = [box3D(x1, y1, z1)]
-        if x2 - x1 != self.empty:
-            table.append(box3D(x2 - x1, y2, z2))
-        if y2 - y1 != self.empty:
-            table.append(box3D(x2 & x1, y2 - y1, z2))
-        if z2 - z1 != self.empty:
-            table.append(box3D(x1 & x2, y1 & y2, z2 - z1))
-        return table
-
-    def oI_II_oII_I_oII_I(self, box1, box2):
-        x1, y1, z1 = my_closed(box1.interval_x.lower, box1.interval_x.upper), \
-                     my_closed(box1.interval_y.lower, box1.interval_y.upper), \
-                     my_closed(box1.interval_z.lower, box1.interval_z.upper)
-        x2, y2, z2 = my_closed(box2.interval_x.lower, box2.interval_x.upper), \
-                     my_closed(box2.interval_y.lower, box2.interval_y.upper), \
-                     my_closed(box2.interval_z.lower, box2.interval_z.upper)
-        table = [box3D(x2, y2, z2)]
-        if z1 - z2 != self.empty:
-            table.append(box3D(x1 & x2, y1 & y2, z1 - z2))
-        if y1 - y2 != self.empty:
-            table.append(box3D(x1, y1 - y2, z1))
-        if x1 - x2 != self.empty:
-            table.append(box3D(x1 - x2, y2 & y1, z1))
-        return table
-
-    def oII_I_oII_I_oII_I(self, box1, box2):
-        x1, y1, z1 = my_closed(box1.interval_x.lower, box1.interval_x.upper), \
-                     my_closed(box1.interval_y.lower, box1.interval_y.upper), \
-                     my_closed(box1.interval_z.lower, box1.interval_z.upper)
-        x2, y2, z2 = my_closed(box2.interval_x.lower, box2.interval_x.upper), \
-                     my_closed(box2.interval_y.lower, box2.interval_y.upper), \
-                     my_closed(box2.interval_z.lower, box2.interval_z.upper)
-        table = [box3D(x1, y1, z1)]
-        if z2 - z1 != self.empty:
-            table.append(box3D(x1 & x2, y1 & y2, z2 - z1))
-        if y2 - y1 != self.empty:
-            table.append(box3D(x2, y2 - y1, z2))
-        if x2 - x1 != self.empty:
-            table.append(box3D(x2 - x1, y2 & y1, z2))
-        return table
-
     def iI_II_iI_II_iI_II(self, box1, box2):
-        x2, y2, z2 = my_closed(box2.interval_x.lower, box2.interval_x.upper), \
-                     my_closed(box2.interval_y.lower, box2.interval_y.upper), \
-                     my_closed(box2.interval_z.lower, box2.interval_z.upper)
-        table = [box3D(x2, y2, z2)]
-        return table
-
-    def iI_II_iI_II_iII_I(self, box1, box2):
-        x1, y1, z1 = my_closed(box1.interval_x.lower, box1.interval_x.upper), \
-                     my_closed(box1.interval_y.lower, box1.interval_y.upper), \
-                     my_closed(box1.interval_z.lower, box1.interval_z.upper)
-        x2, y2, z2 = my_closed(box2.interval_x.lower, box2.interval_x.upper), \
-                     my_closed(box2.interval_y.lower, box2.interval_y.upper), \
-                     my_closed(box2.interval_z.lower, box2.interval_z.upper)
-        table = [box3D(x2, y2, z2)]
-        z = [i for i in z1 - z2]
-        if len(z) == 2:
-            if z[0] != self.empty and z[1] != self.empty:
-                table.append(box3D(x1, y1, z[0]))
-                table.append(box3D(x1, y1, z[1]))
-        if len(z) != 2 or (self.empty in z):
-            if z[0] != self.empty:
-                table.append(box3D(x1, y1, z[0]))
-            if len(z) == 2:
-                if z[1] != self.empty:
-                    table.append(x1, y1, z[1])
-        return table
-
-    def iI_II_iII_I_iII_I(self, box1, box2):
-        x1, y1, z1 = my_closed(box1.interval_x.lower, box1.interval_x.upper), \
-                     my_closed(box1.interval_y.lower, box1.interval_y.upper), \
-                     my_closed(box1.interval_z.lower, box1.interval_z.upper)
-        x2, y2, z2 = my_closed(box2.interval_x.lower, box2.interval_x.upper), \
-                     my_closed(box2.interval_y.lower, box2.interval_y.upper), \
-                     my_closed(box2.interval_z.lower, box2.interval_z.upper)
-        table = [box3D(x1, y1, z1)]
-        x = [i for i in x2 - x1]
-        if x[0] != self.empty:
-            table.append(box3D(x[0], y2, z2))
-        if len(x) == 2:
-            if x[1] != self.empty:
-                table.append(box3D(x[1], y2, z2))
-        return table
+       return [box2]
 
     def iII_I_iII_I_iII_I(self, box1, box2):
-        x1, y1, z1 = my_closed(box1.interval_x.lower, box1.interval_x.upper), \
-                     my_closed(box1.interval_y.lower, box1.interval_y.upper), \
-                     my_closed(box1.interval_z.lower, box1.interval_z.upper)
-        table = [box3D(x1, y1, z1)]
-        return table
+        return [box1]
 
-    def iI_II_oI_II_oII_I(self, box1, box2):
-        x1, y1, z1 = my_closed(box1.interval_x.lower, box1.interval_x.upper), \
-                     my_closed(box1.interval_y.lower, box1.interval_y.upper), \
-                     my_closed(box1.interval_z.lower, box1.interval_z.upper)
-        x2, y2, z2 = my_closed(box2.interval_x.lower, box2.interval_x.upper), \
-                     my_closed(box2.interval_y.lower, box2.interval_y.upper), \
-                     my_closed(box2.interval_z.lower, box2.interval_z.upper)
-        table = [box3D(x2, y2, z2)]
-        if z1 - z2 != self.empty:
-            table.append(box3D(x1, y2 & y1, z1 - z2))
-        if y1 - y2 != self.empty:
-            table.append(box3D(x1, y1 - y2, z1))
-        return table
+    def iI_II_iI_II_iII_I(self, box1, box2):
+        my_box1 = box3D(box1.interval_x, box1.interval_y, my_closed(box1.interval_z.lower, box2.interval_z.lower))
+        my_box2 = box3D(box1.interval_x, box1.interval_y, my_closed(box2.inteval_z.upper, box1.interval_z.upper))
+        return [box2, my_box1, my_box2]
 
-    def iI_II_oI_II_oI_II(self, box1, box2):
-        x1, y1, z1 = my_closed(box1.interval_x.lower, box1.interval_x.upper), \
-                     my_closed(box1.interval_y.lower, box1.interval_y.upper), \
-                     my_closed(box1.interval_z.lower, box1.interval_z.upper)
-        x2, y2, z2 = my_closed(box2.interval_x.lower, box2.interval_x.upper), \
-                     my_closed(box2.interval_y.lower, box2.interval_y.upper), \
-                     my_closed(box2.interval_z.lower, box2.interval_z.upper)
-        table = [box3D(x2, y2, z2)]
-        if z1 - z2 != self.empty:
-            table.append(box3D(x2, y1 & y2, z1 - z2))
-        if y1 - y2 != self.empty:
-            table.append(box3D(x1, y1 - y2, z1))
-        return table
-
-    def iI_II_oII_I_oII_I(self, box1, box2):
-        x1, y1, z1 = my_closed(box1.interval_x.lower, box1.interval_x.upper), \
-                     my_closed(box1.interval_y.lower, box1.interval_y.upper), \
-                     my_closed(box1.interval_z.lower, box1.interval_z.upper)
-        x2, y2, z2 = my_closed(box2.interval_x.lower, box2.interval_x.upper), \
-                     my_closed(box2.interval_y.lower, box2.interval_y.upper), \
-                     my_closed(box2.interval_z.lower, box2.interval_z.upper)
-        table = [box3D(x2, y2, z2)]
-        if y2 - y1 != self.empty:
-            table.append(box3D(x1, y1 - y2, z1))
-        if z2 - z1 != self.empty:
-            table.append(box3D(x1, y1 & y2, z1 - z2))
-        return table
-
-    def iI_II_iI_II_oII_I(self, box1, box2):
-        x1, y1, z1 = my_closed(box1.interval_x.lower, box1.interval_x.upper), \
-                     my_closed(box1.interval_y.lower, box1.interval_y.upper), \
-                     my_closed(box1.interval_z.lower, box1.interval_z.upper)
-        x2, y2, z2 = my_closed(box2.interval_x.lower, box2.interval_x.upper), \
-                     my_closed(box2.interval_y.lower, box2.interval_y.upper), \
-                     my_closed(box2.interval_z.lower, box2.interval_z.upper)
-        table = [box3D(x2, y2, z2)]
-        if z1 - z2 != self.empty:
-            table.append(box3D(x1, y1, z1 - z2))
-        return table
-
-    def iII_I_oI_II_oI_II(self, box1, box2):
-        x1, y1, z1 = my_closed(box1.interval_x.lower, box1.interval_x.upper), \
-                     my_closed(box1.interval_y.lower, box1.interval_y.upper), \
-                     my_closed(box1.interval_z.lower, box1.interval_z.upper)
-        x2, y2, z2 = my_closed(box2.interval_x.lower, box2.interval_x.upper), \
-                     my_closed(box2.interval_y.lower, box2.interval_y.upper), \
-                     my_closed(box2.interval_z.lower, box2.interval_z.upper)
-        table = [box3D(x1, y1, z1)]
-        if y2 - y1 != self.empty:
-            table.append(box3D(x2, y2 - y1, z2))
-        if z2 - z1 != self.empty:
-            table.append(box3D(x2, y2 & y1, z2 - z1))
-        return table
+    def iI_II_iII_I_iII_I(self, box1, box2):
+        my_box1 = box3D(my_closed(box2.interval_x.lower, box1.interval_x.lower), box2.interval_y, box2.interval_z)
+        my_box2 = box3D(my_closed(box1.interval_x.upper, box2.interval_x.upper), box2.interval_y, box2.interval_z)
+        return [box1, my_box1, my_box2]
 
     def iII_I_oII_I_oII_I(self, box1, box2):
-        x1, y1, z1 = my_closed(box1.interval_x.lower, box1.interval_x.upper), \
-                     my_closed(box1.interval_y.lower, box1.interval_y.upper), \
-                     my_closed(box1.interval_z.lower, box1.interval_z.upper)
-        x2, y2, z2 = my_closed(box2.interval_x.lower, box2.interval_x.upper), \
-                     my_closed(box2.interval_y.lower, box2.interval_y.upper), \
-                     my_closed(box2.interval_z.lower, box2.interval_z.upper)
-        x = [i for i in x2 - x1]
-        table = [box3D(x1, y1, z1)]
-        if z2 - z1 != self.empty:
-            table.append(box3D(x1 & x2, y1 & y2, z2 - z1))
-        if y2 - y1 != self.empty:
-            table.append(box3D(x2, y2 - y1, z2))
-        if x[0] != self.empty:
-            box3D(x[0], y1 & y2, z2)
-        if len(x) == 2:
-            if x[1] != self.empty:
-                box3D(x[1], y1 & y2, z2)
-        return table
+        my_box1 = box3D(box2.interval_x, box2.interval_y, box2.interval_z - box1.interval_z)
+        my_box2 = box3D(box2.interval_x, box2.interval_y - box1.interval_y, box2.interval_z & box1.interval_z)
+        return [box1, my_box1, my_box2]
 
-    def iII_I_oI_II_oII_I(self, box1, box2):
-        x1, y1, z1 = my_closed(box1.interval_x.lower, box1.interval_x.upper), \
-                     my_closed(box1.interval_y.lower, box1.interval_y.upper), \
-                     my_closed(box1.interval_z.lower, box1.interval_z.upper)
-        x2, y2, z2 = my_closed(box2.interval_x.lower, box2.interval_x.upper), \
-                     my_closed(box2.interval_y.lower, box2.interval_y.upper), \
-                     my_closed(box2.interval_z.lower, box2.interval_z.upper)
-        table = [box3D(x1, y1, z1)]
-        if z2 - z1 != self.empty:
-            table.append(box3D(x2, y2 & y1, z2 - z1))
-        if y2 - y1 != self.empty:
-            table.append(box3D(x2, y2 - y1, z2))
-        return table
+    def iI_II_oI_II_oII_I(self, box1, box2):
+        my_box1 = box3D(box1.interval_x, box1.interval_y - box2.interval_y, box1.interval_z & box2.interval_z)
+        my_box2 = box3D(box1.interval_x, box1.interval_y & box2.interval_y, box1.interval_z - box2.interval_z)
+        my_box3 = box3D(box1.interval_x, box1.interval_y - box2.interval_y, box1.interval_z - box2.interval_z)
+        return [box2, my_box1, my_box2, my_box3]
 
-    def iII_I_iII_I_oII_I(self, box1, box2):
-        x1, y1, z1 = my_closed(box1.interval_x.lower, box1.interval_x.upper), \
-                     my_closed(box1.interval_y.lower, box1.interval_y.upper), \
-                     my_closed(box1.interval_z.lower, box1.interval_z.upper)
-        x2, y2, z2 = my_closed(box2.interval_x.lower, box2.interval_x.upper), \
-                     my_closed(box2.interval_y.lower, box2.interval_y.upper), \
-                     my_closed(box2.interval_z.lower, box2.interval_z.upper)
-        table = [box3D(x1, y1, z1)]
-        if z2 - z1 != self.empty:
-            table.append(box3D(x2, y2, z2 - z1))
-        return table
+    def iI_II_oI_II_oI_II(self, box1, box2):
+        return self.iII_I_oII_I_oII_I(box2, box1)
 
-    def iI_II_iII_I_oII_I(self, box1, box2):
-        x1, y1, z1 = my_closed(box1.interval_x.lower, box1.interval_x.upper), \
-                     my_closed(box1.interval_y.lower, box1.interval_y.upper), \
-                     my_closed(box1.interval_z.lower, box1.interval_z.upper)
-        x2, y2, z2 = my_closed(box2.interval_x.lower, box2.interval_x.upper), \
-                     my_closed(box2.interval_y.lower, box2.interval_y.upper), \
-                     my_closed(box2.interval_z.lower, box2.interval_z.upper)
-        x = [i for i in x2 - x1]
-        table = [box3D(x1, y1, z1)]
-        if z2 - z1 != self.empty:
-            table.append(box3D(x2 & x1, y2 & y1, z2 - z1))
-        if not (self.empty in x) and (len(x) == 2):
-            table.append(box3D(x[0], y2, z2))
-            table.append(box3D(x[1], y2, z2))
-        else:
-            table.append(box3D(x2 - x1, y2, z2))
-        return table
+    def iI_II_oII_I_oII_I(self, box1, box2):
+        my_box1 = box3D(box1.interval_x, box1.interval_y & box2.interval_y, box1.interval_z - box2.interval_z)
+        my_box2 = box3D(box1.interval_x, box1.interval_y - box2.interval_y, box1.interval_z - box2.interval_z)
+        my_box3 = box3D(box1.interval_x, box1.interval_y - box2.interval_y, box1.interval_z & box2.interval_z)
+        return [box2, my_box1, my_box2, my_box3]
 
-    def iI_II_iI_II_oI_II(self, box1, box2):
-        x1, y1, z1 = my_closed(box1.interval_x.lower, box1.interval_x.upper), \
-                     my_closed(box1.interval_y.lower, box1.interval_y.upper), \
-                     my_closed(box1.interval_z.lower, box1.interval_z.upper)
-        x2, y2, z2 = my_closed(box2.interval_x.lower, box2.interval_x.upper), \
-                     my_closed(box2.interval_y.lower, box2.interval_y.upper), \
-                     my_closed(box2.interval_z.lower, box2.interval_z.upper)
-        table = [box3D(x2, y2, z2)]
-        if z1 - z2 != self.empty:
-            table.append(box3D(x1, y1, z1 - z2))
-        return table
+    def iI_II_iI_II_oII_I(self, box1, box2):
+        my_box1 = box3D(box1.interval_x, box1.interval_y, box1.interval_z - box2.interval_z)
+        return [box2, my_box1]
 
     def iII_I_iII_I_oI_II(self, box1, box2):
-        x1, y1, z1 = my_closed(box1.interval_x.lower, box1.interval_x.upper), \
-                     my_closed(box1.interval_y.lower, box1.interval_y.upper), \
-                     my_closed(box1.interval_z.lower, box1.interval_z.upper)
-        x2, y2, z2 = my_closed(box2.interval_x.lower, box2.interval_x.upper), \
-                     my_closed(box2.interval_y.lower, box2.interval_y.upper), \
-                     my_closed(box2.interval_z.lower, box2.interval_z.upper)
-        table = [box3D(x1, y1, z1)]
-        if z2 - z1 != self.empty:
-            table.append(box3D(x2, y2, z2 - z1))
-        return table
+        return self.iI_II_iI_II_oII_I(box2, box1)
+
+    def iII_I_iII_I_oII_I(self, box1, box2):
+        my_box1 = box3D(box2.interval_x, box2.interval_y, box2.interval_z - box1.interval_z)
+        return [box1, my_box1]
+
+    def iI_II_iI_II_oI_II(self, box1, box2):
+        return self.iII_I_iII_I_oII_I(box2, box1)
+
+    def iII_I_oI_II_oI_II(self, box1, box2):
+        return self.iI_II_oII_I_oII_I(box2, box1)
+
+    def iII_I_oI_II_oII_I(self, box1, box2):
+        my_box1 = box3D(box2.interval_x, box2.interval_y & box1.interval_y, box2.interval_z - box1.interval_z)
+        my_box2 = box3D(box2.interval_x, box2.interval_y - box1.interval_y, box2.interval_z - box1.interval_z)
+        my_box3 = box3D(box2.interval_x, box2.interval_y - box1.interval_y, box1.interval_z & box2.interval_z)
+        return [box1, my_box1, my_box2, my_box3]
+
+    def iI_II_iII_I_oII_I(self, box1, box2):
+        interval_split = [i for i in box1.interval_y - box2.interval_y]
+        my_box1 = box3D(box1.interval_x, interval_split[0], box1.interval_z)
+        my_box2 = box3D(box1.interval_x, interval_split[1], box1.interval_z)
+        my_box3 = box3D(box1.interval_x & box2.interval_x, box1.interval_y & box2.interval_y, box1.interval_z -
+                        box2.interval_z)
+        return [box2, my_box1, my_box2, my_box3]
 
     def iI_II_iII_I_oI_II(self, box1, box2):
-        x1, y1, z1 = my_closed(box1.interval_x.lower, box1.interval_x.upper), \
-                     my_closed(box1.interval_y.lower, box1.interval_y.upper), \
-                     my_closed(box1.interval_z.lower, box1.interval_z.upper)
-        x2, y2, z2 = my_closed(box2.interval_x.lower, box2.interval_x.upper), \
-                     my_closed(box2.interval_y.lower, box2.interval_y.upper), \
-                     my_closed(box2.interval_z.lower, box2.interval_z.upper)
-        x = [x for x in x2 - x1]
-        table = [box3D(x1, y1, z1)]
-        if z2 - z1 != self.empty:
-            table.append(box3D(x2 & x1, y2 & y1, z2 - z1))
-        if not (self.empty in x) and (len(x) == 2):
-            table.append(box3D(x[0], y2, z2))
-            table.append(box3D(x[1], y2, z2))
-        else:
-            table.append(box3D(x2 - x1, y2, z2))
-        return table
-        
-        
+        return self.iI_II_iII_I_oII_I(box1, box2)
+
+    def oI_II_oI_II_oI_II(self, box1, box2):
+        my_box1 = box3D(box1.interval_x, box1.interval_y, box1.interval_z - box2.interval_z)
+        my_box2 = box3D(box1.interval_x & box2.interval_x, box1.interval_y - box2.interval_y, box1.interval_z &
+                        box2.interval_z)
+        my_box3 = box3D(box1.interval_x - box2.interval_x, box1.interval_y, box1.interval_z - box2.interval_z)
+        return [box2, my_box1, my_box2, my_box3]
+
+    def oII_I_oII_I_oII_I(self, box1, box2):
+        return self.oI_II_oI_II_oI_II(box2, box1)
+
+    def oI_II_oI_II_oII_I(self, box1, box2):
+        my_box1 = box3D(box1.interval_x & box2.interval_x, box2.interval_y - box2.interval_y, box2.interval_z)
+        my_box2 = box3D(box2.interval_x - box1.interval_x, box2.interval_y, box2.interval_z)
+        my_box3 = box3D(box1.interval_x & box2.interval_x, box2.interval_y & box1.interval_y, box2.interval_z
+                        - box1.interval_z)
+        return [box1, my_box1, my_box2, my_box3]
+
+    def oI_II_oII_I_oII_I(self, box1, box2):
+        my_box1 = box3D(box1.interval_x & box2.interval_x, box2.interval_y & box1.interval_y, box2.interval_z
+                        - box1.interval_z)
+        my_box2 = box3D(box1.interval_x & box2.interval_x, box2.interval_y - box1.interval_y, box2.interval_z)
+        my_box3 = box3D(box2.interval_x - box1.interval_x, box2.interval_y, box2.interval_z)
+        return [box1, my_box1, my_box2, my_box3]
+
     '''
     20 funkcji rozbijających pudełka.
     Na wejściu 2 pudełka, na wyjściu tablica pudełek z po rozbiciu.\n
@@ -329,29 +132,38 @@ class split:
         :param tri_sign_i: lista interwałów drugiego pudełka\n
         :return: listę pudełek powstałych w wyniku rozbicia pudełek wejściowych
         '''
-        box1 = box3D(tri_sign[0], tri_sign[1], tri_sign[2])
-        box2 = box3D(tri_sign_i[0], tri_sign_i[1], tri_sign_i[2])
+        box1 = tri_sign
+        box2 = tri_sign_i
         rozbij_dict = {
-                       ('ii21', 'io21', 'io21'): self.iII_I_oII_I_oII_I,
-                       ('ii12', 'io12', 'io21'): self.iI_II_oI_II_oII_I,
+                       ('ii12', 'ii12', 'ii12'): self.iI_II_iI_II_iI_II,
+                       ('ii21', 'ii21', 'ii21'): self.iII_I_iII_I_iII_I,
                        ('ii12', 'ii12', 'ii21'): self.iI_II_iI_II_iII_I,
                        ('ii12', 'ii21', 'ii21'): self.iI_II_iII_I_iII_I,
+                       ('ii21', 'io21', 'io21'): self.iII_I_oII_I_oII_I,
+                       ('ii12', 'io12', 'io21'): self.iI_II_oI_II_oII_I,
                        ('ii12', 'io12', 'io12'): self.iI_II_oI_II_oI_II,
-                       ('ii12', 'io21', 'io21'): self.iI_II_oII_I_oII_I,
                        ('ii12', 'ii12', 'io21'): self.iI_II_iI_II_oII_I,
+                       ('ii21', 'ii21', 'io12'): self.iII_I_iII_I_oI_II,
+                       ('ii21', 'ii21', 'io21'): self.iII_I_iII_I_oII_I,
+                       ('ii12', 'ii12', 'io12'): self.iI_II_iI_II_oI_II,
+                       ('ii12', 'io21', 'io21'): self.iI_II_oII_I_oII_I,
                        ('ii21', 'io12', 'io12'): self.iII_I_oI_II_oI_II,
                        ('ii21', 'io12', 'io21'): self.iII_I_oI_II_oII_I,
-                       ('ii21', 'ii21', 'io21'): self.iII_I_iII_I_oII_I,
                        ('ii12', 'ii21', 'io21'): self.iI_II_iII_I_oII_I,
-                       ('ii12', 'ii12', 'io12'): self.iI_II_iI_II_oI_II,
-                       ('ii21', 'ii21', 'io12'): self.iII_I_iII_I_oI_II,
                        ('ii12', 'ii21', 'io12'): self.iI_II_iII_I_oI_II,
                        ('io12', 'io12', 'io12'): self.oI_II_oI_II_oI_II,
-                       ('io12', 'io12', 'io21'): self.oI_II_oI_II_oII_I,
-                       ('io12', 'io21', 'io21'): self.oI_II_oII_I_oII_I,
                        ('io21', 'io21', 'io21'): self.oII_I_oII_I_oII_I,
-                       ('ii12', 'ii12', 'ii12'): self.iI_II_iI_II_iI_II,
-                       ('ii21', 'ii21', 'ii21'): self.iII_I_iII_I_iII_I}
-
+                       ('io12', 'io12', 'io21'): self.oI_II_oI_II_oII_I,
+                       ('io12', 'io21', 'io21'): self.oI_II_oII_I_oII_I
+                      }
+        verify = []
+        print(box1)
+        print(box2)
+        print(idx_sign)
         split = rozbij_dict[idx_sign](box1, box2)
-        return split
+        for box in split:
+            if box.interval_x.empty or box.interval_y.empty or box.interval_z.empty:
+                continue
+            else:
+                verify.append(box)
+        return verify
