@@ -26,7 +26,7 @@ class split:
     empty = my_closed(math.inf, -math.inf)
 
     def iI_II_iI_II_iI_II(self, box1, box2):
-       return [box2]
+        return [box2]
 
     def iII_I_iII_I_iII_I(self, box1, box2):
         return [box1]
@@ -42,8 +42,8 @@ class split:
         return [box1, my_box1, my_box2]
 
     def iII_I_oII_I_oII_I(self, box1, box2):
-        my_box1 = box3D(box2.interval_x, box2.interval_y, box2.interval_z - box1.interval_z)
-        my_box2 = box3D(box2.interval_x, box2.interval_y - box1.interval_y, box2.interval_z & box1.interval_z)
+        my_box1 = box3D(box2.interval_x, box2.interval_y & box1.interval_y, box2.interval_z - box1.interval_z)
+        my_box2 = box3D(box2.interval_x, box2.interval_y - box1.interval_y, box2.interval_z)
         return [box1, my_box1, my_box2]
 
     def iI_II_oI_II_oII_I(self, box1, box2):
@@ -157,9 +157,6 @@ class split:
                        ('io12', 'io21', 'io21'): self.oI_II_oII_I_oII_I
                       }
         verify = []
-        print(box1)
-        print(box2)
-        print(idx_sign)
         split = rozbij_dict[idx_sign](box1, box2)
         for box in split:
             if box.interval_x.empty or box.interval_y.empty or box.interval_z.empty:

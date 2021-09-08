@@ -99,6 +99,8 @@ class signatures:
         '''
         assert len(sortin) == len(permutation)
         return [sortin[i] for i in permutation]
+        #2 1 0
+        #powinno być 1 2 0
 
     def my_sort(self, inputlist):
         '''
@@ -109,10 +111,10 @@ class signatures:
         '''
         inputlist = zip(inputlist, range(len(inputlist)))
         aux = sorted(inputlist, key=lambda x: x[0])
-        sorted2in = [aux[i][1] for i in range(len(aux))]
-        list2 = zip(sorted2in, range(len(sorted2in)))
+        in2sorted = [aux[i][1] for i in range(len(aux))]
+        list2 = zip(in2sorted, range(len(in2sorted)))
         aux1 = sorted(list2, key=lambda x: x[0])
-        in2sorted = [aux1[i][1] for i in range(len(aux1))]
+        sorted2in = [aux1[i][1] for i in range(len(aux1))]
         sort = [aux[i][0] for i in range(len(aux))]
         return sort, in2sorted, sorted2in
 

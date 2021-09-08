@@ -34,7 +34,9 @@ class algorithm:
         sort, in2sorted, sorted2in = sign.my_sort(idx_sign)
         tri_sign = sign.permute([box1.interval_x, box1.interval_y, box1.interval_z], in2sorted)
         tri_sign_i = sign.permute([box2.interval_x, box2.interval_y, box2.interval_z], in2sorted)
-        tri_sign, tri_sign_i = box3D(tri_sign[0], tri_sign[1], tri_sign[2]), box3D(tri_sign_i[0], tri_sign_i[1], tri_sign_i[2])
+        tri_sign, tri_sign_i = box3D(tri_sign[0], tri_sign[1], tri_sign[2]), box3D(tri_sign_i[0], tri_sign_i[1],
+                                                                                   tri_sign_i[2])
+
         split_sign = spl.split(tuple(sort), tri_sign, tri_sign_i)
         table = sign.ret_original_order(split_sign, sorted2in)
         return table
@@ -85,19 +87,12 @@ class algorithm:
                 j = my_int.box_uncut(j)
                 #cofnięcie przycięcia dla pudełek które mają być rozbite
                 q = [my_int.box_cut(i) for i in algorithm().rotate_and_execute(q, j)]
-                for box in q:
-                    if box.interval_x.empty or box.interval_y.empty or box.interval_z.empty:
-                        tree.tree.add(iD, (
-                        box.interval_x.lower, box.interval_y.lower, box.interval_z.lower, box.interval_x.upper,
-                        box.interval_y.upper, box.interval_z.upper), box)
-                        iD += 1
-                    else:
-                        Q.extend([box])
+                Q.extend(q) 
                 #wprowadzenie wyniku rozbicia na stos
                 tree.tree.delete(i.id, (i.bbox[0], i.bbox[1], i.bbox[2], i.bbox[3], i.bbox[4], i.bbox[5]))
                 #usunięcie starego pudełka z drzewa
             else:
-                tree.tree.add(iD, (q.interval_x.lower, q.interval_y.lower, q.interval_z.lower, q.interval_x.upper, q.interval_y.upper, q.interval_z.upper), q)
+                tree.tree.add(iD, (q.interval_x.lower, q.interval_y.lower, q.interval_z.lower, q.interval_x.upper,
+                                   q.interval_y.upper, q.interval_z.upper), q)
                 #dodanie nowego pudełka do drzewa i zwiększenie zmiennej iD o 1
                 iD += 1
-
