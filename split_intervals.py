@@ -33,7 +33,7 @@ class split:
 
     def iI_II_iI_II_iII_I(self, box1, box2):
         my_box1 = box3D(box1.interval_x, box1.interval_y, my_closed(box1.interval_z.lower, box2.interval_z.lower))
-        my_box2 = box3D(box1.interval_x, box1.interval_y, my_closed(box2.inteval_z.upper, box1.interval_z.upper))
+        my_box2 = box3D(box1.interval_x, box1.interval_y, my_closed(box2.interval_z.upper, box1.interval_z.upper))
         return [box2, my_box1, my_box2]
 
     def iI_II_iII_I_iII_I(self, box1, box2):
@@ -85,12 +85,16 @@ class split:
         return [box1, my_box1, my_box2, my_box3]
 
     def iI_II_iII_I_oII_I(self, box1, box2):
+        table = []
         interval_split = [i for i in box1.interval_y - box2.interval_y]
         my_box1 = box3D(box1.interval_x, interval_split[0], box1.interval_z)
-        my_box2 = box3D(box1.interval_x, interval_split[1], box1.interval_z)
+        if len(interval_split) == 2:
+            my_box2 = box3D(box1.interval_x, interval_split[1], box1.interval_z)
+            table.append(my_box2)
         my_box3 = box3D(box1.interval_x & box2.interval_x, box1.interval_y & box2.interval_y, box1.interval_z -
                         box2.interval_z)
-        return [box2, my_box1, my_box2, my_box3]
+        table.extend([box2, my_box1, my_box3])
+        return table
 
     def iI_II_iII_I_oI_II(self, box1, box2):
         return self.iI_II_iII_I_oII_I(box1, box2)
@@ -124,7 +128,7 @@ class split:
     Na wejściu 2 pudełka, na wyjściu tablica pudełek z po rozbiciu.\n
     '''
 
-    def split(self, idx_sign, tri_sign, tri_sign_i):
+    def split(self, idx_sign, box1, box2):
         '''
         Funkcja dobierająca właściwą funkcje rozbijającą na bazie trójki interwałów\n
         :param idx_sign: lista sygnatur interwałów\n
@@ -132,8 +136,6 @@ class split:
         :param tri_sign_i: lista interwałów drugiego pudełka\n
         :return: listę pudełek powstałych w wyniku rozbicia pudełek wejściowych
         '''
-        box1 = tri_sign
-        box2 = tri_sign_i
         rozbij_dict = {
                        ('ii12', 'ii12', 'ii12'): self.iI_II_iI_II_iI_II,
                        ('ii21', 'ii21', 'ii21'): self.iII_I_iII_I_iII_I,
@@ -156,11 +158,5 @@ class split:
                        ('io12', 'io12', 'io21'): self.oI_II_oI_II_oII_I,
                        ('io12', 'io21', 'io21'): self.oI_II_oII_I_oII_I
                       }
-        verify = []
         split = rozbij_dict[idx_sign](box1, box2)
-        for box in split:
-            if box.interval_x.empty or box.interval_y.empty or box.interval_z.empty:
-                continue
-            else:
-                verify.append(box)
-        return verify
+        return split
