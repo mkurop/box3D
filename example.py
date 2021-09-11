@@ -14,6 +14,7 @@ table.append(box3D.factory(2, 2, 0, 6, 6, 1))
 #wypisywanie pudełek przed wstawieniem ich do drzewa
 pudelka = algorithm.execute(table)
 #uruchomienie funkcji execute i rozbicie pudełek
+print("Wynik")
 for box in pudelka:
     print(box)
     #wypisanie pudełek na wyjściu programu

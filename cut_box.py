@@ -255,9 +255,9 @@ class myInterval(portion.Interval):
         x = my_closed(x.lower, x.upper)
         y = my_closed(y.lower, y.upper)
         z = my_closed(z.lower, z.upper)
-        x = self.box_cut_execute(x)
-        y = self.box_cut_execute(y)
-        z = self.box_cut_execute(z)
+        x = self.box_cut_execute(x) if not x.empty else x
+        y = self.box_cut_execute(y) if not y.empty else y
+        z = self.box_cut_execute(z) if not z.empty else z
         box = box3D(x, y, z)
         return box
 
@@ -268,7 +268,10 @@ class myInterval(portion.Interval):
         :return: interwał w stanie takim samym jak przed przycięciem\n
         :rtype: myInterval
         '''
-        interval = my_closed(myInt.get_lower_meps, myInt.get_upper_eps)
+        if myInt == my_closed(inf, -inf):
+            interval = myInt
+        else:
+            interval = my_closed(round(myInt.lower), round(myInt.upper))
         return interval
 
     def box_uncut(self, box1):
