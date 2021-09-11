@@ -23,7 +23,10 @@ class algorithm_test(unittest.TestCase):
         print("Ile pudełek?")
         ile_pudelek = int(input())
         for j in range(ile_pudelek):
-            print("Podaj współrzędne pudełka ", j +1, " kolejność x1, x2, y1, y2, z1, z2")
+            print("Podaj współrzędne pudełka ", j +1, " kolejność x lower, x upper, y lower, y upper, z lower, z upper, "
+                                                      "po każdej współrzędnej wciśnij enter")
+            print("Przykład 2 enter 4 enter 5 enter 10 enter 3 enter 12 enter to pudełko o współrzędnych x=(2,4) "
+                  "y=(5,10) z=(3,12)")
             x1, x2, y1, y2, z1, z2 = int(input()), int(input()), int(input()), int(input()), int(input()), int(input())
             table.append(box3D.factory(x1, y1, z1, x2, y2, z2))
         table_copy = self.copy_box_list(table)
