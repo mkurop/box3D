@@ -7,7 +7,7 @@ from cut_box import *
 from signatures_setup import split as TEST
 from portion import closed, closedopen, openclosed
 from cut_box import myInterval
-
+from preparing_boxes import Slice
 #unit testy
 import random as rnd
 import unittest
@@ -189,7 +189,11 @@ class algorithm_check(unittest.TestCase):
         assert_box =  [my_int.box_uncut(temp_box) for temp_box in TEST().iII_I_iII_I_oII_I(box0, box1)]
         self.assertEqual(True ,self.evaluate([box0, box1], assert_box))
 
-
+    def test_slice_box(self):
+        Sliced = Slice()
+        box = box3D.factory(rnd.randint(1, 10), rnd.randint(1, 10), rnd.randint(1, 10), rnd.randint(11, 20),
+                            rnd.randint(11, 20), rnd.randint(11, 20))
+        self.assertEqual(True, self.evaluate([box], Sliced.slice_box(box)))
 
 if __name__ == '__main__':
     unittest.main()
