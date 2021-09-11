@@ -32,7 +32,11 @@ class algorithm:
         spl = split()
         idx_sign = sign.get_signatures_triple(box1, box2)
         sort, in2sorted, sorted2in = sign.my_sort(idx_sign)
-        tri_sign, tri_sign_i = sign.sort_signatures(box1, box2, in2sorted)
+        tri_sign = sign.permute([box1.interval_x, box1.interval_y, box1.interval_z], in2sorted)
+        tri_sign_i = sign.permute([box2.interval_x, box2.interval_y, box2.interval_z], in2sorted)
+        tri_sign, tri_sign_i = box3D(tri_sign[0], tri_sign[1], tri_sign[2]), box3D(tri_sign_i[0], tri_sign_i[1],
+                                                                                   tri_sign_i[2])
+
         split_sign = spl.split(tuple(sort), tri_sign, tri_sign_i)
         table = sign.ret_original_order(split_sign, sorted2in)
         return table
@@ -70,7 +74,8 @@ class algorithm:
         while not Q.empty():
             #zdjęcie ostatniego pudełka ze stosu i przycięcie go
             q = Q.pop()
-            q = my_int.box_cut(q)
+            while q.interval_x == my_closed(inf, -inf) or q.interval_y == my_closed(inf, -inf) or q.interval_z == my_closed(inf, -inf):
+                q = Q.pop()
             if tree.tree.count((q.interval_x.lower,  q.interval_y.lower, q.interval_z.lower, q.interval_x.upper, q.interval_y.upper,  q.interval_z.upper)) > 0:
                 '''
                 Sprawdzenie czy pudełko q przecina się z którymkolwiek elementem z drzewa.
@@ -83,12 +88,13 @@ class algorithm:
                 q = my_int.box_uncut(q)
                 j = my_int.box_uncut(j)
                 #cofnięcie przycięcia dla pudełek które mają być rozbite
-                Q.extend(algorithm().rotate_and_execute(q, j))
+                q = [my_int.box_cut(i) for i in algorithm().rotate_and_execute(q, j)]
+                Q.extend(q) 
                 #wprowadzenie wyniku rozbicia na stos
                 tree.tree.delete(i.id, (i.bbox[0], i.bbox[1], i.bbox[2], i.bbox[3], i.bbox[4], i.bbox[5]))
                 #usunięcie starego pudełka z drzewa
             else:
-                tree.tree.add(iD, (q.interval_x.lower, q.interval_y.lower, q.interval_z.lower, q.interval_x.upper, q.interval_y.upper, q.interval_z.upper), q)
+                tree.tree.add(iD, (q.interval_x.lower, q.interval_y.lower, q.interval_z.lower, q.interval_x.upper,
+                                   q.interval_y.upper, q.interval_z.upper), q)
                 #dodanie nowego pudełka do drzewa i zwiększenie zmiennej iD o 1
                 iD += 1
-
