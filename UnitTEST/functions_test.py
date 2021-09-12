@@ -193,7 +193,28 @@ class algorithm_check(unittest.TestCase):
         Sliced = Slice()
         box = box3D.factory(rnd.randint(1, 10), rnd.randint(1, 10), rnd.randint(1, 10), rnd.randint(11, 20),
                             rnd.randint(11, 20), rnd.randint(11, 20))
-        self.assertEqual(True, self.evaluate([box], Sliced.slice_box(box)))
+        slice_list = []
+        x, y, z, box_cut = Sliced.slice_box(box)
+        slice_list.extend(x)
+        slice_list.extend(y)
+        slice_list.extend(z)
+        slice_list.extend(box_cut)
+        self.assertEqual(True, self.evaluate([box], slice_list))
+
+    def test_slice_boxes(self):
+        Sliced, slice_list = Slice(), []
+        box1 = box3D.factory(rnd.randint(1, 10), rnd.randint(1, 10), rnd.randint(1, 10), rnd.randint(11, 20),
+                    rnd.randint(11, 20), rnd.randint(11, 20))
+        box2 = box3D.factory(rnd.randint(1, 10), rnd.randint(1, 10), rnd.randint(1, 10), rnd.randint(11, 20),
+                            rnd.randint(11, 20), rnd.randint(11, 20))
+        box3 = box3D.factory(rnd.randint(1, 10), rnd.randint(1, 10), rnd.randint(1, 10), rnd.randint(11, 20),
+                            rnd.randint(11, 20), rnd.randint(11, 20))
+        x, y, z, box_ret = Sliced.slice_boxes([box1, box2, box3])
+        slice_list.extend(x)
+        slice_list.extend(y)
+        slice_list.extend(z)
+        slice_list.extend(box_ret)
+        self.assertEqual(True, self.evaluate([box1, box2, box3], slice_list))
 
 if __name__ == '__main__':
     unittest.main()
