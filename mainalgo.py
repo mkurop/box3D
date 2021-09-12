@@ -1,8 +1,11 @@
 import os, sys
+from collections import defaultdict
+
 sys.path.insert(0, os.path.abspath('.'))
 from signatures_setup import *
 from split_intervals import *
 from cut_box import *
+from preparing_boxes import Slice
 
 try:
     os.remove('3d_index.idx')
@@ -42,6 +45,13 @@ class algorithm:
         return table
 
     @staticmethod
+    def append_wall_to_tree(iD, wall_list, tree):
+        wall = wall_list.pop()
+        tree.tree.add(iD, (wall.interval_x.lower, wall.interval_y.lower, wall.interval_z.lower,
+                           wall.interval_x.upper, wall.interval_y.upper, wall.interval_z.upper), wall)
+        return tree, wall_list, iD
+
+    @staticmethod
     def execute(box_list):
         '''
         Funkcja statyczna, która przyjmuje listę pudełek i zwraca listę rozbitych pudełek\n
@@ -53,8 +63,8 @@ class algorithm:
         Q.extend(box_list)
         algorithm().algorytm(Q, drzewo)
         return drzewo.ret_boxes()
-		
-		
+
+
     @staticmethod
     def algorytm(Q, tree):
         '''
@@ -65,9 +75,8 @@ class algorithm:
         :return: drzewo rtree zawierające pudełka\n
         :rtype: tree.tree
         '''
-
         #obiekt klasy myInterval
-        my_int = myInterval()
+        my_int, my_slice = myInterval(), Slice()
         #zmienna potrzebna do wprowadzania pudełka w unikalne miejsce do drzewa
         iD = 0
         #pętla działa dopóki stos nie zostanie pusty
@@ -89,7 +98,7 @@ class algorithm:
                 j = my_int.box_uncut(j)
                 #cofnięcie przycięcia dla pudełek które mają być rozbite
                 q = [my_int.box_cut(i) for i in algorithm().rotate_and_execute(q, j)]
-                Q.extend(q) 
+                Q.extend(q)
                 #wprowadzenie wyniku rozbicia na stos
                 tree.tree.delete(i.id, (i.bbox[0], i.bbox[1], i.bbox[2], i.bbox[3], i.bbox[4], i.bbox[5]))
                 #usunięcie starego pudełka z drzewa
@@ -98,3 +107,38 @@ class algorithm:
                                    q.interval_y.upper, q.interval_z.upper), q)
                 #dodanie nowego pudełka do drzewa i zwiększenie zmiennej iD o 1
                 iD += 1
+
+        wall_stack = []
+        wall_stack.extend([box.object for box in tree.tree.intersection((tree.tree.bounds[0], tree.tree.bounds[1],
+                                                            tree.tree.bounds[2], tree.tree.bounds[3],
+                                                            tree.tree.bounds[4], tree.tree.bounds[5]),
+                                                             objects=True)])
+
+        wall_yz_dict, wall_xz_dict, wall_xy_dict = defaultdict(list), defaultdict(list), defaultdict(list)
+        for box in wall_stack:
+            while not any([my_slice.x_sliceable(box), my_slice.y_sliceable(box), my_slice.z_sliceable(box)]):
+                # TUTAJ BłĄD - ZłE ROZBIJANIE ŚCIANEK
+                wall_yz, wall_xz, wall_xy, wall_stack = my_slice.slice_boxes(wall_stack)
+                wall_yz_dict, wall_xz_dict, wall_xy_dict = my_slice.sort_sliced_walls(wall_yz, wall_yz_dict), \
+                                                           my_slice.sort_sliced_walls(wall_xz, wall_xz_dict), \
+                                                           my_slice.sort_sliced_walls(wall_xy, wall_xy_dict)
+        print(wall_yz_dict)
+        print(wall_xz_dict)
+        print(wall_xy_dict)
+        wall_yz_prepared = my_slice.prepare_walls_for_tree(wall_yz_dict)
+        wall_xz_prepared = my_slice.prepare_walls_for_tree(wall_xz_dict)
+        wall_xy_prepared = my_slice.prepare_walls_for_tree(wall_xy_dict)
+
+        while any([len(wall_xy_prepared) != 0, len(wall_xz_prepared) != 0, len(wall_yz_prepared) != 0]):
+            if len(wall_xy_prepared) != 0:
+                tree, wall_xy_prepared, iD = algorithm.append_wall_to_tree(iD, wall_xy_prepared, tree)
+                iD += 1
+            if len(wall_xz_prepared) != 0:
+                tree, wall_xz_prepared, iD = algorithm.append_wall_to_tree(iD, wall_xz_prepared, tree)
+                iD += 1
+            if len(wall_yz_prepared) != 0:
+                tree, wall_yz_prepared, iD = algorithm.append_wall_to_tree(iD, wall_yz_prepared, tree)
+                iD += 1
+
+
+

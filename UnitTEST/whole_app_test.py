@@ -8,7 +8,6 @@ import unittest
 from functions_test import *
 from random import randint
 from cut_box import *
-import copy
 
 class algorithm_test(unittest.TestCase):
     def copy_box_list(self, list):

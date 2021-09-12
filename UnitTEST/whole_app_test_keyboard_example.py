@@ -34,7 +34,6 @@ class algorithm_test(unittest.TestCase):
         stack.extend(table)
         drzewo = tree()
         algorithm().algorytm(stack, drzewo)
-
         self.assertEqual(True, algorithm_check().evaluate(table_copy, drzewo.ret_boxes(), 10000))
 
 
