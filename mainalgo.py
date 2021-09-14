@@ -18,11 +18,13 @@ inaczej błąd kompilacji, bo python
 próbuje zapisać coś co już jest
 '''
 
-#główna klasa całego programu
+
+# główna klasa całego programu
 class algorithm:
     '''
     Główna klasa programu.
     '''
+
     def rotate_and_execute(self, box1, box2):
         '''
         Funkcja obraca pudełka zmieniając kolejność interwałów \n
@@ -64,7 +66,6 @@ class algorithm:
         algorithm().algorytm(Q, drzewo)
         return drzewo.ret_boxes()
 
-
     @staticmethod
     def algorytm(Q, tree):
         '''
@@ -75,59 +76,64 @@ class algorithm:
         :return: drzewo rtree zawierające pudełka\n
         :rtype: tree.tree
         '''
-        #obiekt klasy myInterval
+        # obiekt klasy myInterval
         my_int, my_slice = myInterval(), Slice()
-        #zmienna potrzebna do wprowadzania pudełka w unikalne miejsce do drzewa
+        # zmienna potrzebna do wprowadzania pudełka w unikalne miejsce do drzewa
         iD = 0
-        #pętla działa dopóki stos nie zostanie pusty
+        # pętla działa dopóki stos nie zostanie pusty
         while not Q.empty():
-            #zdjęcie ostatniego pudełka ze stosu i przycięcie go
+            # zdjęcie ostatniego pudełka ze stosu i przycięcie go
             q = Q.pop()
-            while q.interval_x == my_closed(inf, -inf) or q.interval_y == my_closed(inf, -inf) or q.interval_z == my_closed(inf, -inf):
+            while q.interval_x == my_closed(inf, -inf) or q.interval_y == my_closed(inf,
+                                                                                    -inf) or q.interval_z == my_closed(
+                inf, -inf):
                 q = Q.pop()
-            if tree.tree.count((q.interval_x.lower,  q.interval_y.lower, q.interval_z.lower, q.interval_x.upper, q.interval_y.upper,  q.interval_z.upper)) > 0:
+            if tree.tree.count((q.interval_x.lower, q.interval_y.lower, q.interval_z.lower, q.interval_x.upper,
+                                q.interval_y.upper, q.interval_z.upper)) > 0:
                 '''
                 Sprawdzenie czy pudełko q przecina się z którymkolwiek elementem z drzewa.
                 Jeśli tak, pudełko przecinające się zostaje pobrane z drzewa i usunięte,
                 zaś wynik rozbicia zostaje wstawiony ponownie na stos pudełek
                 '''
-                i = list(tree.tree.intersection((q.interval_x.lower,  q.interval_y.lower, q.interval_z.lower, q.interval_x.upper, q.interval_y.upper,  q.interval_z.upper), objects=True))[0]
+                i = list(tree.tree.intersection((q.interval_x.lower, q.interval_y.lower, q.interval_z.lower,
+                                                 q.interval_x.upper, q.interval_y.upper, q.interval_z.upper),
+                                                objects=True))[0]
                 inter = [i.object.interval_x, i.object.interval_y, i.object.interval_z]
                 j = box3D(inter[0], inter[1], inter[2])
                 q = my_int.box_uncut(q)
                 j = my_int.box_uncut(j)
-                #cofnięcie przycięcia dla pudełek które mają być rozbite
+                # cofnięcie przycięcia dla pudełek które mają być rozbite
                 q = [my_int.box_cut(i) for i in algorithm().rotate_and_execute(q, j)]
                 Q.extend(q)
-                #wprowadzenie wyniku rozbicia na stos
+                # wprowadzenie wyniku rozbicia na stos
                 tree.tree.delete(i.id, (i.bbox[0], i.bbox[1], i.bbox[2], i.bbox[3], i.bbox[4], i.bbox[5]))
-                #usunięcie starego pudełka z drzewa
+                # usunięcie starego pudełka z drzewa
             else:
                 tree.tree.add(iD, (q.interval_x.lower, q.interval_y.lower, q.interval_z.lower, q.interval_x.upper,
                                    q.interval_y.upper, q.interval_z.upper), q)
-                #dodanie nowego pudełka do drzewa i zwiększenie zmiennej iD o 1
+                # dodanie nowego pudełka do drzewa i zwiększenie zmiennej iD o 1
                 iD += 1
 
         wall_stack = []
         wall_stack.extend([box.object for box in tree.tree.intersection((tree.tree.bounds[0], tree.tree.bounds[1],
-                                                            tree.tree.bounds[2], tree.tree.bounds[3],
-                                                            tree.tree.bounds[4], tree.tree.bounds[5]),
-                                                             objects=True)])
-
+                                                                         tree.tree.bounds[2], tree.tree.bounds[3],
+                                                                         tree.tree.bounds[4], tree.tree.bounds[5]),
+                                                                        objects=True)])
+        box_num = 0
         wall_yz_dict, wall_xz_dict, wall_xy_dict = defaultdict(list), defaultdict(list), defaultdict(list)
         for box in wall_stack:
-            while not any([my_slice.x_sliceable(box), my_slice.y_sliceable(box), my_slice.z_sliceable(box)]):
-                # TUTAJ BłĄD - ZłE ROZBIJANIE ŚCIANEK
-                wall_yz, wall_xz, wall_xy, wall_stack = my_slice.slice_boxes(wall_stack)
-                wall_yz_dict, wall_xz_dict, wall_xy_dict = my_slice.sort_sliced_walls(wall_yz, wall_yz_dict), \
-                                                           my_slice.sort_sliced_walls(wall_xz, wall_xz_dict), \
-                                                           my_slice.sort_sliced_walls(wall_xy, wall_xy_dict)
+            box = my_int.box_uncut(box)
+            while mylen(box.interval_x) >= 1 or mylen(box.interval_y) >= 1 or mylen(box.interval_z) >= 1:
+                wall_yz, wall_xz, wall_xy, box = my_slice.slice_boxes([box])
+                wall_yz_dict, wall_xz_dict, wall_xy_dict = my_slice.sort_sliced_walls_yz(wall_yz, wall_yz_dict), \
+                                                           my_slice.sort_sliced_walls_xz(wall_xz, wall_xz_dict), \
+                                                           my_slice.sort_sliced_walls_xy(wall_xy, wall_xy_dict)
         print(wall_yz_dict)
         print(wall_xz_dict)
         print(wall_xy_dict)
-        wall_yz_prepared = my_slice.prepare_walls_for_tree(wall_yz_dict)
-        wall_xz_prepared = my_slice.prepare_walls_for_tree(wall_xz_dict)
-        wall_xy_prepared = my_slice.prepare_walls_for_tree(wall_xy_dict)
+        wall_yz_prepared = my_slice.prepare_walls_for_tree_x(wall_yz_dict)
+        wall_xz_prepared = my_slice.prepare_walls_for_tree_y(wall_xz_dict)
+        wall_xy_prepared = my_slice.prepare_walls_for_tree_z(wall_xy_dict)
 
         while any([len(wall_xy_prepared) != 0, len(wall_xz_prepared) != 0, len(wall_yz_prepared) != 0]):
             if len(wall_xy_prepared) != 0:
@@ -139,6 +145,3 @@ class algorithm:
             if len(wall_yz_prepared) != 0:
                 tree, wall_yz_prepared, iD = algorithm.append_wall_to_tree(iD, wall_yz_prepared, tree)
                 iD += 1
-
-
-
