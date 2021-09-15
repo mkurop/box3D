@@ -1,5 +1,5 @@
 from cut_box import *
-
+from split_intervals import mylen
 
 class Slice:
 
@@ -160,3 +160,152 @@ class Slice:
             return box3D(box.interval_x, box.interval_y, my_closed(box.interval_z.lower + 1, box.interval_z.upper))
         else:
             return box3D(box.interval_x, box.interval_y, my_closed(box.interval_z.lower + 1, box.interval_z.upper - 1))
+
+    def slice_wall_xyz_cond(self, wall):
+        return all([mylen(wall.interval_x) == 0, mylen(wall.interval_y) == 0,
+                    mylen(wall.interval_z) == 0])
+
+    def slice_wall_xy_cond(self, wall):
+        return mylen(wall.interval_x) == 0 and mylen(wall.interval_y) == 0
+
+    def slice_wall_xz_cond(self, wall):
+        return mylen(wall.interval_x) == 0 and mylen(wall.interval_z) == 0
+
+    def slice_wall_yz_cond(self, wall):
+        return mylen(wall.interval_y) == 0 and mylen(wall.interval_z) == 0
+
+    def slice_wall_xy(self, wall):
+        edge = box3D(wall.interval_x, wall.interval_y, my_closed(wall.interval_z.lower, wall.interval_z.lower),
+                     False, True)
+        wall = self.z_cut_off(wall, True)
+        return edge, wall
+
+    def slice_wall_xz(self, wall):
+        edge = box3D(wall.interval_x, my_closed(wall.interval_y.lower, wall.interval_y.lower), wall.interval_z,
+                     False, True)
+        wall = self.y_cut_off(wall, True)
+        return edge, wall
+
+    def slice_wall_yz(self, wall):
+        edge = box3D(my_closed(wall.interval_x.lower, wall.interval_x.lower), wall.interval_y, wall.interval_z,
+                     False, True)
+        wall = self.x_cut_off(wall, True)
+        return edge, wall
+
+    def slice_wall_x_cond(self, wall):
+        return mylen(wall.interval_x) == 0
+
+    def slice_wall_y_cond(self, wall):
+        return mylen(wall.interval_y) == 0
+
+    def slice_wall_z_cond(self, wall):
+        return mylen(wall.interval_z) == 0
+
+    def prepare_edge_for_tree_x(self, edge):
+        edge = box3D(my_closed(edge.interval_x.lower_meps, edge.interval_x.upper_eps), edge.interval_y,
+                     edge.interval_z, False, True)
+        return edge
+
+    def prepare_edge_for_tree_y(self, edge):
+        edge = box3D(edge.interval_x, my_closed(edge.interval_y.lower_meps, edge.interval_y.upper_eps),
+                     edge.interval_z, False, True)
+        return edge
+
+    def prepare_edge_for_tree_z(self, edge):
+        edge = box3D(edge.interval_x, edge.interval_y,
+                     my_closed(edge.interval_z.lower_meps, edge.interval_z.upper_eps), False, True)
+        return edge
+
+    def slice_wall_x(self, wall):
+        edge = box3D(wall.interval_x, my_closed(wall.interval_y.lower, wall.interval_y.lower), wall.interval_z, False,
+                     True)
+        wall = self.y_cut_off(wall, True)
+        return edge, wall
+
+    def slice_wall_y(self, wall):
+        edge = box3D(wall.interval_x, wall.interval_y, my_closed(wall.interval_z.lower, wall.interval_z.lower), False,
+                     True)
+        wall = self.z_cut_off(wall, True)
+        return edge, wall
+
+    def slice_wall_z(self, wall):
+        edge = box3D(my_closed(wall.interval_x.lower, wall.interval_x.lower), wall.interval_y, wall.interval_z, False,
+                     True)
+        wall = self.x_cut_off(wall, True)
+        return edge, wall
+
+    def slice_wall(self, wall):
+        my_int = myInterval()
+        wall = my_int.box_uncut(wall)
+        if self.slice_wall_xyz_cond(wall):
+            return wall, None
+        if self.slice_wall_xy_cond(wall):
+            return self.slice_wall_xy(wall)
+        if self.slice_wall_xz_cond(wall):
+            return self.slice_wall_xz(wall)
+        if self.slice_wall_yz(wall):
+            return self.slice_wall_xz(wall)
+        if self.slice_wall_x_cond(wall):
+            return self.slice_wall_x(wall)
+        if self.slice_wall_y_cond(wall):
+            return self.slice_wall_y(wall)
+        if self.slice_wall_z_cond(wall):
+            return self.slice_wall_z(wall)
+
+    def prepare_sliced_edges_x(self, sorted_edges):
+        prepared_edges = []
+        for key, value in sorted_edges.items():
+            for wall in value:
+                edge = self.prepare_edge_for_tree_x(wall)
+            if mylen(edge.interval_y) == 0:
+                edge = self.prepare_edge_for_tree_y(edge)
+            if mylen(edge.interval_z) == 0:
+                edge = self.prepare_edge_for_tree_z(edge)
+            prepared_edges.append(edge)
+        return prepared_edges
+
+    def prepare_sliced_edges_y(self, sorted_edges):
+        prepared_edges = []
+        for key, value in sorted_edges.items():
+            for wall in value:
+                edge = self.prepare_edge_for_tree_y(wall)
+            if mylen(edge.interval_z) == 0:
+                edge = self.prepare_edge_for_tree_y(edge)
+            prepared_edges.append(edge)
+        return prepared_edges
+
+    def prepare_sliced_edges_z(self, sorted_edges):
+        prepared_edges = []
+        for key, value in sorted_edges.items():
+            for wall in value:
+                edge = self.prepare_edge_for_tree_z(wall)
+            prepared_edges.append(edge)
+        return prepared_edges
+
+    def sort_sliced_edges(self, edges, edge_xyz_dict, edge_xy_dict, edge_yz_dict, edge_xz_dict):
+        for edge in edges:
+            if self.slice_wall_xyz_cond(edge):
+                edge_xyz_dict = self.sort_sliced_edge_xyz(edge, edge_xyz_dict)
+            if self.slice_wall_xy_cond(edge) or self.slice_wall_x_cond(edge):
+                edge_xy_dict = self.sort_sliced_edge_xy(edge, edge_xy_dict)
+            if self.slice_wall_yz_cond(edge) or self.slice_wall_y_cond(edge):
+                edge_yz_dict = self.sort_sliced_edge_yz(edge, edge_yz_dict)
+            if self.slice_wall_xz_cond(edge) or self.slice_wall_z_cond(edge):
+                edge_xz_dict = self.sort_sliced_edge_xz(edge, edge_xz_dict)
+        return edge_xyz_dict, edge_xy_dict, edge_yz_dict, edge_xz_dict
+
+    def sort_sliced_edge_xy(self, wall, sorted_edges):
+        sorted_edges[wall.interval_x.lower, wall.interval_y.lower].append(wall)
+        return sorted_edges
+
+    def sort_sliced_edge_yz(self, wall, sorted_edges):
+        sorted_edges[wall.interval_y.lower, wall.interval_z.lower].append(wall)
+        return sorted_edges
+
+    def sort_sliced_edge_xz(self, wall, sorted_edges):
+        sorted_edges[wall.interval_x.lower, wall.interval_z.lower].append(wall)
+        return sorted_edges
+
+    def sort_sliced_edge_xyz(self, wall, sorted_edges):
+        sorted_edges[wall.interval_x.lower, wall.interval_y.lower, wall.interval_z.lower].append(wall)
+        return sorted_edges
