@@ -1,5 +1,6 @@
 import math
 import os, sys
+from mainalgo import algorithm
 sys.path.append('..')
 from split_intervals import split 
 import portion
@@ -198,7 +199,7 @@ class algorithm_check(unittest.TestCase):
         slice_list.extend(x)
         slice_list.extend(y)
         slice_list.extend(z)
-        slice_list.extend(box_cut)
+        slice_list.append(box_cut)
         self.assertEqual(True, self.evaluate([box], slice_list))
 
     def test_slice_boxes(self):
@@ -213,8 +214,16 @@ class algorithm_check(unittest.TestCase):
         slice_list.extend(x)
         slice_list.extend(y)
         slice_list.extend(z)
-        slice_list.extend(box_ret)
+        slice_list.append(box_ret)
         self.assertEqual(True, self.evaluate([box1, box2, box3], slice_list))
+
+    def test_walls(self):
+        table = []
+        for i in range(random.randint(30, 40), random.randint(41, 50)):
+            table.append(box3D.random())
+        boxes = algorithm.execute(table)
+        boxes = [wall for wall in boxes[1] if wall.wall]
+        self.assertEqual(True, self.evaluate(table, boxes))
 
 if __name__ == '__main__':
     unittest.main()

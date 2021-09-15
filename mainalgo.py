@@ -128,13 +128,9 @@ class algorithm:
                 wall_yz_dict, wall_xz_dict, wall_xy_dict = my_slice.sort_sliced_walls_yz(wall_yz, wall_yz_dict), \
                                                            my_slice.sort_sliced_walls_xz(wall_xz, wall_xz_dict), \
                                                            my_slice.sort_sliced_walls_xy(wall_xy, wall_xy_dict)
-        print(wall_yz_dict)
-        print(wall_xz_dict)
-        print(wall_xy_dict)
         wall_yz_prepared = my_slice.prepare_walls_for_tree_x(wall_yz_dict)
         wall_xz_prepared = my_slice.prepare_walls_for_tree_y(wall_xz_dict)
         wall_xy_prepared = my_slice.prepare_walls_for_tree_z(wall_xy_dict)
-
         while any([len(wall_xy_prepared) != 0, len(wall_xz_prepared) != 0, len(wall_yz_prepared) != 0]):
             if len(wall_xy_prepared) != 0:
                 tree, wall_xy_prepared, iD = algorithm.append_wall_to_tree(iD, wall_xy_prepared, tree)

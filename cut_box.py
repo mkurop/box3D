@@ -9,7 +9,7 @@ Atomic = namedtuple('Atomic', ['left', 'lower', 'upper', 'right'])
 class box3D:
     '''Klasa przechowująca instrukcje dot. pudełek'''
 
-    def __init__(self, interval_x, interval_y, interval_z):
+    def __init__(self, interval_x, interval_y, interval_z, wall=False, edge=False, point=False):
         '''
         :param interval_x: interwał opisujący położenie pudełka na płaszczyźnie x \n
         :param interval_y: interwał opisujący położenie pudełka na płaszczyźnie y \n
@@ -19,6 +19,10 @@ class box3D:
         self.interval_x = interval_x
         self.interval_y = interval_y
         self.interval_z = interval_z
+        self.wall = wall
+        self.edge = edge
+        self.point = point
+        self.box = True if sum([not self.wall, not self.edge, not self.point]) == 3 else False
 
     def get_interval_x(self):
         '''
@@ -50,7 +54,8 @@ class box3D:
         :param num: tablica zawierająca 3 wartości punktu sprawdzanego - x, y, z\n
         :rtype: bool
         '''
-        return True if (num[0] in self.interval_x) & (num[1] in self.interval_y) & (num[2] in self.interval_z) else False
+        return True if (num[0] in self.interval_x) & (num[1] in self.interval_y) & (
+                num[2] in self.interval_z) else False
 
     def __ror__(self, num):
         '''
@@ -59,10 +64,11 @@ class box3D:
         :rtype: bool
         '''
         x, y, z = num[0], num[1], num[2]
-        is_on_border = x in set([self.interval_x.lower, self.interval_x.upper]) or y in set([self.interval_y.lower, self.interval_y.upper]) or z in set([self.interval_z.lower, self.interval_z.upper])
+        is_on_border = x in {self.interval_x.lower, self.interval_x.upper} or y in {self.interval_y.lower,
+                                                                                    self.interval_y.upper} or z in {
+                           self.interval_z.lower, self.interval_z.upper}
         is_inside_box = self.__contains__(num)
         return True if is_on_border & is_inside_box else False
-
 
     def __str__(self):
         '''
@@ -72,7 +78,8 @@ class box3D:
         y = self.get_interval_y()
         z = self.get_interval_z()
         lista = [x.lower, x.upper, y.lower, y.upper, z.lower, z.upper]
-        intervals = '[' + str(lista[0]) + ',' + str(lista[1]) + ']' + ' x ' + '[' + str(lista[2]) + ',' + str(lista[3]) + ']' + ' x ' + '[' + str(lista[4]) + ',' + str(lista[5]) + ']' + '\n'
+        intervals = '[' + str(lista[0]) + ',' + str(lista[1]) + ']' + ' x ' + '[' + str(lista[2]) + ',' + str(
+            lista[3]) + ']' + ' x ' + '[' + str(lista[4]) + ',' + str(lista[5]) + ']' + '\n'
         return intervals
 
     @staticmethod
@@ -84,13 +91,15 @@ class box3D:
         :return: losowe pudełko\n
         :rtype: box3D
         """
-        side_x, side_y, side_z = random.randint(1, side_range), random.randint(1, side_range), random.randint(1, side_range)
-        corner_x, corner_y, corner_z = random.randint(0, corner_range), random.randint(0, corner_range), random.randint(0, corner_range)
-        return box3D(my_closed(corner_x, corner_x + side_x), my_closed(corner_y, corner_y + side_y), my_closed(corner_z, corner_z + side_z))
-        
-    
+        side_x, side_y, side_z = random.randint(1, side_range), random.randint(1, side_range), random.randint(1,
+                                                                                                              side_range)
+        corner_x, corner_y, corner_z = random.randint(0, corner_range), random.randint(0, corner_range), random.randint(
+            0, corner_range)
+        return box3D(my_closed(corner_x, corner_x + side_x), my_closed(corner_y, corner_y + side_y),
+                     my_closed(corner_z, corner_z + side_z))
+
     @staticmethod
-    def factory(x1, y1, z1, x2, y2, z2):
+    def factory(x1, y1, z1, x2, y2, z2, wall=False, edge=False, point=False):
         '''
         metoda statyczna tworząca pudełko na podstawie interwałów\n
         podanych w kolejności wszystkie lower, potem wszystkie upper\n
@@ -103,7 +112,9 @@ class box3D:
         :return: nowy obiekt pudełko\n
         :rtype: box3D
         '''
-        return box3D(portion.closed(x1, x2), portion.closed(y1, y2), portion.closed(z1, z2))
+        return box3D(portion.closed(x1, x2), portion.closed(y1, y2), portion.closed(z1, z2), wall=wall, edge=edge,
+                     point=point)
+
 
 def my_closed(lower, upper):
     '''
@@ -115,16 +126,16 @@ def my_closed(lower, upper):
     '''
     return myInterval.my_from_atomic(portion.const.Bound.CLOSED, lower, upper, portion.const.Bound.CLOSED)
 
+
 class myInterval(portion.Interval):
     '''
     Klasa dziedzicząca z funkcji interwał\n
     :param eps: liczba potrzebna do przycięcia pudełek, bez tego są liczone jako przecinające się nawet jak tylko nachodzą na siebie granicami\n
     '''
-    
+
     def __init__(self):
         super().__init__()
         self.eps = 1e-7
-        
 
     @property
     def upper_eps(self):
@@ -290,7 +301,7 @@ class myInterval(portion.Interval):
         z = self.box_uncut_execute(z)
         box = box3D(x, y, z)
         return box
-    
+
     @staticmethod
     def my_from_atomic(left, lower, upper, right):
         '''
@@ -303,5 +314,5 @@ class myInterval(portion.Interval):
         right = right if upper not in [inf, -inf] else portion.const.Bound.OPEN
         instance._intervals = [Atomic(left, lower, upper, right)]
         if instance.empty:
-            return myInterval() 
+            return myInterval()
         return instance

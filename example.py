@@ -17,6 +17,7 @@ print(table[1])
 pudelka = algorithm.execute(table)
 #uruchomienie funkcji execute i rozbicie pudełek
 print("Wynik")
-for box in pudelka:
-    print(box)
+for box_list in pudelka:
+    for box in box_list:
+        print(box, "box={0}, wall={1}, edge={2}, point={3} \n".format(box.box, box.wall, box.edge, box.point))
     #wypisanie pudełek na wyjściu programu

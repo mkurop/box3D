@@ -1,5 +1,4 @@
 from cut_box import *
-from collections import defaultdict
 
 
 class Slice:
@@ -43,11 +42,10 @@ class Slice:
             sorted_walls[wall.interval_x.lower].append(wall)
         return sorted_walls
 
-    def sort_sliced_walls_xz(self,  sliced, sorted_walls):
+    def sort_sliced_walls_xz(self, sliced, sorted_walls):
         for wall in sliced:
             sorted_walls[wall.interval_y.lower].append(wall)
         return sorted_walls
-
 
     def sort_sliced_walls_xy(self, sliced, sorted_walls):
         for wall in sliced:
@@ -59,7 +57,7 @@ class Slice:
         for key, value in wall_list.items():
             for box in value:
                 wall = box3D(my_closed(box.interval_x.lower_meps, box.interval_x.upper_eps),
-                                            box.interval_y, box.interval_z)
+                             box.interval_y, box.interval_z, True)
             prepared_walls.append(wall)
         return prepared_walls
 
@@ -67,9 +65,9 @@ class Slice:
         prepared_walls = []
         for key, value in wall_list.items():
             for box in value:
-               wall = box3D(box.interval_x,
-                                        my_closed(box.interval_y.lower_meps, box.interval_y.upper_eps),
-                                        box.interval_z)
+                wall = box3D(box.interval_x,
+                             my_closed(box.interval_y.lower_meps, box.interval_y.upper_eps),
+                             box.interval_z, True)
         prepared_walls.append(wall)
         return prepared_walls
 
@@ -78,7 +76,7 @@ class Slice:
         for key, value in wall_list.items():
             for box in value:
                 wall = box3D(box.interval_x, box.interval_y,
-                                            my_closed(box.interval_z.lower_meps, box.interval_z.upper_eps))
+                             my_closed(box.interval_z.lower_meps, box.interval_z.upper_eps), True)
         prepared_walls.append(wall)
         return prepared_walls
 
@@ -91,16 +89,16 @@ class Slice:
     def x_slice(self, box):
         slice_lower = box3D(my_closed(box.interval_x.lower, box.interval_x.lower),
                             my_closed(box.interval_y.lower, box.interval_y.upper),
-                            my_closed(box.interval_z.lower, box.interval_z.upper))
+                            my_closed(box.interval_z.lower, box.interval_z.upper), True)
         slice_upper = box3D(my_closed(box.interval_x.upper, box.interval_x.upper),
                             my_closed(box.interval_y.lower, box.interval_y.upper),
-                            my_closed(box.interval_z.lower, box.interval_z.upper))
+                            my_closed(box.interval_z.lower, box.interval_z.upper), True)
         return [slice_lower, slice_upper]
 
     def x_part_slice(self, box):
         slice_wall = box3D(my_closed(box.interval_x.lower, box.interval_x.lower),
                            my_closed(box.interval_y.lower, box.interval_y.upper),
-                           my_closed(box.interval_z.lower, box.interval_z.upper))
+                           my_closed(box.interval_z.lower, box.interval_z.upper), True)
         return slice_wall
 
     def y_sliceable(self, box):
@@ -112,16 +110,16 @@ class Slice:
     def y_slice(self, box):
         slice_lower = box3D(my_closed(box.interval_x.lower, box.interval_x.upper),
                             my_closed(box.interval_y.lower, box.interval_y.lower),
-                            my_closed(box.interval_z.lower, box.interval_z.upper))
+                            my_closed(box.interval_z.lower, box.interval_z.upper), True)
         slice_upper = box3D(my_closed(box.interval_x.lower, box.interval_x.upper),
                             my_closed(box.interval_y.upper, box.interval_y.upper),
-                            my_closed(box.interval_z.lower, box.interval_z.upper))
+                            my_closed(box.interval_z.lower, box.interval_z.upper), True)
         return [slice_lower, slice_upper]
 
     def y_part_slice(self, box):
         slice_wall = box3D(my_closed(box.interval_x.lower, box.interval_x.upper),
                            my_closed(box.interval_y.lower, box.interval_y.lower),
-                           my_closed(box.interval_z.lower, box.interval_z.upper))
+                           my_closed(box.interval_z.lower, box.interval_z.upper), True)
         return slice_wall
 
     def z_sliceable(self, box):
@@ -133,16 +131,16 @@ class Slice:
     def z_slice(self, box):
         slice_lower = box3D(my_closed(box.interval_x.lower, box.interval_x.upper),
                             my_closed(box.interval_y.lower, box.interval_y.upper),
-                            my_closed(box.interval_z.lower, box.interval_z.lower))
+                            my_closed(box.interval_z.lower, box.interval_z.lower), True)
         slice_upper = box3D(my_closed(box.interval_x.lower, box.interval_x.upper),
                             my_closed(box.interval_y.lower, box.interval_y.upper),
-                            my_closed(box.interval_z.upper, box.interval_z.upper))
+                            my_closed(box.interval_z.upper, box.interval_z.upper), True)
         return [slice_lower, slice_upper]
 
     def z_part_slice(self, box):
         slice_wall = box3D(my_closed(box.interval_x.lower, box.interval_x.upper),
                            my_closed(box.interval_y.lower, box.interval_y.upper),
-                           my_closed(box.interval_z.lower, box.interval_z.lower))
+                           my_closed(box.interval_z.lower, box.interval_z.lower), True)
         return slice_wall
 
     def x_cut_off(self, box, part=False):

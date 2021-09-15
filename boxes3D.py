@@ -2,6 +2,7 @@ import rtree
 from portion import closed
 from cut_box import box3D
 
+
 class boxStack:
     '''
     Klasa przechowująca dane\n
@@ -19,7 +20,7 @@ class boxStack:
         :rtype: bool
         '''
         return not bool(self.get_stack())
-        
+
     def get_stack(self):
         '''
         Funkcja get stosu\n
@@ -49,6 +50,7 @@ class boxStack:
         :rtype: boxStack
         '''
         return self.stack.pop()
+
 
 class tree:
     '''Klasa przechowująca instrukcje drzewa'''
@@ -80,7 +82,17 @@ class tree:
     	:return: pudełka znajdujące się w drzewie
     	:rtype: list
     	'''
-        boxes = self.tree.intersection(self.tree.get_bounds(), True)
-        boxes = [item.bbox for item in boxes]
-        boxes = [box3D.factory(int(round(item[0])), int(round(item[1])), int(round(item[2])), int(round(item[3])), int(round(item[4])), int(round(item[5]))) for item in boxes]
-        return boxes
+        boxes, elem_ret, boxes_ret, walls_ret = self.tree.intersection(self.tree.get_bounds(), True), [], [], []
+        for item in boxes:
+            if item.object.wall:
+                walls_ret.append(item.bbox)
+            else:
+                boxes_ret.append(item.bbox)
+        boxes = [box3D.factory(int(round(item[0])), int(round(item[1])), int(round(item[2])),
+                               int(round(item[3])), int(round(item[4])), int(round(item[5]))) for item in boxes_ret]
+        walls_ret = [box3D.factory(int(round(item[0])), int(round(item[1])), int(round(item[2])),
+                               int(round(item[3])), int(round(item[4])), int(round(item[5])), True)
+                     for item in walls_ret]
+        elem_ret.append(boxes)
+        elem_ret.append(walls_ret)
+        return elem_ret
