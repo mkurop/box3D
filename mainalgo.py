@@ -84,9 +84,9 @@ class algorithm:
         while not Q.empty():
             # zdjęcie ostatniego pudełka ze stosu i przycięcie go
             q = Q.pop()
-            while q.interval_x == my_closed(inf, -inf) or q.interval_y == my_closed(inf,
+            while (q.interval_x == my_closed(inf, -inf) or q.interval_y == my_closed(inf,
                                                                                     -inf) or q.interval_z == my_closed(
-                inf, -inf):
+                inf, -inf)) and len(Q.get_stack()) > 0:
                 q = Q.pop()
             if tree.tree.count((q.interval_x.lower, q.interval_y.lower, q.interval_z.lower, q.interval_x.upper,
                                 q.interval_y.upper, q.interval_z.upper)) > 0:
