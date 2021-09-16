@@ -243,8 +243,8 @@ class Slice:
             return self.slice_wall_xy(wall)
         if self.slice_wall_xz_cond(wall):
             return self.slice_wall_xz(wall)
-        if self.slice_wall_yz(wall):
-            return self.slice_wall_xz(wall)
+        if self.slice_wall_yz_cond(wall):
+            return self.slice_wall_yz(wall)
         if self.slice_wall_x_cond(wall):
             return self.slice_wall_x(wall)
         if self.slice_wall_y_cond(wall):
