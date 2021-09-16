@@ -225,5 +225,13 @@ class algorithm_check(unittest.TestCase):
         boxes = [wall for wall in boxes[1] if wall.wall]
         self.assertEqual(True, self.evaluate(table, boxes))
 
+    def test_edges(self):
+        table = []
+        for i in range(random.randint(30, 40), random.randint(41, 50)):
+            table.append(box3D.random())
+        boxes = algorithm.execute(table)
+        boxes = [edge for edge in boxes[2] if edge.edge]
+        self.assertEqual(True, self.evaluate(table, boxes))
+
 if __name__ == '__main__':
     unittest.main()
