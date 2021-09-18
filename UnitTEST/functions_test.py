@@ -30,7 +30,7 @@ class algorithm_check(unittest.TestCase):
         x = self.random_point_from_a_box(b)
         num_in = sum([b.__contains__(x) for b in boxes_out])
         num_boundary = sum([b.__ror__(x) for b in boxes_out])
-        if (num_in == 1) or (num_in >= num_boundary and num_boundary >= 0):
+        if (num_in == 1) or (num_in >= num_boundary >= 0):
             return True
         else:
             if num_in != 1 & num_in != num_boundary:
@@ -39,6 +39,31 @@ class algorithm_check(unittest.TestCase):
                 print('\n__ror__ error')
             print('\n', b.interval_x, b.interval_y, b.interval_z, '\n', x)
             return False
+
+    def point_is_in(self, b, x):
+        return True if all([self.point_is_in_x(b, x), self.point_is_in_y(b, x), self.point_is_in_z(b, x)]) else False
+
+    def point_is_in_x(self, b, x):
+        return True if x[0] >= b.interval_x.lower >= x[0] else False
+
+    def point_is_in_y(self, b, x):
+        return True if x[1] >= b.interval_y.lower >= x[1] else False
+
+    def point_is_in_z(self, b, x):
+        return True if x[2] >= b.interval_z.lower >= x[2] else False
+
+    def point_is_ror(self, b, x):
+        return sum([self.point_is_ror_x(b, x), self.point_is_ror_y(b, x), self.point_is_ror_z(b, x)])
+
+    def point_is_ror_x(self, b, x):
+        return True if x[0] == b.interval_x.lower or x[0] == b.interval_x.lower else False
+
+    def point_is_ror_y(self, b, x):
+        return True if x[1] == b.interval_y.lower or x[1] == b.interval_y.lower else False
+
+    def point_is_ror_z(self, b, x):
+        return True if x[2] == b.interval_z.lower or x[2] == b.interval_z.lower else False
+
 
     def evaluate(self, boxes_in, boxes_out, checks_num = 1000):
         for i in range(checks_num):
@@ -232,6 +257,15 @@ class algorithm_check(unittest.TestCase):
         boxes = algorithm.execute(table)
         boxes = [edge for edge in boxes[2] if edge.edge]
         self.assertEqual(True, self.evaluate(table, boxes))
+
+    def test_points(self):
+        table = []
+        for i in range(random.randint(30, 40), random.randint(41, 50)):
+            table.append(box3D.random())
+        points = algorithm.execute(table)
+        boxes = [box for box in points[0] if box.box]
+        points = [point for point in points[3] if point.point]
+        self.assertEqual(True, self.evaluate(table, points))
 
 if __name__ == '__main__':
     unittest.main()

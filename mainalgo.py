@@ -47,11 +47,11 @@ class algorithm:
         return table
 
     @staticmethod
-    def append_wall_to_tree(iD, wall_list, tree):
-        wall = wall_list.pop()
+    def append_obj_to_tree(iD, obj_list, tree):
+        wall = obj_list.pop()
         tree.tree.add(iD, (wall.interval_x.lower, wall.interval_y.lower, wall.interval_z.lower,
                            wall.interval_x.upper, wall.interval_y.upper, wall.interval_z.upper), wall)
-        return tree, wall_list, iD
+        return tree, obj_list, iD
 
     @staticmethod
     def execute(box_list):
@@ -85,7 +85,7 @@ class algorithm:
             # zdjęcie ostatniego pudełka ze stosu i przycięcie go
             q = Q.pop()
             while (q.interval_x == my_closed(inf, -inf) or q.interval_y == my_closed(inf,
-                                                                                    -inf) or q.interval_z == my_closed(
+                                                                                     -inf) or q.interval_z == my_closed(
                 inf, -inf)) and len(Q.get_stack()) > 0:
                 q = Q.pop()
             if tree.tree.count((q.interval_x.lower, q.interval_y.lower, q.interval_z.lower, q.interval_x.upper,
@@ -131,9 +131,9 @@ class algorithm:
         wall_yz_prepared = my_slice.prepare_walls_for_tree_x(wall_yz_dict)
         wall_xz_prepared = my_slice.prepare_walls_for_tree_y(wall_xz_dict)
         wall_xy_prepared = my_slice.prepare_walls_for_tree_z(wall_xy_dict)
-        edge_xyz_dict, edge_xy_dict, edge_yz_dict, edge_xz_dict = defaultdict(list), defaultdict(list),\
-                                                                  defaultdict(list), defaultdict(list)
-        prepared_edges, edges = [], []
+        edge_xyz_dict, edge_xy_dict, edge_yz_dict, edge_xz_dict, points_dict = \
+            defaultdict(list), defaultdict(list), defaultdict(list), defaultdict(list), defaultdict(list)
+        prepared_edges, edges, prepared_walls, walls = [], [], [], []
         for wall in wall_yz_prepared:
             while sum([mylen(wall.interval_x) == 0, mylen(wall.interval_y) == 0, mylen(wall.interval_z) == 0]) < 2:
                 edge, wall = my_slice.slice_wall(wall)
@@ -143,38 +143,45 @@ class algorithm:
                 edge, wall = my_slice.slice_wall(wall)
                 edges.append(edge)
         for wall in wall_xy_prepared:
-            while sum([mylen(wall.interval_x) == 0, mylen(wall.interval_y) == 0, mylen(wall.interval_z) == 0])< 2:
+            while sum([mylen(wall.interval_x) == 0, mylen(wall.interval_y) == 0, mylen(wall.interval_z) == 0]) < 2:
                 edge, wall = my_slice.slice_wall(wall)
                 edges.append(edge)
         edge_dict_xyz, edge_dict_xy, edge_dict_yz, edge_dict_xz = \
             my_slice.sort_sliced_edges(edges, edge_xyz_dict, edge_xy_dict, edge_yz_dict, edge_xz_dict)
         edges_xyz, edges_xy, edges_xz, edges_yz = my_slice.prepare_sliced_edges_x(edge_dict_xyz), \
-                                                    my_slice.prepare_sliced_edges_x(edge_dict_xy), \
-                                                    my_slice.prepare_sliced_edges_x(edge_dict_xz), \
-                                                                  my_slice.prepare_sliced_edges_y(edge_dict_xz)
+                                                  my_slice.prepare_sliced_edges_x(edge_dict_xy), \
+                                                  my_slice.prepare_sliced_edges_x(edge_dict_xz), \
+                                                  my_slice.prepare_sliced_edges_y(edge_dict_xz)
+        points_list = []
+        for edge in edges:
+            while not edge == 0:
+                points_list, edge = my_slice.slice_points(edge, points_list)
+        points_dict = my_slice.sort_sliced_points(points_list, points_dict)
+        points = my_slice.prepare_sliced_points(points_dict)
         while any([len(wall_xy_prepared) != 0, len(wall_xz_prepared) != 0,
                    len(wall_yz_prepared) != 0, len(edges_xyz) != 0, len(edges_xy) != 0, len(edges_xz) != 0,
-                   len(edges_yz) != 0]):
+                   len(edges_yz) != 0, len(points) != 0]):
             if len(wall_xy_prepared) != 0:
-                tree, wall_xy_prepared, iD = algorithm.append_wall_to_tree(iD, wall_xy_prepared, tree)
+                tree, wall_xy_prepared, iD = algorithm.append_obj_to_tree(iD, wall_xy_prepared, tree)
                 iD += 1
             if len(wall_xz_prepared) != 0:
-                tree, wall_xz_prepared, iD = algorithm.append_wall_to_tree(iD, wall_xz_prepared, tree)
+                tree, wall_xz_prepared, iD = algorithm.append_obj_to_tree(iD, wall_xz_prepared, tree)
                 iD += 1
             if len(wall_yz_prepared) != 0:
-                tree, wall_yz_prepared, iD = algorithm.append_wall_to_tree(iD, wall_yz_prepared, tree)
+                tree, wall_yz_prepared, iD = algorithm.append_obj_to_tree(iD, wall_yz_prepared, tree)
                 iD += 1
             if len(edges_xyz) != 0:
-                tree, edges_xyz, iD = algorithm.append_wall_to_tree(iD, edges_xyz, tree)
+                tree, edges_xyz, iD = algorithm.append_obj_to_tree(iD, edges_xyz, tree)
                 iD += 1
             if len(edges_xy) != 0:
-                tree, edges_xy, iD = algorithm.append_wall_to_tree(iD, edges_xy, tree)
+                tree, edges_xy, iD = algorithm.append_obj_to_tree(iD, edges_xy, tree)
                 iD += 1
             if len(edges_yz) != 0:
-                tree, edges_yz, iD = algorithm.append_wall_to_tree(iD, edges_yz, tree)
+                tree, edges_yz, iD = algorithm.append_obj_to_tree(iD, edges_yz, tree)
                 iD += 1
             if len(edges_xz) != 0:
-                tree, edges_xz, iD = algorithm.append_wall_to_tree(iD, edges_xz, tree)
+                tree, edges_xz, iD = algorithm.append_obj_to_tree(iD, edges_xz, tree)
                 iD += 1
-
-
+            if len(points) != 0:
+                tree, points, iD = algorithm.append_obj_to_tree(iD, points, tree)
+                iD += 1

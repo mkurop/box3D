@@ -1,6 +1,7 @@
 from cut_box import *
 from split_intervals import mylen
 
+
 class Slice:
 
     def slice_boxes(self, box_list):
@@ -178,18 +179,21 @@ class Slice:
         edge = box3D(wall.interval_x, wall.interval_y, my_closed(wall.interval_z.lower, wall.interval_z.lower),
                      False, True)
         wall = self.z_cut_off(wall, True)
+        wall = box3D(wall.interval_x, wall.interval_y, wall.interval_z, True)
         return edge, wall
 
     def slice_wall_xz(self, wall):
         edge = box3D(wall.interval_x, my_closed(wall.interval_y.lower, wall.interval_y.lower), wall.interval_z,
                      False, True)
         wall = self.y_cut_off(wall, True)
+        wall = box3D(wall.interval_x, wall.interval_y, wall.interval_z, True)
         return edge, wall
 
     def slice_wall_yz(self, wall):
         edge = box3D(my_closed(wall.interval_x.lower, wall.interval_x.lower), wall.interval_y, wall.interval_z,
                      False, True)
         wall = self.x_cut_off(wall, True)
+        wall = box3D(wall.interval_x, wall.interval_y, wall.interval_z, True)
         return edge, wall
 
     def slice_wall_x_cond(self, wall):
@@ -255,13 +259,14 @@ class Slice:
     def prepare_sliced_edges_x(self, sorted_edges):
         prepared_edges = []
         for key, value in sorted_edges.items():
-            for wall in value:
-                edge = self.prepare_edge_for_tree_x(wall)
-            if mylen(edge.interval_y) == 0:
-                edge = self.prepare_edge_for_tree_y(edge)
-            if mylen(edge.interval_z) == 0:
-                edge = self.prepare_edge_for_tree_z(edge)
-            prepared_edges.append(edge)
+            for edge in value:
+                if mylen(edge.interval_x) == 0:
+                    edge = self.prepare_edge_for_tree_x(edge)
+                if mylen(edge.interval_y) == 0:
+                    edge = self.prepare_edge_for_tree_y(edge)
+                if mylen(edge.interval_z) == 0:
+                    edge = self.prepare_edge_for_tree_z(edge)
+                prepared_edges.append(edge)
         return prepared_edges
 
     def prepare_sliced_edges_y(self, sorted_edges):
@@ -309,3 +314,76 @@ class Slice:
     def sort_sliced_edge_xyz(self, wall, sorted_edges):
         sorted_edges[wall.interval_x.lower, wall.interval_y.lower, wall.interval_z.lower].append(wall)
         return sorted_edges
+
+    def slice_points(self, edge, sorted_points):
+        if all([mylen(edge.interval_x) == 0, mylen(edge.interval_y) == 0, mylen(edge.interval_z) == 0]):
+            point = box3D(edge.interval_x, edge.interval_y, edge.interval_z, False, False, True)
+            sorted_points.append(point)
+            return sorted_points, 0
+        if self.slice_point_xy_cond(edge):
+            sorted_points.append(self.slice_point_xy(edge))
+            edge = self.z_cut_off(edge, True)
+            edge = box3D(edge.interval_x, edge.interval_y, edge.interval_z, False, False, True)
+            return sorted_points, edge
+        if self.slice_point_yz_cond(edge):
+            sorted_points.append(self.slice_point_yz(edge))
+            edge = self.x_cut_off(edge, True)
+            edge = box3D(edge.interval_x, edge.interval_y, edge.interval_z, False, False, True)
+            return sorted_points, edge
+        if self.slice_point_xz_cond(edge):
+            sorted_points.append(self.slice_point_xz(edge))
+            edge = self.y_cut_off(edge, True)
+            edge = box3D(edge.interval_x, edge.interval_y, edge.interval_z, False, False, True)
+            return sorted_points, edge
+
+    def slice_point_xy_cond(self, edge):
+        return True if mylen(edge.interval_x) == 0 and mylen(edge.interval_y) == 0 else False
+
+    def slice_point_xz_cond(self, edge):
+        return True if mylen(edge.interval_x) == 0 and mylen(edge.interval_z) == 0 else False
+
+    def slice_point_yz_cond(self, edge):
+        return True if mylen(edge.interval_y) == 0 and mylen(edge.interval_z) == 0 else False
+
+    def slice_point_xy(self, edge):
+        return box3D(my_closed(edge.interval_x.lower, edge.interval_x.lower), edge.interval_y, edge.interval_z,
+                     False, False, True)
+
+    def slice_point_xz(self, edge):
+        return box3D(edge.interval_x, my_closed(edge.interval_y.lower, edge.interval_y.lower), edge.interval_z,
+                     False, False, True)
+
+    def slice_point_yz(self, edge):
+        return box3D(edge.interval_x, edge.interval_y, my_closed(edge.interval_z.lower, edge.interval_z.lower),
+                     False, False, True)
+
+    def sort_sliced_points(self, points_list, points_dict):
+        for point in points_list:
+            points_dict[point.interval_x.lower, point.interval_y.lower, point.interval_z.lower].append(point)
+        return points_dict
+
+    def prepare_sliced_points(self, sorted_points):
+        prepared_points = []
+        for key, value in sorted_points.items():
+            for point in value:
+                point = self.prepare_point_for_tree_x(point)
+                point = self.prepare_point_for_tree_y(point)
+                point = self.prepare_point_for_tree_z(point)
+            prepared_points.append(point)
+        return prepared_points
+
+
+    def prepare_point_for_tree_x(self, edge):
+        edge = box3D(my_closed(edge.interval_x.lower_meps, edge.interval_x.upper_eps), edge.interval_y,
+                     edge.interval_z, False, False, True)
+        return edge
+
+    def prepare_point_for_tree_y(self, edge):
+        edge = box3D(edge.interval_x, my_closed(edge.interval_y.lower_meps, edge.interval_y.upper_eps),
+                     edge.interval_z, False, False, True)
+        return edge
+
+    def prepare_point_for_tree_z(self, edge):
+        edge = box3D(edge.interval_x, edge.interval_y,
+                     my_closed(edge.interval_z.lower_meps, edge.interval_z.upper_eps), False, False, True)
+        return edge
