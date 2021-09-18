@@ -1,6 +1,5 @@
 import os, sys
 from functions_test import algorithm_check
-
 sys.path.insert(0, os.path.abspath('..'))
 sys.path.insert(0, os.path.abspath('.'))
 from mainalgo import *
@@ -8,7 +7,7 @@ import unittest
 from functions_test import *
 from random import randint
 from cut_box import *
-import copy
+
 
 class algorithm_test(unittest.TestCase):
     def copy_box_list(self, list):
@@ -27,8 +26,14 @@ class algorithm_test(unittest.TestCase):
         stack.extend(table)
         drzewo = tree()
         algorithm().algorytm(stack, drzewo)
-        self.assertEqual(True, algorithm_check().evaluate(table_copy, drzewo.ret_boxes(), 10000))
-
+        for box_list in drzewo.ret_boxes():
+            ret_boxes = [box for box in box_list]
+        self.assertEqual(True, algorithm_check().evaluate(table_copy, ret_boxes, 10000))
+try:
+    os.remove('.3d_index.idx')
+    os.remove('.3d_index.dat')
+except:
+    pass
 if __name__ == '__main__':
     unittest.main()
 
