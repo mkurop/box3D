@@ -345,7 +345,7 @@ class Slice:
     def slice_point_yz_cond(self, edge):
         return True if mylen(edge.interval_y) == 0 and mylen(edge.interval_z) == 0 else False
 
-    def slice_point_xy(self, edge):
+    def slice_point_yz(self, edge):
         return box3D(my_closed(edge.interval_x.lower, edge.interval_x.lower), edge.interval_y, edge.interval_z,
                      False, False, True)
 
@@ -353,7 +353,7 @@ class Slice:
         return box3D(edge.interval_x, my_closed(edge.interval_y.lower, edge.interval_y.lower), edge.interval_z,
                      False, False, True)
 
-    def slice_point_yz(self, edge):
+    def slice_point_xy(self, edge):
         return box3D(edge.interval_x, edge.interval_y, my_closed(edge.interval_z.lower, edge.interval_z.lower),
                      False, False, True)
 
